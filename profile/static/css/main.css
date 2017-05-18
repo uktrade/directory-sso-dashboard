@@ -18,8 +18,11 @@ body {
 }
 
 .sso-profile-tab-container {
-    margin-top: 30px;
     background-color: #F0F3F2;
+    margin-top: 30px;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap;
 }
 
 .sso-profile-tab-container ul {
