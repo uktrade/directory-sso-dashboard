@@ -4,10 +4,8 @@ from django.conf import settings
 from directory_ch_client.client import ch_search_api_client
 from directory_sso_api_client.client import sso_api_client
 from directory_forms_api_client import actions
-from directory_forms_api_client.client import forms_api_client
 
 COMPANIES_HOUSE_DATE_FORMAT = '%Y-%m-%d'
-CONFIRM_VERIFICATION_CODE_TEMPLATE_ID = 'aa4bb8dc-0e54-43d1-bcc7-a8b29d2ecba6'
 
 
 def get_company_profile(number):
@@ -24,16 +22,16 @@ def create_user(email, password):
 
 def send_verification_code_email(email, verification_code, from_url):
     action = actions.GovNotifyAction(
-        client=forms_api_client,
-        template_id=CONFIRM_VERIFICATION_CODE_TEMPLATE_ID,
+        template_id=settings.CONFIRM_VERIFICATION_CODE_TEMPLATE_ID,
         email_address=email,
         form_url=from_url,
     )
-    data = {'code': verification_code,
-            'expiry_days': settings.VERIFICATION_EXPIRY_DAYS,
-            }
 
-    response = action.save(data)
+    response = action.save({
+        'code': verification_code,
+        'expiry_days': settings.VERIFICATION_EXPIRY_DAYS,
+    })
+    response.raise_for_status()
     return response
 
 

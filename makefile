@@ -79,16 +79,16 @@ DEBUG_SET_ENV_VARS := \
 	export DIRECTORY_CH_SEARCH_CLIENT_API_KEY=debug; \
 	export DIRECTORY_CH_SEARCH_CLIENT_BASE_URL=http://127.0.0.1:8012; \
 	export DIRECTORY_FORMS_API_BASE_URL=http://forms.trade.great:8011 \
-	export VERIFICATION_EXPIRY_DAYS=3\
-	export DIRECTORY_FORMS_API_API_KEY=debug\
-	export DIRECTORY_FORMS_API_SENDER_ID=debug
+	export VERIFICATION_EXPIRY_DAYS=3
 
 
 DEBUG_TEST_SET_ENV_VARS := \
 	export EXPORTING_OPPORTUNITIES_API_BASE_URL=https://staging-new-design-eig.herokuapp.com/; \
 	export EXPORTING_OPPORTUNITIES_API_SECRET=debug; \
 	export EXPORTING_OPPORTUNITIES_SEARCH_URL=https://opportunities.export.great.gov.uk/opportunities; \
-	export GET_ADDRESS_API_KEY=debug
+	export GET_ADDRESS_API_KEY=debug\
+	export DIRECTORY_FORMS_API_API_KEY=debug\
+	export DIRECTORY_FORMS_API_SENDER_ID=debug
 
 debug_webserver:
 	$(DEBUG_SET_ENV_VARS) && $(DJANGO_WEBSERVER)

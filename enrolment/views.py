@@ -78,9 +78,9 @@ class EnrolmentView(
             email = form.cleaned_data.get("email")
             new_user = helpers.create_user(email, password)
             helpers.send_verification_code_email(
-                new_user['email'],
-                new_user['verification_code'],
-                self.request.path
+                email=new_user['email'],
+                verification_code=new_user['verification_code'],
+                form_url=self.request.path,
             )
 
         return super().render_next_step(form, **kwargs)

@@ -45,7 +45,9 @@ def test_create_user(mock_create_user):
     assert result == data
 
 
-@mock.patch.object(helpers.forms_api_client, 'submit_generic')
+@mock.patch(
+    'directory_forms_api_client.client.forms_api_client.submit_generic'
+)
 def test_send_verification_code_email(mock_submit):
     email = 'gurdeep.atwal@digital.trade.gov.uk'
     verification_code = '12345'
