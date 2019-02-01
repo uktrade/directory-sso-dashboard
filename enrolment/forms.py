@@ -70,6 +70,7 @@ class UserAccount(forms.Form):
         label='',
         label_suffix='',
     )
+
     terms_agreed = fields.BooleanField(
         label=mark_safe(
             'Tick this box to accept the '
