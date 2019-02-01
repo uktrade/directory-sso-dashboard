@@ -84,9 +84,12 @@ def submit_step_factory(client, url_name, view_name, view_class):
     return submit_step
 
 
+@mock.patch.object(helpers, 'send_verification_code_email')
+@mock.patch.object(helpers, 'create_user')
 @mock.patch('captcha.fields.ReCaptchaField.clean')
 def test_companies_house_enrolment(
-    mock_clean, client, captcha_stub, submit_enrolment_step
+    mock_clean, mock_create_user,
+    mock_send_code, client, captcha_stub, submit_enrolment_step
 ):
     response = submit_enrolment_step({
         'choice': constants.COMPANIES_HOUSE_COMPANY
@@ -130,9 +133,12 @@ def test_companies_house_enrolment(
     assert response.status_code == 302
 
 
+@mock.patch.object(helpers, 'send_verification_code_email')
+@mock.patch.object(helpers, 'create_user')
 @mock.patch('captcha.fields.ReCaptchaField.clean')
 def test_companies_house_enrolment_change_company_name(
-    mock_clean, client, captcha_stub, submit_enrolment_step
+    mock_clean, mock_create_user, mock_send_code, client, captcha_stub,
+    submit_enrolment_step,
 ):
     response = submit_enrolment_step({
         'choice': constants.COMPANIES_HOUSE_COMPANY
@@ -183,33 +189,45 @@ def test_companies_house_enrolment_change_company_name(
 
 
 @mock.patch('captcha.fields.ReCaptchaField.clean')
+@mock.patch.object(helpers, 'send_verification_code_email')
+@mock.patch.object(helpers, 'create_user')
 def test_create_user_enrolment(
-    mock_clean, mock_create_user, client, captcha_stub, submit_enrolment_step
+        mock_create_user, mock_send_code, mock_clean, client, captcha_stub
 ):
-    response = submit_enrolment_step({
-        'choice': constants.COMPANIES_HOUSE_COMPANY
+    mock_create_user.return_value = {
+        'email': 'test@test.com',
+        'verification_code': '123456',
+    }
+
+    submit_step = submit_step_factory(
+
+        client=client,
+        url_name='enrolment',
+        view_name='enrolment_view',
+        view_class=views.EnrolmentView,
+    )
+
+    response = submit_step({
+        'choice': constants.SOLE_TRADER
     })
     assert response.status_code == 302
 
-    response = submit_enrolment_step({
+    response = submit_step({
         'email': 'tex4566eqw34e7@example.com',
         'password': 'thing',
         'password_confirmed': 'thing',
         'captcha': captcha_stub,
         'terms_agreed': True
     })
-
     assert response.status_code == 302
-    assert mock_create_user.call_count == 1
-    assert mock_create_user.call_args == mock.call(
-        email='tex4566eqw34e7@example.com',
-        password='thing'
-    )
 
 
+@mock.patch.object(helpers, 'send_verification_code_email')
+@mock.patch.object(helpers, 'create_user')
 @mock.patch('captcha.fields.ReCaptchaField.clean')
 def test_companies_house_enrolment_expose_company(
-    mock_clean, client, captcha_stub, submit_enrolment_step
+    mock_clean, mock_create_user, mock_send_code, client, captcha_stub,
+    submit_enrolment_step
 ):
     response = submit_enrolment_step({
         'choice': constants.COMPANIES_HOUSE_COMPANY
