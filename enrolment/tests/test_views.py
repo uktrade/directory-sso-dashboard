@@ -50,11 +50,12 @@ def submit_step_factory(client, url_name, view_name, view_class):
 
 
 @mock.patch('captcha.fields.ReCaptchaField.clean')
+@mock.patch.object(helpers, 'send_verification_code_email')
 @mock.patch.object(helpers, 'create_user')
 @mock.patch.object(helpers, 'get_company_profile')
 def test_companies_house_enrolment(
     mock_get_company_profile, mock_create_user,
-    mock_clean, client, captcha_stub,
+    mock_clean, mock_send_code,  client, captcha_stub,
 ):
     mock_get_company_profile.return_value = {
         'company_number': '12345678',
@@ -66,7 +67,7 @@ def test_companies_house_enrolment(
 
     mock_create_user.return_value = {
         'email': 'test@test.com',
-        'password': '123456',
+        'verification_code': '123456',
     }
 
     submit_step = submit_step_factory(
@@ -118,14 +119,15 @@ def test_companies_house_enrolment(
 
 
 @mock.patch('captcha.fields.ReCaptchaField.clean')
+@mock.patch.object(helpers, 'send_verification_code_email')
 @mock.patch.object(helpers, 'create_user')
 def test_create_user_enrolment(
-        mock_create_user, mock_clean, client, captcha_stub
+        mock_create_user, mock_send_code, mock_clean, client, captcha_stub
 ):
 
     mock_create_user.return_value = {
         'email': 'test@test.com',
-        'password': '123456',
+        'verification_code': '123456',
     }
 
     submit_step = submit_step_factory(
