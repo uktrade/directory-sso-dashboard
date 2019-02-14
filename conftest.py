@@ -65,7 +65,7 @@ def api_response_500():
     return response
 
 
-@pytest.fixture
+@pytest.fixture()
 def sso_user_middleware(sso_user):
     def process_request(self, request):
         request.sso_user = sso_user
