@@ -25,7 +25,6 @@ class BusinessType(forms.Form):
                 'My business is registered with Companies House. ' 
                 'For example, a limited company (Ltd), a public limited' 
                 'company (PLC) or a Royal Charter company'
-
             )
         ),
         (
@@ -33,7 +32,6 @@ class BusinessType(forms.Form):
             (
                 'I\’m a sole trader or I represent another type of UK '
                 'business not registered with Companies House'
-
             )
         ),
         (
