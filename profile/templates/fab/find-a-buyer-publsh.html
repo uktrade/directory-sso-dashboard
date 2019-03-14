@@ -12,7 +12,9 @@
     {% include 'fab/breadcrumbs.html' with label='Publish your profile' %}
     <h1 class="heading-large">Publishing your profile on great.gov.uk</h1>
     {% if company.is_uk_isd_company %}
-        <p>Great.gov.uk has two services you can publish your profile on. ISD and great.gov.uk/trade/, you can publish to either or just one.</p>
+        <p>You can publish your profile on 2 great.gov.uk platforms – invest.great.gov.uk and trade.great.gov.uk.</p>
+		<p>You can publish on either or both of these.</p>
+		<p>Choose where you want to publish below.</p>
     {% endif %}
     {{ block.super }}
 {% endblock %}
