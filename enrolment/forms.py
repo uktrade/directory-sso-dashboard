@@ -174,6 +174,8 @@ class CompaniesHouseSearch(forms.Form):
 
 
 class CompaniesHouseBusinessDetails(forms.Form):
+    MESSAGE_INVALID_ADDRESS = 'Address should be at least two lines.'
+
     company_name = fields.CharField(
         label='Registered company name'
     )
@@ -199,6 +201,12 @@ class CompaniesHouseBusinessDetails(forms.Form):
     address = fields.CharField(
         disabled=True,
         required=False,
+    )
+    address_manual = fields.CharField(
+        label='Enter your business address',
+        disabled=False,
+        required=False,
+        widget=Textarea(attrs={'rows': 3}),
     )
     industry = fields.ChoiceField(
         label='What industry is your company in?',
@@ -237,8 +245,13 @@ class CompaniesHouseBusinessDetails(forms.Form):
         self.initial['company_number'] = company.number
         self.initial['sic'] = company.sic_code
         self.initial['date_of_creation'] = company.date_created
-        self.initial['address'] = company.address
         self.initial['postal_code'] = company.postcode
+
+        if company.address is None or company.address == '':
+            self.fields.pop('address')
+        else:
+            self.fields.pop('address_manual')
+            self.initial['address'] = company.address
 
     def initial_to_data(self, field_name):
         self.data.setlist(
@@ -251,9 +264,23 @@ class CompaniesHouseBusinessDetails(forms.Form):
 
     def clean_address(self):
         address_parts = self.cleaned_data['address'].split(',')
-        self.cleaned_data['address_line_1'] = address_parts[0].strip()
-        self.cleaned_data['address_line_2'] = address_parts[1].strip()
+        self.set_address(address_parts)
         return self.cleaned_data['address']
+
+    def set_address(self, address_parts):
+        # For Manual address entry this will need a correction
+        # As address can be more then 2 lines
+        if len(address_parts) > 1:
+            self.cleaned_data['address_line_1'] = address_parts[0].strip()
+            self.cleaned_data['address_line_2'] = address_parts[1].strip()
+
+    def clean_address_manual(self):
+        value = self.cleaned_data['address_manual'].strip().replace(', ', '\n')
+        if value.count('\n') == 0:
+            raise ValidationError(self.MESSAGE_INVALID_ADDRESS)
+        self.set_address(value)
+        self.cleaned_data['address'] = self.cleaned_data['address_manual']
+        return value
 
 
 class PersonalDetails(forms.Form):
