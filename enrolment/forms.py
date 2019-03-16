@@ -278,7 +278,7 @@ class CompaniesHouseBusinessDetails(forms.Form):
         value = self.cleaned_data['address_manual'].strip().replace(', ', '\n')
         if value.count('\n') == 0:
             raise ValidationError(self.MESSAGE_INVALID_ADDRESS)
-        self.set_address(value)
+        self.set_address(value.split('\n'))
         self.cleaned_data['address'] = self.cleaned_data['address_manual']
         return value
 

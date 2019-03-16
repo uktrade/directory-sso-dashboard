@@ -114,6 +114,20 @@ def mock_get_company_profile():
     patch.stop()
 
 
+@pytest.fixture()
+def mock_get_company_profile_no_address():
+    patch = mock.patch.object(helpers, 'get_company_profile', return_value={
+        'company_number': '12345678',
+        'company_name': 'Charity',
+        'sic_codes': ['1234'],
+        'date_of_creation': '2001-01-20',
+        'registered_office_address': {},
+        'company_status': 'active',
+    })
+    yield patch.start()
+    patch.stop()
+
+
 @pytest.fixture(autouse=True)
 def mock_send_verification_code_email():
     patch = mock.patch.object(helpers, 'send_verification_code_email')
@@ -441,6 +455,46 @@ def test_companies_house_enrolment_expose_company(
         'industry': 'AEROSPACE',
         'website_address': ''
     }
+
+
+def test_companies_house_enrolment_manual_address(
+    client, submit_companies_house_step, mock_session_user, steps_data,
+        mock_get_company_profile_no_address,
+):
+
+    response = submit_companies_house_step(steps_data[views.USER_ACCOUNT])
+    assert response.status_code == 302
+
+    response = submit_companies_house_step(steps_data[views.VERIFICATION])
+    assert response.status_code == 302
+
+    mock_session_user.login()
+
+    response = submit_companies_house_step(steps_data[views.COMPANY_SEARCH])
+    assert response.status_code == 302
+
+    response = submit_companies_house_step({
+        'company_name': 'Charity',
+        'industry': 'AEROSPACE',
+        'address_manual': '155 Manual address \n Manual'
+    })
+    assert response.status_code == 302
+
+    response = client.get(response.url)
+
+    assert response.context_data['company'] == {
+        'company_name': 'Charity',
+        'company_number': '12345678',
+        'sic': '1234',
+        'date_of_creation': '2001-01-01',
+        'postal_code': '',
+        'address_manual': '155 Manual address \n Manual',
+        'address_line_1': '155 Manual address',
+        'address_line_2': 'Manual',
+        'address': '155 Manual address \n Manual',
+        'industry': 'AEROSPACE',
+        'website_address': ''
+     }
 
 
 def test_companies_house_enrolment_redirect_to_start(client):
