@@ -459,7 +459,7 @@ def test_companies_house_enrolment_expose_company(
 
 def test_companies_house_enrolment_manual_address(
     client, submit_companies_house_step, mock_session_user, steps_data,
-        mock_get_company_profile_no_address,
+    mock_get_company_profile_no_address,
 ):
 
     response = submit_companies_house_step(steps_data[views.USER_ACCOUNT])
@@ -495,6 +495,30 @@ def test_companies_house_enrolment_manual_address(
         'industry': 'AEROSPACE',
         'website_address': ''
      }
+
+
+def test_companies_house_enrolment_manual_address_error(
+    client, submit_companies_house_step, mock_session_user, steps_data,
+    mock_get_company_profile_no_address,
+):
+
+    response = submit_companies_house_step(steps_data[views.USER_ACCOUNT])
+    assert response.status_code == 302
+
+    response = submit_companies_house_step(steps_data[views.VERIFICATION])
+    assert response.status_code == 302
+
+    mock_session_user.login()
+
+    response = submit_companies_house_step(steps_data[views.COMPANY_SEARCH])
+    assert response.status_code == 302
+
+    response = submit_companies_house_step({
+        'company_name': 'Charity',
+        'industry': 'AEROSPACE',
+        'address_manual': 'no address'
+    })
+    assert response.status_code == 200
 
 
 def test_companies_house_enrolment_redirect_to_start(client):
