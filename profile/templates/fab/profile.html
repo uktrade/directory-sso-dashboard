@@ -9,24 +9,22 @@
 
 {% block tab_content %}
 
-    {% if features.ADMIN_PANEL_ON %}
-        {% if is_profile_owner %}
-        <div id="user-mode-container">
-            <div class="grid-row" >
-                <div class="column-one-half">
-                    <a href="#">Admin tools</a>
-                </div>
-                <div class="column-one-half right-column">
-                    <a class="background-light-blue font-xsmall pill" href="#">Admin view</a>
-                    {% if not company.is_published %}
-                        <span class="divider"></span>
-                        <a href="{{ services_urls.fas }}/suppliers/{{ company.number }}/">View profile</a>
-                    {% endif %}
-                </div>
+    {% if is_profile_owner %}
+    <div id="user-mode-container">
+        <div class="grid-row" >
+            <div class="column-one-half">
+                <a href="{% url 'find-a-buyer-admin-tools' %}">Admin tools</a>
             </div>
-            <hr>
+            <div class="column-one-half right-column">
+                <a class="background-light-blue font-xsmall pill" href="{% url 'find-a-buyer-admin-tools' %}">Admin view</a>
+                {% if company.is_published and not company.is_uk_isd_company %}
+                    <span class="divider"></span>
+                    <a href="{{ services_urls.fas }}/suppliers/{{ company.number }}/">View profile</a>
+                {% endif %}
+            </div>
         </div>
-        {% endif %}
+        <hr>
+    </div>
     {% endif %}
 
     {% if success_message %}
@@ -57,7 +55,7 @@
                 <p>For security reasons, we need to check you're who you say you are.</p>
             </div>
             <div class="column-one-third alerts-button-container">
-                <a class="button button-ghost-white" href="{{ services_urls.fab }}/verify/">Confirm your identity</a>
+                <a class="button button-ghost-white" href="{{ services_urls.fab }}verify/">Confirm your identity</a>
             </div>
         {% elif not company.is_published %}
             {% if company.is_uk_isd_company %}
@@ -93,7 +91,13 @@
             </div>
 
             <div>
-                <h3 class="heading-medium">About company</h3>
+                <div class="grid-row" id="about-company-container">
+                    <h3 class="column-two-thirds heading-medium">About company</h3>
+                    <div class="column-one-third right-column">
+                        <a href="{% url 'find-a-buyer-business-details' %}" class="link pencil-link">Edit</a>
+                    </div>
+                </div>
+
                 <dl>
                     {% if company.website %}
                         <dt>Website</dt>
@@ -121,38 +125,67 @@
                     <a href="#" class="link">Add website</a>
                 {% endif %}
                 <hr>
-                <h3 class="heading-medium">Online profiles</h3>
-                <ul>
-                    <li>
-                        <img alt="with Facebook" height="36px" src="{% static 'directory_components/icons/twitter.svg' %}" width="36px" />
-                        {% if company.facebook_url %}
-                            <a class="link" href="{{ company.facebook_url }}">{{ company.facebook_url }}</a>
-                        {% else %}
-                            <a class="link" href="{% url 'find-a-buyer-social' %}">Add Facebook</a>
-                        {% endif %}
-                    </li>
-                    <li>
-                        <img alt="with Twitter" height="36px" src="{% static 'directory_components/icons/facebook.svg' %}" width="36px" />                            
-                        {% if company.twitter_url %}
-                            <a class="link" href="{{ company.twitter_url }}">{{ company.twitter_url }}</a>
-                        {% else %}
-                            <a class="link" href="{% url 'find-a-buyer-social' %}">Add Twitter</a>
-                        {% endif %}
-                    </li>
-                    <li>
-                        <img alt="with LinkedIn" height="36px" src="{% static 'directory_components/icons/linkedin.svg' %}" width="36px" />                            
-                        {% if company.linkedin_url %}
-                            <a class="link" href="{{ company.linkedin_url }}">{{ company.linkedin_url }}</a>
-                        {% else %}
-                            <a class="link" href="{% url 'find-a-buyer-social' %}">Add Linkedin</a>
-                        {% endif %}
-                    </li>
-                </ul>
+
+                <section id="online-profiles">
+                    <div class="grid-row">
+                        <h3 class="column-two-thirds heading-medium">Online profiles</h3>
+                        <div class="column-one-third right-column">
+                            {% if company.facebook_url and company.twitter_url and company.linkedin_url %}
+                                <a href="{% url 'find-a-buyer-social' %}" class="link pencil-link">Edit</a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <ul>
+                        <li>
+                            
+                            {% if company.facebook_url %}
+                                <a class="link" href="{{ company.facebook_url }}">
+                                    <img alt="with Facebook" height="36px" src="{% static 'directory_components/icons/facebook.svg' %}" width="36px" />
+                                    <span>{{ company.facebook_url }}</span>
+                                </a>
+                            {% else %}
+                                <a class="link" href="{% url 'find-a-buyer-social' %}">
+                                    <img alt="with Facebook" height="36px" src="{% static 'directory_components/icons/facebook.svg' %}" width="36px" />
+                                    <span>Add Facebook</span>
+                                </a>
+                            {% endif %}
+                        </li>
+                        <li>
+                            {% if company.twitter_url %}
+                                <a class="link" href="{{ company.twitter_url }}">
+                                    <img alt="with Twitter" height="36px" src="{% static 'directory_components/icons/twitter.svg' %}" width="36px" />
+                                    <span>{{ company.twitter_url }}</span>
+                                </a>
+                            {% else %}
+                                <a class="link" href="{% url 'find-a-buyer-social' %}">
+                                    <img alt="with Twitter" height="36px" src="{% static 'directory_components/icons/twitter.svg' %}" width="36px" />
+                                    <span>Add Twitter</span>
+                                </a>
+                            {% endif %}
+                        </li>
+                        <li>
+                            {% if company.linkedin_url %}
+                                <a class="link" href="{{ company.linkedin_url }}">
+                                    <img alt="with LinkedIn" height="36px" src="{% static 'directory_components/icons/linkedin.svg' %}" width="36px" />                            
+                                    <span>{{ company.linkedin_url }}</span>
+                                </a>
+                            {% else %}
+                                <a class="link" href="{% url 'find-a-buyer-social' %}">
+                                    <img alt="with LinkedIn" height="36px" src="{% static 'directory_components/icons/linkedin.svg' %}" width="36px" />
+                                    <span>Add Linkedin</span>
+                                </a>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </section>
             </div>
         </div>
         <div class="column-two-thirds">
-            <h2 class="heading-large">{{ company.name }}</h2>
-
+            <h2 class="heading-large" id="company-name">
+                {{ company.name }}
+                <a href="{% url 'find-a-buyer-business-details' %}" class="link pencil-link">Edit</a>
+            </h2>
             <div class="{% if not company.email_address %}primary-action-required{% endif %} message-box border-medium border-black background-white">
               <div class="grid-row">
                 <h3 class="box-heading heading-medium black-text column-one-half">Profile email</h3>
@@ -176,11 +209,27 @@
                 </div>
               </div>
 
-              <p class="mid-grey-text font-xsmall">This will be the email address international buyers will contact you from the business profile.</p>
+              <p class="mid-grey-text font-xsmall">Tell overseas companies more about your business.</p>
               {% if company.description %}
                 <span>{{ company.description }}</span>
               {% else %}
                 <a href="{% url 'find-a-buyer-description' %}" class="link">Add description</a>
+              {% endif %}
+            </div>
+
+            <div class="{% if not company.keywords %}primary-action-required{% endif %} message-box border-medium border-black background-white">
+              <div class="grid-row">
+                <h3 class="box-heading heading-medium black-text column-one-half">Products and services</h3>
+                <div class="column-one-half right-column">
+                    {% if company.keywords %}<a href="{% url 'find-a-buyer-products-and-services' %}" class="link pencil-link">Edit</a>{% endif %}
+                </div>
+              </div>
+
+              <p class="mid-grey-text font-xsmall">Add search words to describe the core things your business offers.</p>
+              {% if company.keywords %}
+                <span>{{ company.keywords }}</span>
+              {% else %}
+                <a href="{% url 'find-a-buyer-products-and-services' %}" class="link">Add products and services</a>
               {% endif %}
             </div>
 

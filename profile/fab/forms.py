@@ -6,7 +6,11 @@ import directory_validators.enrolment
 from django.conf import settings
 from django.forms import ImageField, Textarea
 
+from enrolment.fields import DateField
 from profile.fab import validators
+
+
+INDUSTRY_CHOICES = [('', 'Select Industry')] + list(choices.INDUSTRIES)
 
 
 class SocialLinksForm(forms.Form):
@@ -105,7 +109,7 @@ class CaseStudyBasicInfoForm(forms.Form):
     )
     sector = fields.ChoiceField(
         label='Industry most relevant to your showcase',
-        choices=[('', 'Select Sector')] + list(choices.INDUSTRIES)
+        choices=INDUSTRY_CHOICES
     )
     website = fields.URLField(
         label='The web address for your case study (optional)',
@@ -298,6 +302,26 @@ class LogoForm(forms.Form):
     )
 
 
+class ProductsServicesForm(forms.Form):
+    keywords = fields.CharField(
+        label=(
+            'Enter up to 10 keywords that describe your company '
+            '(separated by commas):'
+        ),
+        help_text=(
+            'These keywords will be used to help potential overseas buyers '
+            'find your company.'
+        ),
+        widget=Textarea,
+        max_length=1000,
+        validators=[
+            directory_validators.company.keywords_word_limit,
+            directory_validators.company.keywords_special_characters,
+            directory_validators.company.no_html,
+        ]
+    )
+
+
 class PublishForm(forms.Form):
 
     LABEL_UNPUBLISH_FAS = 'Untick to remove your profile from this service'
@@ -322,3 +346,78 @@ class PublishForm(forms.Form):
         label=LABEL_FAS,
         required=False
     )
+
+
+class CompaniesHouseBusinessDetailsForm(forms.Form):
+    name = fields.CharField(
+        label='Trading name'
+    )
+    number = fields.CharField(
+        disabled=True,
+    )
+    date_of_creation = DateField(
+        label='Incorporated on',
+        input_formats=['%d %B %Y'],
+        disabled=True,
+        required=False,
+    )
+    address = fields.CharField(
+        disabled=True,
+        required=False,
+    )
+    website = fields.URLField(
+        label='Business URL (optional)',
+        help_text='The website address must start with http:// or https://',
+        required=False,
+    )
+    employees = fields.ChoiceField(
+        choices=choices.EMPLOYEES,
+        label='How many employees are in your business?',
+    )
+    sectors = fields.ChoiceField(
+        label='What industry is your business in?',
+        choices=INDUSTRY_CHOICES,
+    )
+
+    def clean_sectors(self):
+        return [self.cleaned_data['sectors']]
+
+    def clean(self):
+        super().clean()
+        self.cleaned_data.pop('clean_number', None)
+        self.cleaned_data.pop('date_of_creation', None)
+
+
+class SoleTraderBusinessDetailsForm(forms.Form):
+    name = fields.CharField(
+        label='Trading name'
+    )
+    address_line_1 = fields.CharField(
+        required=False,
+    )
+    address_line_2 = fields.CharField(
+        required=False,
+    )
+    locality = fields.CharField(
+        required=False,
+    )
+    postal_code = fields.CharField(
+        required=False,
+    )
+
+    website_address = fields.URLField(
+        label='Business URL (optional)',
+        help_text='The website address must start with http:// or https://',
+        required=False,
+    )
+    employees = fields.ChoiceField(
+        choices=choices.EMPLOYEES,
+        label='How many employees are in your business?',
+    )
+    sectors = fields.ChoiceField(
+        label='What industry is your business in?',
+        choices=INDUSTRY_CHOICES,
+    )
+
+    def clean_sectors(self):
+        return [self.cleaned_data['sectors']]
