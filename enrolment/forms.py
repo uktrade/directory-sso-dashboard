@@ -250,6 +250,7 @@ class CompaniesHouseBusinessDetails(forms.Form):
 
     def clean_address(self):
         address_parts = self.cleaned_data['address'].split(',')
+        
         for i, address_part in enumerate(address_parts, start=1):
             field_name = f'address_line_{i}'
             self.cleaned_data[field_name] = address_part.strip()
