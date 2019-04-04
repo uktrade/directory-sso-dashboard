@@ -250,12 +250,9 @@ class CompaniesHouseBusinessDetails(forms.Form):
 
     def clean_address(self):
         address_parts = self.cleaned_data['address'].split(',')
-        counter = 1
-        for address_part in address_parts:
-            self.cleaned_data[
-                'address_line_{}'.format(counter)
-            ] = address_part.strip()
-            counter += 1
+        for i, address_part in enumerate(address_parts, start=1):
+            field_name = f'address_line_{i}'
+            self.cleaned_data[field_name] = address_part.strip()
         return self.cleaned_data['address']
 
     def clean_sectors(self):
