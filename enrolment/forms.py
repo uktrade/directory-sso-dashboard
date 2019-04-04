@@ -88,7 +88,7 @@ class UserAccount(forms.Form):
         label='',
         label_suffix='',
     )
-    
+
     terms_agreed = fields.BooleanField(
         label=mark_safe(
             'Tick this box to accept the '
@@ -203,7 +203,7 @@ class CompaniesHouseBusinessDetails(forms.Form):
         label='What industry is your company in?',
         choices=INDUSTRY_CHOICES,
     )
-    website_address = fields.URLField(
+    website = fields.URLField(
         label='What\'s your business web address (optional)',
         help_text='The website address must start with http:// or https://',
         required=False,
@@ -228,7 +228,7 @@ class CompaniesHouseBusinessDetails(forms.Form):
 
     def delete_already_enrolled_fields(self):
         del self.fields['sectors']
-        del self.fields['website_address']
+        del self.fields['website']
 
     def set_form_initial(self, company_profile):
         company = helpers.CompanyProfileFormatter(company_profile)
@@ -327,7 +327,7 @@ class SoleTraderBusinessDetails(forms.Form):
         label='What industry is your business in?',
         choices=INDUSTRY_CHOICES,
     )
-    website_address = fields.URLField(
+    website = fields.URLField(
         label='What\'s your business web address (optional)',
         help_text='The website address must start with http:// or https://',
         required=False,
