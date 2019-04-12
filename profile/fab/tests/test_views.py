@@ -180,6 +180,9 @@ def test_find_a_buyer_exposes_context(
     assert context['FAB_EDIT_PROFILE_URL'] == settings.FAB_EDIT_PROFILE_URL
     assert context['FAB_ADD_CASE_STUDY_URL'] == settings.FAB_ADD_CASE_STUDY_URL
     assert context['FAB_REGISTER_URL'] == settings.FAB_REGISTER_URL
+    assert context['expertise_fields_on'] == settings.FEATURE_FLAGS[
+        'EXPERTISE_FIELDS_ON'
+    ]
 
 
 def test_find_a_buyer_unauthenticated(

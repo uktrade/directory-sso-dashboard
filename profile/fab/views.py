@@ -92,6 +92,9 @@ class FindABuyerView(SSOLoginRequiredMixin, CompanyProfileMixin, TemplateView):
             'FAB_ADD_USER_URL': settings.FAB_ADD_USER_URL,
             'FAB_REMOVE_USER_URL': settings.FAB_REMOVE_USER_URL,
             'FAB_TRANSFER_ACCOUNT_URL': settings.FAB_TRANSFER_ACCOUNT_URL,
+            'expertise_fields_on': settings.FEATURE_FLAGS[
+                'EXPERTISE_FIELDS_ON'
+            ],
         }
 
 
