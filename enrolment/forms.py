@@ -101,10 +101,10 @@ class UserAccount(forms.Form):
         label='Confirm password',
         widget=PasswordInput,
     )
-    captcha = ReCaptchaField(
-        label='',
-        label_suffix='',
-    )
+    #captcha = ReCaptchaField(
+    #    label='',
+    #    label_suffix='',
+    #)
     terms_agreed = forms.BooleanField(label=TERMS_LABEL)
     remote_password_error = forms.CharField(
         label='',

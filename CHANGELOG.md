@@ -6,6 +6,7 @@
 - TT-1828 - Increasing size of address preview field in registration journey
 - TT-1199 - Fixing accessibility issues
 - TT-2025 - Update success page content
+- TT-1608 - Member To Request Admin
 
 ### Fixed bugs:
 - TT-1817 - Use correct input types for number fields

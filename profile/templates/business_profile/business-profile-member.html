@@ -48,6 +48,26 @@
 			Selected the wrong company?  <a href="{{ contact_us_url }}">Contact us</a> to change the company.
 		</p>
 	</div>
+	{% if has_admin_request %}
+	<div class="margin-top-30 margin-bottom-30">
+		<h1 class="heading-xlarge margin-top-60 margin-bottom-30">Your request is awaiting approval</h1>
+		<p>
+			We'll let you know when you've been given approval.
+		</p>
+		<p>
+			You can resend request or if your having problems please <a href="{{ contact_us_url }}">Contact us</a>.
+		</p>
+		</div>
+	{% else %}
+    <div class="margin-top-30 margin-bottom-30">
+		<h1 class="heading-xlarge margin-top-60 margin-bottom-30">You can request to become administrator for the business profile</h1>
+
+		<form method="post" enctype="multipart/form-data">
+            {{ form }}
+            <button class="button">Send Admin Request</button>
+        </form>
+	</div>
+	{% endif %}
 {% endblock %}
 
 {% block feedback_reporter %}

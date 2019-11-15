@@ -13,19 +13,24 @@ from django.shortcuts import redirect, Http404
 from django.utils.functional import cached_property
 from django.views.generic import TemplateView, FormView
 
+
 import core.mixins
 import core.forms
 from profile.business_profile import forms, helpers
 from directory_constants import urls
+from enrolment.helpers import collaborator_invite_accept
+from urllib.parse import urlparse
 
 BASIC = 'details'
 MEDIA = 'images'
 
 
-class BusinessProfileView(TemplateView):
+class BusinessProfileView(SuccessMessageMixin, FormView):
     template_name_fab_user = 'business_profile/profile.html'
     template_name_not_fab_user = 'business_profile/is-not-business-profile-user.html'
     template_business_profile_member = 'business_profile/business-profile-member.html'
+    form_class = forms.NoOperationForm
+    success_url = reverse_lazy('business-profile')
 
     SUCCESS_MESSAGES = {
         'owner-transferred': (
@@ -35,6 +40,7 @@ class BusinessProfileView(TemplateView):
             'We’ve emailed the person you want to add to this account.'
         ),
         'user-removed': 'User successfully removed from your profile.',
+        'admin-request': 'Your request to join has been sent',
     }
 
     def get(self, *args, **kwargs):
@@ -59,6 +65,10 @@ class BusinessProfileView(TemplateView):
             company = self.request.user.company.serialize_for_template()
         else:
             company = None
+        has_admin_request = helpers.has_editor_admin_request(
+            self.request.user.session_id,
+            self.request.user.id
+        )
 
         if self.request.user.role == user_roles.MEMBER:
             return {
@@ -68,7 +78,8 @@ class BusinessProfileView(TemplateView):
                 'export_opportunities_apply_url': urls.domestic.EXPORT_OPPORTUNITIES,
                 'is_profile_published': company['is_published_find_a_supplier'] if company else False,
                 'FAB_BUSINESS_PROFILE_URL': (urls.international.TRADE_FAS / 'suppliers' /
-                                             company['number'] / company['slug']) if company else ''
+                                             company['number'] / company['slug']) if company else '',
+                'has_admin_request': has_admin_request,
             }
         else:
             return {
@@ -82,6 +93,21 @@ class BusinessProfileView(TemplateView):
                 'FAB_REMOVE_USER_URL': settings.FAB_REMOVE_USER_URL,
                 'FAB_TRANSFER_ACCOUNT_URL': settings.FAB_TRANSFER_ACCOUNT_URL,
             }
+
+    def form_valid(self, form):
+        try:
+            helpers.collaborator_invite_create(
+                sso_session_id=self.request.user.session_id,
+                collaborator_email=self.request.user.email,
+                role=user_roles.ADMIN,
+            )
+        except HTTPError as error:
+            if error.response.status_code == 400:
+                form.add_error(field=None, error=error.response.json())
+                return self.form_invalid(form)
+            else:
+                raise
+        return super().form_valid(form)
 
 
 class BaseFormView(FormView):
@@ -336,8 +362,13 @@ class AdminCollaboratorsListView(TemplateView):
     template_name = 'business_profile/admin-collaborator-list.html'
 
     def get_context_data(self, **kwargs):
+        collaborator_invites = helpers.collaborator_invite_list(self.request.user.session_id)
+        editor_invites = [
+            c for c in collaborator_invites if not c['accepted'] and c['collaborator_email']==c['requestor_email']
+        ]
         return super().get_context_data(
             collaborators=helpers.collaborator_list(self.request.user.session_id),
+            editor_invites=editor_invites,
             **kwargs,
         )
 
@@ -486,7 +517,9 @@ class AdminInviteCollaboratorFormView(SuccessMessageMixin, FormView):
 
     def get_context_data(self, **kwargs):
         collaborator_invites = helpers.collaborator_invite_list(self.request.user.session_id)
-        collaborator_invites_not_accepted = [c for c in collaborator_invites if not c['accepted']]
+        collaborator_invites_not_accepted = [
+            c for c in collaborator_invites if not c['accepted'] and c['collaborator_email'] != c['requestor_email']
+        ]
         return super().get_context_data(
             collaborator_invites=collaborator_invites_not_accepted,
             **kwargs,
@@ -514,11 +547,25 @@ class AdminInviteCollaboratorDeleteFormView(SuccessMessageMixin, FormView):
     success_url = reverse_lazy('business-profile-admin-invite-collaborator')
 
     def form_valid(self, form):
-        helpers.collaborator_invite_delete(
-            sso_session_id=self.request.user.session_id,
-            invite_key=form.cleaned_data['invite_key'],
-        )
+        if form.cleaned_data['action'] == 'delete':
+            helpers.collaborator_invite_delete(
+                sso_session_id=self.request.user.session_id,
+                invite_key=form.cleaned_data['invite_key'],
+            )
+        else:
+            collaborator_invite_accept(
+                sso_session_id=self.request.user.session_id,
+                invite_key=form.cleaned_data['invite_key'],
+            )
+            self.success_message = ('Invitation successfully accepted')
         return super().form_valid(form)
+
+    def dispatch(self, *args, **kwargs):
+        from_url = urlparse(self.request.META.get('HTTP_REFERER')).path
+        success_url_editor_requests = reverse_lazy('business-profile-admin-tools')
+        if from_url == success_url_editor_requests:
+            self.success_url = success_url_editor_requests
+        return super().dispatch(*args, **kwargs)
 
 
 class ProductsServicesRoutingFormView(FormView):
