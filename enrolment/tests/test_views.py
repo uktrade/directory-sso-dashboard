@@ -202,9 +202,9 @@ def mock_validate_company_number(client):
 
 
 @pytest.fixture(autouse=True)
-def mock_collaborator_request_create(client):
+def mock_collaboration_request_create(client):
     patch = mock.patch.object(
-        helpers.api_client.company, 'collaborator_request_create',
+        helpers.api_client.company, 'collaboration_request_create',
         return_value=create_response()
     )
     yield patch.start()

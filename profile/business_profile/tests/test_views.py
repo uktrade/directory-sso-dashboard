@@ -113,8 +113,8 @@ def mock_collaborator_role_update():
 @pytest.fixture(autouse=True)
 def mock_collaborator_list(user):
     response = create_response([
-        {'sso_id': user.id, 'role': user_roles.ADMIN, 'company_email': user.email, 'name': 'jim example'},
-        {'sso_id': 1234, 'role': user_roles.EDITOR, 'company_email': 'jim@example.com', 'name': 'bob example'}
+        {'sso_id': user.id, 'role': user_roles.ADMIN, 'company_email': user.email, 'name': 'jim example', },
+        {'sso_id': 1234, 'role': user_roles.EDITOR, 'company_email': 'jim@example.com', 'name': 'bob example', }
     ])
     patch = mock.patch.object(api_client.company, 'collaborator_list', return_value=response)
     yield patch.start()
@@ -124,12 +124,13 @@ def mock_collaborator_list(user):
 @pytest.fixture(autouse=True)
 def mock_collaboration_request_list(user):
     response = create_response([
-        {'requestor_sso_id': user.id, 'uuid': 1234, 'name': 'jim example'},
-        {'requestor_sso_id': 1234, 'uuid': 1234,  'name': 'bob example'}
+        {'requestor_sso_id': user.id, 'uuid': 1234, 'name': 'jim example', 'accepted': False, },
+        {'requestor_sso_id': 1234, 'uuid': 1234,  'name': 'bob example', 'accepted': False, }
     ])
     patch = mock.patch.object(api_client.company, 'collaboration_request_list', return_value=response)
     yield patch.start()
     patch.stop()
+
 
 @pytest.fixture(autouse=True)
 def mock_collaborator_invite_list(user):
@@ -1143,7 +1144,9 @@ def test_member_send_admin_request(mock_collaboration_request_create, client, us
     assert response.url == reverse('business-profile')
 
     assert mock_collaboration_request_create.call_count == 1
-    assert mock_collaboration_request_create.call_args == mock.call(sso_session_id=user.session_id, role=user_roles.ADMIN)
+    assert mock_collaboration_request_create.call_args == mock.call(
+        sso_session_id=user.session_id, role=user_roles.ADMIN
+    )
 
 
 @mock.patch.object(api_client.company, 'collaboration_request_create')
@@ -1161,13 +1164,14 @@ def test_member_send_admin_request_error_400(mock_collaboration_request_create, 
     errors = ['Something went wrong']
     mock_collaboration_request_create.return_value = create_response(errors, status_code=400)
     client.force_login(user)
-
+    import pdb
+    pdb.set_trace()
     url = reverse('send-admin-request')
     response = client.post(url)
     assert response.status_code == 200
     assert response.context_data['form'].is_valid() is False
     assert response.context_data['form'].errors == {NON_FIELD_ERRORS: errors}
-        
+
 
 def test_business_profile_member_redirect(client, user, mock_retrieve_supplier, company_profile_data):
     client.force_login(user)

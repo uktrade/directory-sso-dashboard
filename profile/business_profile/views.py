@@ -16,7 +16,6 @@ import core.mixins
 import core.forms
 from profile.business_profile import forms, helpers
 from directory_constants import urls
-from urllib.parse import urlparse
 
 BASIC = 'details'
 MEDIA = 'images'
@@ -296,12 +295,11 @@ class CaseStudyWizardEditView(BaseCaseStudyWizardView):
 
 class CaseStudyWizardCreateView(BaseCaseStudyWizardView):
     def done(self, form_list, *args, **kwags):
-       response = api_client.company.case_study_create(
-            sso_session_id=self.request.user.session_id,
-            data=self.serialize_form_list(form_list),
+        response = api_client.company.case_study_create(
+            sso_session_id=self.request.user.session_id, data=self.serialize_form_list(form_list),
         )
-       response.raise_for_status()
-       return redirect('business-profile')
+        response.raise_for_status()
+        return redirect('business-profile')
 
 
 class AdminCollaboratorsListView(TemplateView):

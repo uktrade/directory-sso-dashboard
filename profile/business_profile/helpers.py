@@ -111,22 +111,27 @@ def collaborator_role_update(sso_session_id, sso_id, role):
     response = api_client.company.collaborator_role_update(sso_session_id=sso_session_id, sso_id=sso_id, role=role)
     response.raise_for_status()
 
+
 def collaboration_request_list(sso_session_id):
     response = api_client.company.collaboration_request_list(sso_session_id=sso_session_id)
     response.raise_for_status()
     return response.json()
 
+
 def collaboration_request_accept(sso_session_id, request_key):
     response = api_client.company.collaboration_request_accept(sso_session_id=sso_session_id, request_key=request_key)
     response.raise_for_status()
+
 
 def collaboration_request_delete(sso_session_id, request_key):
     response = api_client.company.collaboration_request_delete(sso_session_id=sso_session_id, request_key=request_key)
     response.raise_for_status()
 
+
 def collaboration_request_create(sso_session_id, role):
     response = api_client.company.collaboration_request_create(sso_session_id=sso_session_id, role=role)
     response.raise_for_status()
+
 
 def has_editor_admin_request(sso_session_id, sso_id):
     requests = collaboration_request_list(sso_session_id)
