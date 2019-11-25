@@ -135,4 +135,4 @@ def collaboration_request_create(sso_session_id, role):
 
 def has_editor_admin_request(sso_session_id, sso_id):
     collaboration_requests = collaboration_request_list(sso_session_id)
-    return bool([r for r in requests if r['requestor_sso_id'] == sso_id and not r['accepted']])
+    return bool([r for r in collaboration_requests if r['requestor_sso_id'] == sso_id and not r['accepted']])

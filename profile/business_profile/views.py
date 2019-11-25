@@ -309,7 +309,9 @@ class AdminCollaboratorsListView(TemplateView):
         collaborators = helpers.collaborator_list(self.request.user.session_id)
         collaboration_requests = helpers.collaboration_request_list(self.request.user.session_id)
         collaboration_requests = [c for c in collaboration_requests if not c['accepted']]
-        return super().get_context_data(collaborators=collaborators, **kwargs, collaboration_requests=collaboration_requests,)
+        return super().get_context_data(
+            collaborators=collaborators, **kwargs, collaboration_requests=collaboration_requests,
+        )
 
 
 class MemberDisconnectFromCompany(DisconnectFromCompanyMixin, SuccessMessageMixin, FormView):
