@@ -1164,8 +1164,7 @@ def test_member_send_admin_request_error_400(mock_collaboration_request_create, 
     errors = ['Something went wrong']
     mock_collaboration_request_create.return_value = create_response(errors, status_code=400)
     client.force_login(user)
-    import pdb
-    pdb.set_trace()
+    
     url = reverse('send-admin-request')
     response = client.post(url)
     assert response.status_code == 200
