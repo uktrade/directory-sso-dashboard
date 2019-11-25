@@ -308,8 +308,8 @@ class AdminCollaboratorsListView(TemplateView):
     def get_context_data(self, **kwargs):
         collaborators = helpers.collaborator_list(self.request.user.session_id)
         collaboration_requests = helpers.collaboration_request_list(self.request.user.session_id)
-        editor_requests = [c for c in collaboration_requests if not c['accepted']]
-        return super().get_context_data(collaborators=collaborators, **kwargs, editor_requests=editor_requests,)
+        collaboration_requests = [c for c in collaboration_requests if not c['accepted']]
+        return super().get_context_data(collaborators=collaborators, **kwargs, collaboration_requests=collaboration_requests,)
 
 
 class MemberDisconnectFromCompany(DisconnectFromCompanyMixin, SuccessMessageMixin, FormView):
@@ -517,7 +517,7 @@ class AdminInviteCollaborationRequestManageForm(SuccessMessageMixin, FormView):
                 sso_session_id=self.request.user.session_id,
                 request_key=form.cleaned_data['request_key'],
             )
-        else:
+        elif form.cleaned_data['action'] == 'accept':
             helpers.collaboration_request_accept(
                 sso_session_id=self.request.user.session_id,
                 request_key=form.cleaned_data['request_key'],

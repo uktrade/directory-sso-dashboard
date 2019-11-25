@@ -206,10 +206,8 @@ urlpatterns = [
     ),
     url(
         r'^business-profile/admin-request/$',
-        company_required(
-            profile.business_profile.views.MemberSendAdminRequest.as_view()),
-        name='send-admin-request'
-    ),
+        company_required(profile.business_profile.views.MemberSendAdminRequest.as_view()), name='send-admin-request')
+    ,
     url(
         r'^business-profile/admin/collaborator/(?P<sso_id>[0-9]+)/$',
         company_admin_required(profile.business_profile.views.AdminCollaboratorEditFormView.as_view()),

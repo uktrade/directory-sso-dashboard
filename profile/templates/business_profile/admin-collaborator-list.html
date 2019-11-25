@@ -52,7 +52,7 @@
     </thead>
 	  {% if editor_requests %}
 		<tbody>
-		  {% for request in editor_requests %}
+		  {% for request in collaboration_requests %}
 			  <tr>
 				<th class="border-white padding-top-15 padding-bottom-10" scope="row">{{ request.name }}</th>
 				<td class="border-white padding-top-15 padding-bottom-10">{{ request.role|title }}</td>

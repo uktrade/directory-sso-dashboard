@@ -134,5 +134,5 @@ def collaboration_request_create(sso_session_id, role):
 
 
 def has_editor_admin_request(sso_session_id, sso_id):
-    requests = collaboration_request_list(sso_session_id)
-    return [r['requestor_sso_id'] for r in requests if not r['accepted']].count(sso_id) == 1
+    collaboration_requests = collaboration_request_list(sso_session_id)
+    return bool([r for r in requests if r['requestor_sso_id'] == sso_id and not r['accepted']])
