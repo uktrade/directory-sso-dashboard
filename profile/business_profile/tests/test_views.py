@@ -790,7 +790,7 @@ def test_collaborator_list(mock_collaborator_list, mock_collaboration_request_li
 
     assert response.status_code == 200
     assert response.context_data['collaborators'] == []
-    assert response.context_data['editor_requests'] == []
+    assert response.context_data['collaboration_requests'] == []
 
 
 @pytest.mark.parametrize('role', (user_roles.EDITOR, user_roles.MEMBER))
