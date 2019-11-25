@@ -64,9 +64,9 @@
 		<div class="margin-top-30 margin-bottom-30">
 			<h1 class="heading-large">You can request to become administrator for the business profile</h1>
 			<p>
-				You can send a request to the business profile adminstors, so they can give you permission to add or change information about the business. We'll let you know when they do.
+				You can send a request to the business profile administrators, so they can give you permission to add or change information about the business. We'll let you know when they do.
 			</p>
-			<form action="{% url 'send-admin-invite' %}" method="post" enctype="multipart/form-data">
+			<form action="{% url 'send-admin-request' %}" method="post" enctype="multipart/form-data">
 				{{ form }}
 				<button class="button">Request</button>
 			</form>

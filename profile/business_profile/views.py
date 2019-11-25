@@ -296,12 +296,12 @@ class CaseStudyWizardEditView(BaseCaseStudyWizardView):
 
 class CaseStudyWizardCreateView(BaseCaseStudyWizardView):
     def done(self, form_list, *args, **kwags):
-        response = api_client.company.case_study_create(
+       response = api_client.company.case_study_create(
             sso_session_id=self.request.user.session_id,
             data=self.serialize_form_list(form_list),
         )
-        response.raise_for_status()
-        return redirect('business-profile')
+       response.raise_for_status()
+       return redirect('business-profile')
 
 
 class AdminCollaboratorsListView(TemplateView):
@@ -309,11 +309,9 @@ class AdminCollaboratorsListView(TemplateView):
 
     def get_context_data(self, **kwargs):
         collaborators = helpers.collaborator_list(self.request.user.session_id)
-        collaborator_invites = helpers.collaborator_invite_list(self.request.user.session_id)
-        editor_invites = [
-            c for c in collaborator_invites if not c['accepted'] and c['collaborator_email'] == c['requestor_email']
-        ]
-        return super().get_context_data(collaborators=collaborators, **kwargs, editor_invites=editor_invites,)
+        collaboration_requests = helpers.collaboration_request_list(self.request.user.session_id)
+        editor_requests = [c for c in collaboration_requests if not c['accepted']]
+        return super().get_context_data(collaborators=collaborators, **kwargs, editor_requests=editor_requests,)
 
 
 class MemberDisconnectFromCompany(DisconnectFromCompanyMixin, SuccessMessageMixin, FormView):
@@ -330,15 +328,10 @@ class MemberSendAdminRequest(SuccessMessageMixin, FormView):
     success_message = 'Your request to join has been sent.'
     success_url = reverse_lazy('business-profile')
 
-    def get_context_data(self, **kwargs):
-        company = self.request.user.company.serialize_for_form()
-        return super().get_context_data(company=company, **kwargs)
-
     def form_valid(self, form):
         try:
-            helpers.collaborator_invite_create(
+            helpers.collaboration_request_create(
                 sso_session_id=self.request.user.session_id,
-                collaborator_email=self.request.user.email,
                 role=user_roles.ADMIN,
             )
         except HTTPError as error:
@@ -480,9 +473,7 @@ class AdminInviteCollaboratorFormView(SuccessMessageMixin, FormView):
 
     def get_context_data(self, **kwargs):
         collaborator_invites = helpers.collaborator_invite_list(self.request.user.session_id)
-        collaborator_invites_not_accepted = [
-            c for c in collaborator_invites if not c['accepted'] and c['collaborator_email'] != c['requestor_email']
-        ]
+        collaborator_invites_not_accepted = [c for c in collaborator_invites if not c['accepted']]
         return super().get_context_data(
             collaborator_invites=collaborator_invites_not_accepted,
             **kwargs,
@@ -504,32 +495,37 @@ class AdminInviteCollaboratorFormView(SuccessMessageMixin, FormView):
         return super().form_valid(form)
 
 
-class AdminInviteCollaboratorManageForm(SuccessMessageMixin, FormView):
-    form_class = forms.AdminInviteCollaboratorManageForm
+class AdminInviteCollaboratorDeleteFormView(SuccessMessageMixin, FormView):
+    form_class = forms.AdminInviteCollaboratorDeleteForm
     success_message = ('Invitation successfully deleted')
     success_url = reverse_lazy('business-profile-admin-invite-collaborator')
 
     def form_valid(self, form):
+        helpers.collaborator_invite_delete(
+            sso_session_id=self.request.user.session_id,
+            invite_key=form.cleaned_data['invite_key'],
+        )
+        return super().form_valid(form)
+
+
+class AdminInviteCollaborationRequestManageForm(SuccessMessageMixin, FormView):
+    form_class = forms.AdminCollaborationRequestManageForm
+    success_message = ('Invitation successfully deleted')
+    success_url = reverse_lazy('business-profile-admin-tools')
+
+    def form_valid(self, form):
         if form.cleaned_data['action'] == 'delete':
-            helpers.collaborator_invite_delete(
+            helpers.collaboration_request_delete(
                 sso_session_id=self.request.user.session_id,
-                invite_key=form.cleaned_data['invite_key'],
+                request_key=form.cleaned_data['request_key'],
             )
         else:
-            helpers.editor_admin_request_accept(
+            helpers.collaboration_request_accept(
                 sso_session_id=self.request.user.session_id,
-                sso_id=form.cleaned_data['requestor_sso_id'],
-                invite_key=form.cleaned_data['invite_key'],
+                request_key=form.cleaned_data['request_key'],
             )
             self.success_message = ('Collaborator added')
         return super().form_valid(form)
-
-    def dispatch(self, *args, **kwargs):
-        from_url = urlparse(self.request.META.get('HTTP_REFERER')).path
-        success_url_editor_requests = reverse_lazy('business-profile-admin-tools')
-        if from_url == success_url_editor_requests:
-            self.success_url = success_url_editor_requests
-        return super().dispatch(*args, **kwargs)
 
 
 class ProductsServicesRoutingFormView(FormView):
