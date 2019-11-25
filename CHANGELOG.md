@@ -7,7 +7,10 @@
 - TT-1199 - Fixing accessibility issues
 - TT-2025 - Update success page content
 - No ticket - Removed old feature flagged items
+- TT-1608-member-request-admin-2
 - TT-1608 - Member To Request Admin
+- No ticket - upgrade django
+
 
 ### Fixed bugs:
 - TT-1817 - Use correct input types for number fields
@@ -23,6 +26,15 @@
 - TT-1708 - link user to ingress url on success page
 - TT-2095 - Added "remove from business profile" feature for non-admins
 - TT-1855 - Fix incorrect company type label on enrolment
+- TT-1132 - Improve contrast of breadcrumbs and feedback link
+- TT-1132 - Upgrade directory components to fix accessibility bug
+- no ticket - upgrade pillow
+
+## [2019.11.20](https://github.com/uktrade/directory-sso-profile/releases/tag/2019.11.20)
+[Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2019.10.30...2019.11.20)
+
+## Hotfix
+- TT-2176 - Fix password form remembering old bad password
 
 ## [2019.10.30](https://github.com/uktrade/directory-sso-profile/releases/tag/2019.10.30)
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2019.08.14_1...2019.10.30)
@@ -175,3 +187,4 @@
 - TT-1415 - Allow products and services to be cleared
 [directory-constants]: https://github.com/uktrade/directory-constants
 - TT-1417 - Populate "Other" products and services with keywords
+
