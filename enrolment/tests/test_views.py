@@ -1031,7 +1031,7 @@ def test_companies_house_enrolment_submit_end_to_end_company_second_user(
     assert mock_gov_notify.call_count == 2
 
     assert mock_has_editor_admin_request.call_count == 1
-    assert mock_has_editor_admin_request.call_args == mock.call('123', 1)
+    assert mock_has_editor_admin_request.call_args == mock.call(sso_session_id='123', sso_id=1)
 
 
 @mock.patch('directory_forms_api_client.client.forms_api_client.submit_generic')
