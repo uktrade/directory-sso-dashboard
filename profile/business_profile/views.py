@@ -40,30 +40,6 @@ class DisconnectFromCompanyMixin:
         return super().form_valid(form)
 
 
-class BusinessProfileMixin:
-
-    def get_context_data(self):
-        if self.request.user.is_authenticated and self.request.user.company:
-            company = self.request.user.company.serialize_for_template()
-            business_profile_url = urls.international.TRADE_FAS / 'suppliers' / company['number'] / company['slug']
-        else:
-            company = None
-            business_profile_url = ''
-        context = {'fab_tab_classes': 'active', 'company': company}
-        if self.request.user.role == user_roles.MEMBER:
-            context.update({
-                'contact_us_url': urls.domestic.CONTACT_US / 'domestic',
-                'export_opportunities_apply_url': urls.domestic.EXPORT_OPPORTUNITIES,
-                'is_profile_published': company['is_published_find_a_supplier'] if company else False,
-                'FAB_BUSINESS_PROFILE_URL': business_profile_url,
-                'has_admin_request': helpers.has_editor_admin_request(
-                    self.request.user.session_id,
-                    self.request.user.id
-                ),
-            })
-        return context
-
-
 class BusinessProfileView(TemplateView):
     template_name_fab_user = 'business_profile/profile.html'
     template_name_not_fab_user = 'business_profile/is-not-business-profile-user.html'
