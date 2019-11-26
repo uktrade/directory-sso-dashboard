@@ -336,11 +336,10 @@ class MemberSendAdminRequest(SuccessMessageMixin, FormView):
                     role=user_roles.ADMIN,
                 )
             elif form.cleaned_data['action'] == 'send_reminder':
-                company = self.request.user.company.serialize_for_template()
                 helpers.notify_company_admins_collaboration_request_reminder(
                     sso_session_id=self.request.user.session_id,
                     email_data={
-                        'company_name': company['name'],
+                        'company_name': self.request.user.company.data['name'],
                         'name': self.request.user.full_name,
                         'email': self.request.user.email,
                         'login_url': self.request.build_absolute_uri(
