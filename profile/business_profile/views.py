@@ -68,8 +68,8 @@ class BusinessProfileView(TemplateView):
                 'is_profile_published': company['is_published_find_a_supplier'] if company else False,
                 'FAB_BUSINESS_PROFILE_URL': business_profile_url,
                 'has_admin_request': helpers.has_editor_admin_request(
-                    self.request.user.session_id,
-                    self.request.user.id
+                    sso_session_id=self.request.user.session_id,
+                    sso_id=self.request.user.id
                 ),
             })
         return context
@@ -337,7 +337,7 @@ class MemberSendAdminRequest(SuccessMessageMixin, FormView):
                 )
             elif form.cleaned_data['action'] == 'send_reminder':
                 company = self.request.user.company.serialize_for_template()
-                helpers.notify_company_admins_collaboration_request_resent(
+                helpers.notify_company_admins_collaboration_request_reminder(
                     sso_session_id=self.request.user.session_id,
                     email_data={
                         'company_name': company['name'],

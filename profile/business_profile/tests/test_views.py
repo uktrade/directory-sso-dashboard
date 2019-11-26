@@ -1149,7 +1149,7 @@ def test_member_send_admin_request(mock_collaboration_request_create, client, us
     )
 
 
-@mock.patch.object(helpers, 'notify_company_admins_collaboration_request_resent')
+@mock.patch.object(helpers, 'notify_company_admins_collaboration_request_reminder')
 def test_member_send_admin_reminder(mock_collaboration_request_notify, client, user):
     mock_collaboration_request_notify.return_value = create_response()
 

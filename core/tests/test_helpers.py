@@ -52,3 +52,24 @@ def test_update_user_profile(mock_update_user_profile, mock_profile_update, stat
     assert mock_update_user_profile.call_args == mock.call(sso_session_id=1, data=data)
     assert mock_profile_update.call_count == 1
     assert mock_profile_update.call_args == mock.call(sso_session_id=1, data=profile_name_data)
+
+
+@mock.patch.object(helpers.api_client.company, 'collaborator_list')
+def test_get_company_admins(mock_collaborator_list):
+    data = [{
+        'sso_id': 1,
+        'company': '12345678',
+        'company_email': 'jim@example.com',
+        'date_joined': '2001-01-01T00:00:00.000000Z',
+        'is_company_owner': True,
+        'role': 'ADMIN',
+        'name': 'Jim'
+    }]
+
+    mock_collaborator_list.return_value = create_response(status_code=200, json_body=data)
+
+    return_data = helpers.get_company_admins(sso_session_id=1)
+
+    assert mock_collaborator_list.call_count == 1
+    assert mock_collaborator_list.call_args == mock.call(sso_session_id=1)
+    assert return_data == data

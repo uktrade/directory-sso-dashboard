@@ -38,5 +38,6 @@ def extract_full_name(data):
 def get_company_admins(sso_session_id):
     response = api_client.company.collaborator_list(sso_session_id=sso_session_id)
     response.raise_for_status()
+
     collaborators = response.json()
     return [collaborator for collaborator in collaborators if collaborator['role'] == user_roles.ADMIN]

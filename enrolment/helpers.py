@@ -8,6 +8,7 @@ from directory_constants import choices, urls, user_roles
 from directory_forms_api_client import actions
 from directory_sso_api_client import sso_api_client
 import directory_components
+from core.helpers import get_company_admins
 
 from django.core.cache import cache
 from django.utils import formats
@@ -140,13 +141,6 @@ def regenerate_verification_code(email):
         return None
     response.raise_for_status()
     return response.json()
-
-
-def get_company_admins(sso_session_id):
-    response = api_client.company.collaborator_list(sso_session_id=sso_session_id)
-    response.raise_for_status()
-    collaborators = response.json()
-    return [collaborator for collaborator in collaborators if collaborator['role'] == user_roles.ADMIN]
 
 
 def create_company_member(sso_session_id, data):
