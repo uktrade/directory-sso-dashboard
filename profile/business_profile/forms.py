@@ -579,3 +579,7 @@ class AdminInviteCollaboratorDeleteForm(forms.Form):
 class AdminCollaborationRequestManageForm(forms.Form):
     request_key = forms.CharField()
     action = forms.CharField()
+
+
+class MemberCollaborationRequestForm(forms.Form):
+    action = forms.CharField()

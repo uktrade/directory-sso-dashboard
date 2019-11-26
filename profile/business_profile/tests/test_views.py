@@ -1138,7 +1138,7 @@ def test_member_send_admin_request(mock_collaboration_request_create, client, us
 
     client.force_login(user)
 
-    response = client.post(reverse('send-admin-request'))
+    response = client.post(reverse('send-admin-request'), {'action': 'send_request'},)
 
     assert response.status_code == 302
     assert response.url == reverse('business-profile')
@@ -1149,6 +1149,30 @@ def test_member_send_admin_request(mock_collaboration_request_create, client, us
     )
 
 
+@mock.patch.object(helpers, 'notify_company_admins_collaboration_request_resent')
+def test_member_send_admin_reminder(mock_collaboration_request_notify, client, user):
+    mock_collaboration_request_notify.return_value = create_response()
+
+    client.force_login(user)
+
+    response = client.post(reverse('send-admin-request'), {'action': 'send_reminder'},)
+
+    assert response.status_code == 302
+    assert response.url == reverse('business-profile')
+
+    assert mock_collaboration_request_notify.call_count == 1
+    assert mock_collaboration_request_notify.call_args == mock.call(
+        email_data={
+            'company_name': user.company.data['name'],
+            'name': user.full_name,
+            'email': user.email,
+            'login_url': 'http://testserver/profile/business-profile/admin/'
+        },
+        form_url=reverse('send-admin-request'),
+        sso_session_id=user.session_id,
+    )
+
+
 @mock.patch.object(api_client.company, 'collaboration_request_create')
 def test_member_send_admin_request_error(mock_collaboration_request_create, client, user):
     mock_collaboration_request_create.return_value = create_response(status_code=500)
@@ -1156,7 +1180,7 @@ def test_member_send_admin_request_error(mock_collaboration_request_create, clie
 
     url = reverse('send-admin-request')
     with pytest.raises(HTTPError):
-        client.post(url)
+        client.post(url,  {'action': 'send_request'})
 
 
 @mock.patch.object(api_client.company, 'collaboration_request_create')
@@ -1166,7 +1190,7 @@ def test_member_send_admin_request_error_400(mock_collaboration_request_create, 
     client.force_login(user)
 
     url = reverse('send-admin-request')
-    response = client.post(url)
+    response = client.post(url,  {'action': 'send_request'})
     assert response.status_code == 200
     assert response.context_data['form'].is_valid() is False
     assert response.context_data['form'].errors == {NON_FIELD_ERRORS: errors}

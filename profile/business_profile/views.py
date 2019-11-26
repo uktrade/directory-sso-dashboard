@@ -32,8 +32,6 @@ class DisconnectFromCompanyMixin:
         except HTTPError as error:
             if error.response.status_code == 400:
                 form.add_error(field=None, error=error.response.json())
-                import pdb
-                pdb.set_trace()
                 return self.form_invalid(form)
             else:
                 raise
@@ -326,16 +324,31 @@ class MemberDisconnectFromCompany(DisconnectFromCompanyMixin, SuccessMessageMixi
 
 class MemberSendAdminRequest(SuccessMessageMixin, FormView):
     template_name = 'business_profile/business-profile-member.html'
-    form_class = forms.NoOperationForm
+    form_class = forms.MemberCollaborationRequestForm
     success_message = 'Your request to join has been sent.'
     success_url = reverse_lazy('business-profile')
 
     def form_valid(self, form):
         try:
-            helpers.collaboration_request_create(
-                sso_session_id=self.request.user.session_id,
-                role=user_roles.ADMIN,
-            )
+            if form.cleaned_data['action'] == 'send_request':
+                helpers.collaboration_request_create(
+                    sso_session_id=self.request.user.session_id,
+                    role=user_roles.ADMIN,
+                )
+            elif form.cleaned_data['action'] == 'send_reminder':
+                company = self.request.user.company.serialize_for_template()
+                helpers.notify_company_admins_collaboration_request_resent(
+                    sso_session_id=self.request.user.session_id,
+                    email_data={
+                        'company_name': company['name'],
+                        'name': self.request.user.full_name,
+                        'email': self.request.user.email,
+                        'login_url': self.request.build_absolute_uri(
+                            reverse('business-profile-admin-tools')
+                        ),
+                    }, form_url=self.request.path
+                )
+                self.success_message = 'Your request to the administrator has been sent.'
         except HTTPError as error:
             if error.response.status_code == 400:
                 form.add_error(field=None, error=error.response.json())

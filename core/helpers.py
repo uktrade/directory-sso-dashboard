@@ -1,5 +1,6 @@
 from directory_sso_api_client import sso_api_client
 from directory_api_client.client import api_client
+from directory_constants import user_roles
 
 
 def create_user_profile(sso_session_id, data):
@@ -32,3 +33,10 @@ def extract_full_name(data):
     first_name = data.get('first_name')
     last_name = data.get('last_name')
     return f'{first_name} {last_name}'
+
+
+def get_company_admins(sso_session_id):
+    response = api_client.company.collaborator_list(sso_session_id=sso_session_id)
+    response.raise_for_status()
+    collaborators = response.json()
+    return [collaborator for collaborator in collaborators if collaborator['role'] == user_roles.ADMIN]

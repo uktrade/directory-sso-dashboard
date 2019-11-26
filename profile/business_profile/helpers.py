@@ -1,9 +1,12 @@
 import http
 
 from directory_api_client.client import api_client
-
+from directory_forms_api_client import actions
+from core.helpers import get_company_admins
 from directory_constants import company_types, user_roles
 import directory_components.helpers
+
+from django.conf import settings
 
 
 def get_company_profile(sso_session_id):
@@ -136,3 +139,16 @@ def collaboration_request_create(sso_session_id, role):
 def has_editor_admin_request(sso_session_id, sso_id):
     collaboration_requests = collaboration_request_list(sso_session_id)
     return bool([r for r in collaboration_requests if r['requestor_sso_id'] == sso_id and not r['accepted']])
+
+
+def notify_company_admins_collaboration_request_resent(sso_session_id, email_data, form_url):
+    company_admins = get_company_admins(sso_session_id)
+    assert company_admins, f"No admin found for {email_data['company_name']}"
+    for admin in company_admins:
+        action = actions.GovNotifyEmailAction(
+            email_address=admin['company_email'],
+            template_id=settings.GOV_NOTIFY_COLLABORATION_REQUEST_RESENT,
+            form_url=form_url
+        )
+        response = action.save(email_data)
+        response.raise_for_status()
