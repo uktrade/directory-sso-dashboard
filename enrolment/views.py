@@ -1,8 +1,9 @@
+from urllib.parse import urlparse
+
 from directory_constants import urls, user_roles
 from formtools.wizard.views import NamedUrlSessionWizardView
 from requests.exceptions import HTTPError
 
-from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
@@ -14,6 +15,7 @@ import core.forms
 import core.mixins
 from enrolment import constants, forms, helpers, mixins
 from directory_forms_api_client.helpers import FormSessionMixin
+
 
 URL_NON_COMPANIES_HOUSE_ENROLMENT = reverse_lazy(
     'enrolment-sole-trader', kwargs={'step': constants.USER_ACCOUNT}
@@ -73,11 +75,6 @@ class BusinessTypeRoutingView(
         constants.PROGRESS_STEP_LABEL_PERSONAL_INFO,
     ]
 
-    def dispatch(self, *args, **kwargs):
-        if not settings.FEATURE_FLAGS['ENROLMENT_SELECT_BUSINESS_ON']:
-            return redirect(URL_COMPANIES_HOUSE_ENROLMENT)
-        return super().dispatch(*args, **kwargs)
-
     def form_valid(self, form):
         choice = form.cleaned_data['choice']
         if choice == constants.COMPANIES_HOUSE_COMPANY:
@@ -119,19 +116,26 @@ class BaseEnrolmentWizardView(
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
+        contact_us_url = urls.domestic.CONTACT_US / 'domestic'
         if self.steps.current == constants.COMPANY_SEARCH:
-            context['contact_us_url'] = (urls.domestic.CONTACT_US / 'domestic')
+            context['contact_us_url'] = contact_us_url
         elif self.steps.current == constants.BUSINESS_INFO:
             previous_data = self.get_cleaned_data_for_step(constants.COMPANY_SEARCH)
             if previous_data:
                 context['is_enrolled'] = helpers.get_is_enrolled(previous_data['company_number'])
-                context['contact_us_url'] = (urls.domestic.CONTACT_US / 'domestic')
-        if self.steps.current == constants.PERSONAL_INFO:
+                context['contact_us_url'] = contact_us_url
+        elif self.steps.current == constants.PERSONAL_INFO:
             context['company'] = self.get_cleaned_data_for_step(constants.BUSINESS_INFO)
         elif self.steps.current == constants.VERIFICATION:
-            context['verification_missing_url'] = (
-                urls.domestic.CONTACT_US / 'triage/great-account/verification-missing/'
-            )
+            url = urls.domestic.CONTACT_US / 'triage/great-account/verification-missing/'
+            context['verification_missing_url'] = url
+        return context
+
+    def get_finished_context_data(self):
+        context = {}
+        parsed_url = urlparse(self.form_session.ingress_url)
+        if parsed_url.netloc == self.request.get_host():
+            context['ingress_url'] = self.form_session.ingress_url
         return context
 
     def get_template_names(self):
@@ -233,13 +237,19 @@ class CompaniesHouseEnrolmentView(mixins.CreateBusinessProfileMixin, BaseEnrolme
             form_initial['sic'] = company.nature_of_business
             form_initial['date_of_creation'] = company.date_of_creation
             if self.address_search_condition():
-                address_step_data = self.get_cleaned_data_for_step(constants.ADDRESS_SEARCH)
-                form_initial['address'] = address_step_data['address']
-                form_initial['postal_code'] = address_step_data['postal_code']
+                address_step_data = self.get_cleaned_data_for_step(constants.ADDRESS_SEARCH) or {}
+                form_initial['address'] = address_step_data.get('address')
+                form_initial['postal_code'] = address_step_data.get('postal_code')
             else:
                 form_initial['address'] = company.address
                 form_initial['postal_code'] = company.postcode
         return form_initial
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        if self.steps.current == constants.ADDRESS_SEARCH:
+            context['is_in_companies_house'] = True
+        return context
 
     def serialize_form_list(self, form_list):
         return {
@@ -400,7 +410,7 @@ class IndividualUserEnrolmentView(BaseEnrolmentWizardView):
         return [self.templates[self.steps.current]]
 
     def done(self, *args, **kwargs):
-        return TemplateResponse(self.request, self.templates[constants.FINISHED])
+        return TemplateResponse(self.request, self.templates[constants.FINISHED], self.get_finished_context_data())
 
 
 class CollaboratorEnrolmentView(BaseEnrolmentWizardView):

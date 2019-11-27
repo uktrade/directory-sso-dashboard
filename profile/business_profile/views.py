@@ -4,7 +4,6 @@ from formtools.wizard.views import NamedUrlSessionWizardView
 from raven.contrib.django.raven_compat.models import client as sentry_client
 from requests.exceptions import HTTPError, RequestException
 
-from django.conf import settings
 from django.contrib import messages
 from django.urls import reverse, reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
@@ -22,27 +21,27 @@ BASIC = 'details'
 MEDIA = 'images'
 
 
+class DisconnectFromCompanyMixin:
+    form_class = forms.NoOperationForm
+    success_message = 'Business profile removed from account.'
+    success_url = reverse_lazy('business-profile')
+
+    def form_valid(self, form):
+        try:
+            helpers.disconnect_from_company(self.request.user.session_id)
+        except HTTPError as error:
+            if error.response.status_code == 400:
+                form.add_error(field=None, error=error.response.json())
+                return self.form_invalid(form)
+            else:
+                raise
+        return super().form_valid(form)
+
+
 class BusinessProfileView(TemplateView):
     template_name_fab_user = 'business_profile/profile.html'
     template_name_not_fab_user = 'business_profile/is-not-business-profile-user.html'
     template_business_profile_member = 'business_profile/business-profile-member.html'
-
-    SUCCESS_MESSAGES = {
-        'owner-transferred': (
-            'We’ve sent a confirmation email to the new profile owner.'
-        ),
-        'user-added': (
-            'We’ve emailed the person you want to add to this account.'
-        ),
-        'user-removed': 'User successfully removed from your profile.',
-    }
-
-    def get(self, *args, **kwargs):
-        for key, message in self.SUCCESS_MESSAGES.items():
-            if key in self.request.GET:
-                messages.add_message(self.request, messages.SUCCESS, message)
-
-        return super().get(*args, **kwargs)
 
     def get_template_names(self, *args, **kwargs):
         if self.request.user.company:
@@ -57,31 +56,23 @@ class BusinessProfileView(TemplateView):
     def get_context_data(self):
         if self.request.user.is_authenticated and self.request.user.company:
             company = self.request.user.company.serialize_for_template()
+            business_profile_url = urls.international.TRADE_FAS / 'suppliers' / company['number'] / company['slug']
         else:
             company = None
-
+            business_profile_url = ''
+        context = {'fab_tab_classes': 'active', 'company': company}
         if self.request.user.role == user_roles.MEMBER:
-            return {
-                'fab_tab_classes': 'active',
-                'company': company,
-                'contact_us_url': (urls.domestic.CONTACT_US / 'domestic'),
+            context.update({
+                'contact_us_url': urls.domestic.CONTACT_US / 'domestic',
                 'export_opportunities_apply_url': urls.domestic.EXPORT_OPPORTUNITIES,
                 'is_profile_published': company['is_published_find_a_supplier'] if company else False,
-                'FAB_BUSINESS_PROFILE_URL': (urls.international.TRADE_FAS / 'suppliers' /
-                                             company['number'] / company['slug']) if company else ''
-            }
-        else:
-            return {
-                'fab_tab_classes': 'active',
-                'company': company,
-                'FAB_EDIT_COMPANY_LOGO_URL': settings.FAB_EDIT_COMPANY_LOGO_URL,
-                'FAB_EDIT_PROFILE_URL': settings.FAB_EDIT_PROFILE_URL,
-                'FAB_ADD_CASE_STUDY_URL': settings.FAB_ADD_CASE_STUDY_URL,
-                'FAB_REGISTER_URL': settings.FAB_REGISTER_URL,
-                'FAB_ADD_USER_URL': settings.FAB_ADD_USER_URL,
-                'FAB_REMOVE_USER_URL': settings.FAB_REMOVE_USER_URL,
-                'FAB_TRANSFER_ACCOUNT_URL': settings.FAB_TRANSFER_ACCOUNT_URL,
-            }
+                'FAB_BUSINESS_PROFILE_URL': business_profile_url,
+                'has_admin_request': helpers.has_editor_admin_request(
+                    sso_session_id=self.request.user.session_id,
+                    sso_id=self.request.user.id
+                ),
+            })
+        return context
 
 
 class BaseFormView(FormView):
@@ -178,10 +169,8 @@ class ExpertiseRoutingFormView(FormView):
         return redirect(url)
 
     def get_context_data(self, **kwargs):
-        return super().get_context_data(
-            company=self.request.user.company.serialize_for_template(),
-            **kwargs,
-        )
+        company = self.request.user.company.serialize_for_template()
+        return super().get_context_data(company=company, **kwargs)
 
 
 class RegionalExpertiseFormView(BaseFormView):
@@ -241,10 +230,8 @@ class PublishFormView(BaseFormView):
         }
 
     def get_context_data(self, **kwargs):
-        return super().get_context_data(
-            **kwargs,
-            company=self.request.user.company.serialize_for_template()
-        )
+        company = self.request.user.company.serialize_for_template()
+        return super().get_context_data(company=company, **kwargs)
 
 
 class BaseCaseStudyWizardView(NamedUrlSessionWizardView):
@@ -309,37 +296,65 @@ class CaseStudyWizardEditView(BaseCaseStudyWizardView):
 class CaseStudyWizardCreateView(BaseCaseStudyWizardView):
     def done(self, form_list, *args, **kwags):
         response = api_client.company.case_study_create(
-            sso_session_id=self.request.user.session_id,
-            data=self.serialize_form_list(form_list),
+            sso_session_id=self.request.user.session_id, data=self.serialize_form_list(form_list),
         )
         response.raise_for_status()
         return redirect('business-profile')
 
 
-class AdminToolsView(TemplateView):
-
-    template_name = 'business_profile/admin-tools.html'
-
-    def get_context_data(self, **kwargs):
-        return super().get_context_data(
-            FAB_ADD_USER_URL=settings.FAB_ADD_USER_URL,
-            FAB_REMOVE_USER_URL=settings.FAB_REMOVE_USER_URL,
-            FAB_TRANSFER_ACCOUNT_URL=settings.FAB_TRANSFER_ACCOUNT_URL,
-            company=self.request.user.company.serialize_for_template(),
-            has_collaborators=len(helpers.collaborator_list(self.request.user.session_id)) > 1,
-            **kwargs,
-        )
-
-
 class AdminCollaboratorsListView(TemplateView):
-
     template_name = 'business_profile/admin-collaborator-list.html'
 
     def get_context_data(self, **kwargs):
+        collaborators = helpers.collaborator_list(self.request.user.session_id)
+        collaboration_requests = helpers.collaboration_request_list(self.request.user.session_id)
+        collaboration_requests = [c for c in collaboration_requests if not c['accepted']]
         return super().get_context_data(
-            collaborators=helpers.collaborator_list(self.request.user.session_id),
-            **kwargs,
+            collaborators=collaborators, **kwargs, collaboration_requests=collaboration_requests,
         )
+
+
+class MemberDisconnectFromCompany(DisconnectFromCompanyMixin, SuccessMessageMixin, FormView):
+    template_name = 'business_profile/disconnect-from-company.html'
+
+    def get_context_data(self, **kwargs):
+        company = self.request.user.company.serialize_for_form()
+        return super().get_context_data(company=company, **kwargs)
+
+
+class MemberSendAdminRequest(SuccessMessageMixin, FormView):
+    template_name = 'business_profile/business-profile-member.html'
+    form_class = forms.MemberCollaborationRequestForm
+    success_message = 'Your request to join has been sent.'
+    success_url = reverse_lazy('business-profile')
+
+    def form_valid(self, form):
+        try:
+            if form.cleaned_data['action'] == 'send_request':
+                helpers.collaboration_request_create(
+                    sso_session_id=self.request.user.session_id,
+                    role=user_roles.ADMIN,
+                )
+            elif form.cleaned_data['action'] == 'send_reminder':
+                helpers.notify_company_admins_collaboration_request_reminder(
+                    sso_session_id=self.request.user.session_id,
+                    email_data={
+                        'company_name': self.request.user.company.data['name'],
+                        'name': self.request.user.full_name,
+                        'email': self.request.user.email,
+                        'login_url': self.request.build_absolute_uri(
+                            reverse('business-profile-admin-tools')
+                        ),
+                    }, form_url=self.request.path
+                )
+                self.success_message = 'Your request to the administrator has been sent.'
+        except HTTPError as error:
+            if error.response.status_code == 400:
+                form.add_error(field=None, error=error.response.json())
+                return self.form_invalid(form)
+            else:
+                raise
+        return super().form_valid(form)
 
 
 class AdminCollaboratorEditFormView(SuccessMessageMixin, FormView):
@@ -397,22 +412,8 @@ class AdminCollaboratorEditFormView(SuccessMessageMixin, FormView):
         return self.success_messages[cleaned_data['action']]
 
 
-class AdminDisconnectFormView(SuccessMessageMixin, FormView):
+class AdminDisconnectFormView(DisconnectFromCompanyMixin, SuccessMessageMixin, FormView):
     template_name = 'business_profile/admin-disconnect.html'
-    form_class = forms.NoOperationForm
-    success_message = 'Business profile removed from account.'
-    success_url = reverse_lazy('business-profile')
-
-    def form_valid(self, form):
-        try:
-            helpers.disconnect_from_company(self.request.user.session_id)
-        except HTTPError as error:
-            if error.response.status_code == 400:
-                form.add_error(field=None, error=error.response.json())
-                return self.form_invalid(form)
-            else:
-                raise
-        return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         is_sole_admin = helpers.is_sole_admin(self.request.user.session_id)
@@ -521,6 +522,26 @@ class AdminInviteCollaboratorDeleteFormView(SuccessMessageMixin, FormView):
         return super().form_valid(form)
 
 
+class AdminInviteCollaborationRequestManageForm(SuccessMessageMixin, FormView):
+    form_class = forms.AdminCollaborationRequestManageForm
+    success_message = ('Invitation successfully deleted')
+    success_url = reverse_lazy('business-profile-admin-tools')
+
+    def form_valid(self, form):
+        if form.cleaned_data['action'] == 'delete':
+            helpers.collaboration_request_delete(
+                sso_session_id=self.request.user.session_id,
+                request_key=form.cleaned_data['request_key'],
+            )
+        elif form.cleaned_data['action'] == 'accept':
+            helpers.collaboration_request_accept(
+                sso_session_id=self.request.user.session_id,
+                request_key=form.cleaned_data['request_key'],
+            )
+            self.success_message = ('Collaborator added')
+        return super().form_valid(form)
+
+
 class ProductsServicesRoutingFormView(FormView):
 
     form_class = forms.ExpertiseProductsServicesRoutingForm
@@ -626,10 +647,7 @@ class IdentityVerificationRequestFormView(SuccessMessageMixin, FormView):
     success_message = 'Request to verify sent'
 
     def dispatch(self, *args, **kwargs):
-        if (
-            not settings.FEATURE_FLAGS['REQUEST_VERIFICATION_ON'] or
-            self.request.user.company.is_identity_check_message_sent
-        ):
+        if self.request.user.company.is_identity_check_message_sent:
             return redirect(self.success_url)
         return super().dispatch(*args, **kwargs)
 

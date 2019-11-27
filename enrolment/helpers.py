@@ -8,6 +8,7 @@ from directory_constants import choices, urls, user_roles
 from directory_forms_api_client import actions
 from directory_sso_api_client import sso_api_client
 import directory_components
+from core.helpers import get_company_admins
 
 from django.core.cache import cache
 from django.utils import formats
@@ -140,33 +141,6 @@ def regenerate_verification_code(email):
         return None
     response.raise_for_status()
     return response.json()
-
-
-def collaborator_request_create(company_number, email, name, form_url):
-    response = api_client.company.collaborator_request_create(
-        company_number=company_number,
-        collaborator_email=email,
-    )
-    response.raise_for_status()
-    action = actions.GovNotifyEmailAction(
-        email_address=response.json()['company_email'],
-        template_id=settings.GOV_NOTIFY_REQUEST_COLLABORATION_TEMPLATE_ID,
-        form_url=form_url,
-    )
-    response = action.save({
-        'name': name,
-        'email': email,
-        'collaborator_create_url': settings.FAB_ADD_USER_URL,
-        'report_abuse_url': urls.domestic.FEEDBACK,
-    })
-    response.raise_for_status()
-
-
-def get_company_admins(sso_session_id):
-    response = api_client.company.collaborator_list(sso_session_id=sso_session_id)
-    response.raise_for_status()
-    collaborators = response.json()
-    return [collaborator for collaborator in collaborators if collaborator['role'] == user_roles.ADMIN]
 
 
 def create_company_member(sso_session_id, data):

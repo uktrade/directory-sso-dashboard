@@ -106,11 +106,6 @@ class UserAccount(forms.Form):
         label_suffix='',
     )
     terms_agreed = forms.BooleanField(label=TERMS_LABEL)
-    remote_password_error = forms.CharField(
-        label='',
-        required=False,
-        widget=HiddenInput,
-    )
 
     def clean(self):
         if self.data.get(self.add_prefix('remote_password_error')):
@@ -168,8 +163,9 @@ class CompaniesHouseCompanySearch(forms.Form):
         cleaned_data = super().clean()
         if 'company_number' in cleaned_data:
             data = helpers.get_companies_house_profile(cleaned_data['company_number'])
-            if data['company_status'] not in ['active', 'voluntary-arrangement']:
-                raise ValidationError({'company_name': self.MESSAGE_COMPANY_NOT_ACTIVE})
+            if 'company_status' in data:
+                if data['company_status'] not in ['active', 'voluntary-arrangement']:
+                    raise ValidationError({'company_name': self.MESSAGE_COMPANY_NOT_ACTIVE})
         elif 'company_name' in cleaned_data:
             raise ValidationError({'company_name': mark_safe(self.MESSAGE_COMPANY_NOT_FOUND)})
 
