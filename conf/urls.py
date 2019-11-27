@@ -204,7 +204,9 @@ urlpatterns = [
         company_required(profile.business_profile.views.MemberDisconnectFromCompany.as_view()),
         name='disconnect-account'
     ),
-
+    url(
+        r'^business-profile/admin-request/$',
+        company_required(profile.business_profile.views.MemberSendAdminRequest.as_view()), name='send-admin-request'),
     url(
         r'^business-profile/admin/collaborator/(?P<sso_id>[0-9]+)/$',
         company_admin_required(profile.business_profile.views.AdminCollaboratorEditFormView.as_view()),
@@ -229,6 +231,11 @@ urlpatterns = [
         r'^business-profile/admin/invite/delete/$',
         company_admin_required(profile.business_profile.views.AdminInviteCollaboratorDeleteFormView.as_view()),
         name='business-profile-collaboration-invite-delete'
+    ),
+    url(
+        r'^business-profile/admin/collaboration-request/manage/$',
+        company_admin_required(profile.business_profile.views.AdminInviteCollaborationRequestManageForm.as_view()),
+        name='business-profile-collaboration-request-manage'
     ),
     url(
         r'^business-profile/social-links/$',

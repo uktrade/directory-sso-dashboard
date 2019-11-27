@@ -202,9 +202,9 @@ def mock_validate_company_number(client):
 
 
 @pytest.fixture(autouse=True)
-def mock_collaborator_request_create(client):
+def mock_collaboration_request_create(client):
     patch = mock.patch.object(
-        helpers.api_client.company, 'collaborator_request_create',
+        helpers.api_client.company, 'collaboration_request_create',
         return_value=create_response()
     )
     yield patch.start()
@@ -974,10 +974,10 @@ def test_companies_house_enrolment_submit_end_to_end_company_has_account(
 @mock.patch('enrolment.views.helpers.create_company_member')
 @mock.patch('enrolment.views.helpers.get_is_enrolled')
 @mock.patch('profile.business_profile.helpers.get_supplier_profile')
+@mock.patch('profile.business_profile.helpers.has_editor_admin_request')
 def test_companies_house_enrolment_submit_end_to_end_company_second_user(
-    mock_get_supplier_profile, mock_get_is_enrolled, mock_add_collaborator,
-    mock_gov_notify, client, steps_data, submit_companies_house_step,
-    mock_get_company_admins, mock_enrolment_send,
+    mock_has_editor_admin_request, mock_get_supplier_profile, mock_get_is_enrolled, mock_add_collaborator,
+    mock_gov_notify, client, steps_data, submit_companies_house_step, mock_get_company_admins, mock_enrolment_send,
     mock_validate_company_number, user
 ):
     mock_validate_company_number.return_value = create_response(status_code=400)
@@ -1029,6 +1029,9 @@ def test_companies_house_enrolment_submit_end_to_end_company_second_user(
 
     assert mock_get_company_admins.call_count == 1
     assert mock_gov_notify.call_count == 2
+
+    assert mock_has_editor_admin_request.call_count == 1
+    assert mock_has_editor_admin_request.call_args == mock.call(sso_session_id='123', sso_id=1)
 
 
 @mock.patch('directory_forms_api_client.client.forms_api_client.submit_generic')

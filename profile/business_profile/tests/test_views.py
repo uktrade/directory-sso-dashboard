@@ -113,10 +113,21 @@ def mock_collaborator_role_update():
 @pytest.fixture(autouse=True)
 def mock_collaborator_list(user):
     response = create_response([
-        {'sso_id': user.id, 'role': user_roles.ADMIN, 'company_email': user.email, 'name': 'jim example'},
-        {'sso_id': 1234, 'role': user_roles.EDITOR, 'company_email': 'jim@example.com', 'name': 'bob example'}
+        {'sso_id': user.id, 'role': user_roles.ADMIN, 'company_email': user.email, 'name': 'jim example', },
+        {'sso_id': 1234, 'role': user_roles.EDITOR, 'company_email': 'jim@example.com', 'name': 'bob example', }
     ])
     patch = mock.patch.object(api_client.company, 'collaborator_list', return_value=response)
+    yield patch.start()
+    patch.stop()
+
+
+@pytest.fixture(autouse=True)
+def mock_collaboration_request_list(user):
+    response = create_response([
+        {'requestor_sso_id': user.id, 'uuid': 1234, 'name': 'jim example', 'accepted': False, },
+        {'requestor_sso_id': 1234, 'uuid': 1234,  'name': 'bob example', 'accepted': False, }
+    ])
+    patch = mock.patch.object(api_client.company, 'collaboration_request_list', return_value=response)
     yield patch.start()
     patch.stop()
 
@@ -129,6 +140,8 @@ def mock_collaborator_invite_list(user):
             'collaborator_email': 'jim@example.com',
             'company': 1,
             'requestor': 2,
+            'requestor_email': 'requestor@testme.com',
+            'requestor_sso_id': 3,
             'accepted': False,
             'role': user_roles.EDITOR,
         }
@@ -767,15 +780,17 @@ def test_request_identity_verification_already_sent(mock_verify_identity_request
     assert mock_verify_identity_request.call_count == 0
 
 
-def test_collaborator_list(mock_collaborator_list, client, user, settings):
+def test_collaborator_list(mock_collaborator_list, mock_collaboration_request_list, client, user, settings):
     client.force_login(user)
     mock_collaborator_list.return_value = create_response([])
+    mock_collaboration_request_list.return_value = create_response([])
 
     url = reverse('business-profile-admin-tools')
     response = client.get(url)
 
     assert response.status_code == 200
     assert response.context_data['collaborators'] == []
+    assert response.context_data['collaboration_requests'] == []
 
 
 @pytest.mark.parametrize('role', (user_roles.EDITOR, user_roles.MEMBER))
@@ -871,6 +886,7 @@ def test_edit_collaborator_edit_remove_collaborator(mock_collaborator_disconnect
     mock_collaborator_disconnect.return_value = create_response()
 
     url = reverse('business-profile-admin-collaborator-edit', kwargs={'sso_id': 1234})
+
     response = client.post(url, data={'action': forms.REMOVE_COLLABORATOR})
 
     assert response.status_code == 302
@@ -1075,7 +1091,6 @@ def test_admin_collaborator_invite_delete(mock_collaborator_invite_delete, clien
     mock_collaborator_invite_delete.return_value = create_response()
 
     client.force_login(user)
-
     url = reverse('business-profile-collaboration-invite-delete')
     response = client.post(url, {'invite_key': '1234'})
 
@@ -1083,6 +1098,102 @@ def test_admin_collaborator_invite_delete(mock_collaborator_invite_delete, clien
     assert response.url == reverse('business-profile-admin-invite-collaborator')
     assert mock_collaborator_invite_delete.call_count == 1
     assert mock_collaborator_invite_delete.call_args == mock.call(sso_session_id=user.session_id, invite_key='1234')
+
+
+@mock.patch.object(api_client.company, 'collaboration_request_accept')
+def test_admin_collaboration_request_accept(mock_collaboration_request_accept, client, user):
+    mock_collaboration_request_accept.return_value = create_response()
+    admin_tools_url = reverse('business-profile-admin-tools')
+    client.force_login(user)
+
+    url = reverse('business-profile-collaboration-request-manage')
+    response = client.post(
+        url, {'request_key': '1234', 'action': 'accept'},)
+
+    assert response.status_code == 302
+    assert response.url == admin_tools_url
+    assert mock_collaboration_request_accept.call_count == 1
+    assert mock_collaboration_request_accept.call_args == mock.call(sso_session_id=user.session_id, request_key='1234')
+
+
+@mock.patch.object(api_client.company, 'collaboration_request_delete')
+def test_admin_collaboration_request_delete(mock_collaboration_request_delete, client, user):
+    mock_collaboration_request_delete.return_value = create_response()
+    admin_tools_url = reverse('business-profile-admin-tools')
+    client.force_login(user)
+
+    url = reverse('business-profile-collaboration-request-manage')
+    response = client.post(
+        url, {'request_key': '1234', 'action': 'delete'},)
+
+    assert response.status_code == 302
+    assert response.url == admin_tools_url
+    assert mock_collaboration_request_delete.call_count == 1
+    assert mock_collaboration_request_delete.call_args == mock.call(sso_session_id=user.session_id, request_key='1234')
+
+
+@mock.patch.object(api_client.company, 'collaboration_request_create')
+def test_member_send_admin_request(mock_collaboration_request_create, client, user):
+    mock_collaboration_request_create.return_value = create_response()
+
+    client.force_login(user)
+
+    response = client.post(reverse('send-admin-request'), {'action': 'send_request'},)
+
+    assert response.status_code == 302
+    assert response.url == reverse('business-profile')
+
+    assert mock_collaboration_request_create.call_count == 1
+    assert mock_collaboration_request_create.call_args == mock.call(
+        sso_session_id=user.session_id, role=user_roles.ADMIN
+    )
+
+
+@mock.patch.object(helpers, 'notify_company_admins_collaboration_request_reminder')
+def test_member_send_admin_reminder(mock_collaboration_request_notify, client, user):
+    mock_collaboration_request_notify.return_value = create_response()
+
+    client.force_login(user)
+
+    response = client.post(reverse('send-admin-request'), {'action': 'send_reminder'},)
+
+    assert response.status_code == 302
+    assert response.url == reverse('business-profile')
+
+    assert mock_collaboration_request_notify.call_count == 1
+    assert mock_collaboration_request_notify.call_args == mock.call(
+        email_data={
+            'company_name': user.company.data['name'],
+            'name': user.full_name,
+            'email': user.email,
+            'login_url': 'http://testserver/profile/business-profile/admin/'
+        },
+        form_url=reverse('send-admin-request'),
+        sso_session_id=user.session_id,
+    )
+
+
+@mock.patch.object(api_client.company, 'collaboration_request_create')
+def test_member_send_admin_request_error(mock_collaboration_request_create, client, user):
+    mock_collaboration_request_create.return_value = create_response(status_code=500)
+    client.force_login(user)
+
+    url = reverse('send-admin-request')
+    with pytest.raises(HTTPError):
+        client.post(url,  {'action': 'send_request'})
+
+
+@mock.patch.object(api_client.company, 'collaboration_request_create')
+def test_member_send_admin_request_error_400(mock_collaboration_request_create, client, user):
+    errors = ['Something went wrong']
+    mock_collaboration_request_create.return_value = create_response(errors, status_code=400)
+    client.force_login(user)
+
+    url = reverse('send-admin-request')
+    response = client.post(url,  {'action': 'send_request'})
+    assert response.status_code == 200
+    assert response.context_data['form'].is_valid() is False
+    assert response.context_data['form'].errors == {NON_FIELD_ERRORS: errors}
 
 
 def test_business_profile_member_redirect(client, user, mock_retrieve_supplier, company_profile_data):

@@ -67,6 +67,10 @@ class BusinessProfileView(TemplateView):
                 'export_opportunities_apply_url': urls.domestic.EXPORT_OPPORTUNITIES,
                 'is_profile_published': company['is_published_find_a_supplier'] if company else False,
                 'FAB_BUSINESS_PROFILE_URL': business_profile_url,
+                'has_admin_request': helpers.has_editor_admin_request(
+                    sso_session_id=self.request.user.session_id,
+                    sso_id=self.request.user.id
+                ),
             })
         return context
 
@@ -292,8 +296,7 @@ class CaseStudyWizardEditView(BaseCaseStudyWizardView):
 class CaseStudyWizardCreateView(BaseCaseStudyWizardView):
     def done(self, form_list, *args, **kwags):
         response = api_client.company.case_study_create(
-            sso_session_id=self.request.user.session_id,
-            data=self.serialize_form_list(form_list),
+            sso_session_id=self.request.user.session_id, data=self.serialize_form_list(form_list),
         )
         response.raise_for_status()
         return redirect('business-profile')
@@ -304,7 +307,11 @@ class AdminCollaboratorsListView(TemplateView):
 
     def get_context_data(self, **kwargs):
         collaborators = helpers.collaborator_list(self.request.user.session_id)
-        return super().get_context_data(collaborators=collaborators, **kwargs)
+        collaboration_requests = helpers.collaboration_request_list(self.request.user.session_id)
+        collaboration_requests = [c for c in collaboration_requests if not c['accepted']]
+        return super().get_context_data(
+            collaborators=collaborators, **kwargs, collaboration_requests=collaboration_requests,
+        )
 
 
 class MemberDisconnectFromCompany(DisconnectFromCompanyMixin, SuccessMessageMixin, FormView):
@@ -313,6 +320,41 @@ class MemberDisconnectFromCompany(DisconnectFromCompanyMixin, SuccessMessageMixi
     def get_context_data(self, **kwargs):
         company = self.request.user.company.serialize_for_form()
         return super().get_context_data(company=company, **kwargs)
+
+
+class MemberSendAdminRequest(SuccessMessageMixin, FormView):
+    template_name = 'business_profile/business-profile-member.html'
+    form_class = forms.MemberCollaborationRequestForm
+    success_message = 'Your request to join has been sent.'
+    success_url = reverse_lazy('business-profile')
+
+    def form_valid(self, form):
+        try:
+            if form.cleaned_data['action'] == 'send_request':
+                helpers.collaboration_request_create(
+                    sso_session_id=self.request.user.session_id,
+                    role=user_roles.ADMIN,
+                )
+            elif form.cleaned_data['action'] == 'send_reminder':
+                helpers.notify_company_admins_collaboration_request_reminder(
+                    sso_session_id=self.request.user.session_id,
+                    email_data={
+                        'company_name': self.request.user.company.data['name'],
+                        'name': self.request.user.full_name,
+                        'email': self.request.user.email,
+                        'login_url': self.request.build_absolute_uri(
+                            reverse('business-profile-admin-tools')
+                        ),
+                    }, form_url=self.request.path
+                )
+                self.success_message = 'Your request to the administrator has been sent.'
+        except HTTPError as error:
+            if error.response.status_code == 400:
+                form.add_error(field=None, error=error.response.json())
+                return self.form_invalid(form)
+            else:
+                raise
+        return super().form_valid(form)
 
 
 class AdminCollaboratorEditFormView(SuccessMessageMixin, FormView):
@@ -477,6 +519,26 @@ class AdminInviteCollaboratorDeleteFormView(SuccessMessageMixin, FormView):
             sso_session_id=self.request.user.session_id,
             invite_key=form.cleaned_data['invite_key'],
         )
+        return super().form_valid(form)
+
+
+class AdminInviteCollaborationRequestManageForm(SuccessMessageMixin, FormView):
+    form_class = forms.AdminCollaborationRequestManageForm
+    success_message = ('Invitation successfully deleted')
+    success_url = reverse_lazy('business-profile-admin-tools')
+
+    def form_valid(self, form):
+        if form.cleaned_data['action'] == 'delete':
+            helpers.collaboration_request_delete(
+                sso_session_id=self.request.user.session_id,
+                request_key=form.cleaned_data['request_key'],
+            )
+        elif form.cleaned_data['action'] == 'accept':
+            helpers.collaboration_request_accept(
+                sso_session_id=self.request.user.session_id,
+                request_key=form.cleaned_data['request_key'],
+            )
+            self.success_message = ('Collaborator added')
         return super().form_valid(form)
 
 
