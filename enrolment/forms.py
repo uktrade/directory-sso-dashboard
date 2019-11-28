@@ -95,7 +95,8 @@ class UserAccount(forms.Form):
     password = forms.CharField(
         label='Set a password',
         help_text=mark_safe(PASSWORD_HELP_TEXT),
-        widget=PasswordInput
+        widget=PasswordInput,
+        required=True
     )
     password_confirmed = forms.CharField(
         label='Confirm password',
@@ -115,7 +116,7 @@ class UserAccount(forms.Form):
 
     def clean_password_confirmed(self):
         value = self.cleaned_data['password_confirmed']
-        if value != self.cleaned_data['password']:
+        if value != self.cleaned_data.get('password'):
             raise ValidationError(self.MESSAGE_NOT_MATCH)
         return value
 
