@@ -26,6 +26,19 @@ def test_create_user_password_invalid_not_matching():
     assert "Passwords don't match" in form.errors['password_confirmed']
 
 
+def test_create_user_password_confirm_empty():
+    form = forms.UserAccount(
+        data={
+            'email': 'test@test.com',
+            'password_confirmed': 'drowssap',
+         }
+    )
+
+    assert form.is_valid() is False
+    assert "Passwords don't match" in form.errors['password_confirmed']
+    assert "This field is required." in form.errors['password']
+
+
 def test_verification_code_empty_email():
 
     form = forms.UserAccountVerification()
