@@ -96,7 +96,6 @@ class UserAccount(forms.Form):
         label='Set a password',
         help_text=mark_safe(PASSWORD_HELP_TEXT),
         widget=PasswordInput,
-        required=True
     )
     password_confirmed = forms.CharField(
         label='Confirm password',
