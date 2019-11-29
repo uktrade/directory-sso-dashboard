@@ -30,6 +30,7 @@
 - no ticket - upgrade pillow
 - TT-2189 - empty password error
 - TT-2149 - Improve accessibility on enrolment start page
+- TT-1855 - Remove "is enrolled" caching 
 
 ## [2019.11.20](https://github.com/uktrade/directory-sso-profile/releases/tag/2019.11.20)
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2019.10.30...2019.11.20)
