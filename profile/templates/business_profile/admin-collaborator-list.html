@@ -7,7 +7,7 @@
     {% breadcrumbs 'Collaborators' %}
         <a href="{{ services_urls.great_domestic }}">great.gov.uk</a>
         <a href="{% url 'business-profile' %}">Business profile</a>
-		<a href="{% url 'business-profile-admin-invite-collaborator' %}">Profile settings</a>
+    <a href="{% url 'business-profile-admin-invite-collaborator' %}">Profile settings</a>
     {% endbreadcrumbs %}
 {% endblock %}
 
@@ -40,42 +40,36 @@
       {% endfor %}
     </tbody>
   </table>
-<h2 class="heading-large margin-top-0">Editor Requests</h2>
+<h2 class="heading-large margin-top-90">Requests</h2>
+  <p>People requesting to joint the business profile</p>
   <table>
     <thead>
       <tr>
         <th class="border-light-grey padding-top-15 padding-bottom-15" scope="col">People</th>
-        <th class="border-light-grey padding-top-15 padding-bottom-15" scope="col">Job Role</th>
-		<th class="border-light-grey padding-top-15 padding-bottom-15" scope="col">Request</th>
+        <th class="border-light-grey padding-top-15 padding-bottom-15" scope="col">Request</th>
         <th class="border-light-grey padding-top-15 padding-bottom-15 numeric" scope="col">Actions</th>
       </tr>
     </thead>
-	  {% if editor_requests %}
-		<tbody>
-		  {% for request in collaboration_requests %}
-			  <tr>
-				<th class="border-white padding-top-15 padding-bottom-10" scope="row">{{ request.name }}</th>
-				<td class="border-white padding-top-15 padding-bottom-10">{{ request.role|title }}</td>
-				  <td class="border-white padding-top-15 padding-bottom-10 numeric">Request to become administrator</td>
-					  <td class="border-white padding-top-15 padding-bottom-10 numeric">
-						<form action="{% url 'business-profile-collaboration-request-manage' %}" method="post" enctype="multipart/form-data" class="no-default-margin">
-			            	<input type="hidden" name="request_key" value="{{ request.uuid }}" />
-							<input type="hidden" name="action" value="accept" />
-							<input type="submit" class="link background-white numeric" value="Approve">
-						</form>
-				    	<form action="{% url 'business-profile-collaboration-request-manage' %}" method="post" enctype="multipart/form-data" class="no-default-margin">
-			            	<input type="hidden" name="request_key" value="{{ request.uuid }}" />
-							<input type="hidden" name="action" value="delete" />
-				    	<input type="submit" class="link background-white numeric" value="Delete">
-			        </form>
-				  </td>
-			  </tr>
-		  {% endfor %}
-    	</tbody>
-	  {% else %}
-	  		<tr>
-		    <th class="border-white padding-top-15 padding-bottom-10" scope="row">You currently have no requests.</th>
-		</tr>
-	  {% endif %}
+    {% if collaboration_requests %}
+    <tbody>
+      {% for collaboration_request in collaboration_requests %}
+        <tr>
+          <td class="border-white padding-top-15 padding-bottom-10" scope="row">{{ collaboration_request.name }}</td>
+          <td class="border-white padding-top-15 padding-bottom-10">Request to become {{ collaboration_request.role|lower }}</td>
+          <td class="border-white padding-top-15 padding-bottom-10 numeric">
+            <form method="post" enctype="multipart/form-data" class="no-default-margin">
+              <input type="hidden" name="request_key" value="{{ collaboration_request.uuid }}" />
+              <button type="submit" class="link background-white margin-right-30" name="{{ form.action.name }}" value="{{ form.APPROVE }}">Approve</button>
+              <button type="submit" class="link background-white" name="{{ form.action.name }}" value="{{ form.DELETE }}">Delete request</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    {% else %}
+        <tr>
+        <th class="border-white padding-top-15 padding-bottom-10" scope="row">You currently have no requests.</th>
+    </tr>
+    {% endif %}
   </table>
 {% endblock %}

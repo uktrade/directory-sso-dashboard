@@ -1106,9 +1106,8 @@ def test_admin_collaboration_request_accept(mock_collaboration_request_accept, c
     admin_tools_url = reverse('business-profile-admin-tools')
     client.force_login(user)
 
-    url = reverse('business-profile-collaboration-request-manage')
-    response = client.post(
-        url, {'request_key': '1234', 'action': 'accept'},)
+    url = reverse('business-profile-admin-tools')
+    response = client.post(url, {'request_key': '1234', 'action': forms.AdminCollaborationRequestManageForm.APPROVE})
 
     assert response.status_code == 302
     assert response.url == admin_tools_url
@@ -1122,9 +1121,8 @@ def test_admin_collaboration_request_delete(mock_collaboration_request_delete, c
     admin_tools_url = reverse('business-profile-admin-tools')
     client.force_login(user)
 
-    url = reverse('business-profile-collaboration-request-manage')
-    response = client.post(
-        url, {'request_key': '1234', 'action': 'delete'},)
+    url = reverse('business-profile-admin-tools')
+    response = client.post(url, {'request_key': '1234', 'action': forms.AdminCollaborationRequestManageForm.DELETE})
 
     assert response.status_code == 302
     assert response.url == admin_tools_url
@@ -1138,7 +1136,7 @@ def test_member_send_admin_request(mock_collaboration_request_create, client, us
 
     client.force_login(user)
 
-    response = client.post(reverse('send-admin-request'), {'action': 'send_request'},)
+    response = client.post(reverse('business-profile'), {'action': forms.MemberCollaborationRequestForm.SEND_REQUEST})
 
     assert response.status_code == 302
     assert response.url == reverse('business-profile')
@@ -1155,7 +1153,7 @@ def test_member_send_admin_reminder(mock_collaboration_request_notify, client, u
 
     client.force_login(user)
 
-    response = client.post(reverse('send-admin-request'), {'action': 'send_reminder'},)
+    response = client.post(reverse('business-profile'), {'action': forms.MemberCollaborationRequestForm.SEND_REMINDER})
 
     assert response.status_code == 302
     assert response.url == reverse('business-profile')
@@ -1168,7 +1166,7 @@ def test_member_send_admin_reminder(mock_collaboration_request_notify, client, u
             'email': user.email,
             'login_url': 'http://testserver/profile/business-profile/admin/'
         },
-        form_url=reverse('send-admin-request'),
+        form_url=reverse('business-profile'),
         sso_session_id=user.session_id,
     )
 
@@ -1178,7 +1176,7 @@ def test_member_send_admin_request_error(mock_collaboration_request_create, clie
     mock_collaboration_request_create.return_value = create_response(status_code=500)
     client.force_login(user)
 
-    url = reverse('send-admin-request')
+    url = reverse('business-profile')
     with pytest.raises(HTTPError):
         client.post(url,  {'action': 'send_request'})
 
@@ -1189,7 +1187,7 @@ def test_member_send_admin_request_error_400(mock_collaboration_request_create, 
     mock_collaboration_request_create.return_value = create_response(errors, status_code=400)
     client.force_login(user)
 
-    url = reverse('send-admin-request')
+    url = reverse('business-profile')
     response = client.post(url,  {'action': 'send_request'})
     assert response.status_code == 200
     assert response.context_data['form'].is_valid() is False
