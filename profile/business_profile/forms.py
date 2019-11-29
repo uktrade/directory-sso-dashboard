@@ -577,9 +577,25 @@ class AdminInviteCollaboratorDeleteForm(forms.Form):
 
 
 class AdminCollaborationRequestManageForm(forms.Form):
+    APPROVE = 'approve'
+    DELETE = 'delete'
+
     request_key = forms.CharField()
-    action = forms.CharField()
+    action = forms.ChoiceField(
+        choices=(
+            (APPROVE, 'approve'),
+            (DELETE, 'delete'),
+        )
+    )
 
 
 class MemberCollaborationRequestForm(forms.Form):
-    action = forms.CharField()
+    SEND_REMINDER = 'send_reminder'
+    SEND_REQUEST = 'send_request'
+
+    action = forms.ChoiceField(
+        choices=(
+            (SEND_REQUEST, 'send request'),
+            (SEND_REMINDER, 'send reminder'),
+        )
+    )
