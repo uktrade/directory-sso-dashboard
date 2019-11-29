@@ -28,7 +28,8 @@
 - TT-1132 - Improve contrast of breadcrumbs and feedback link
 - TT-1132 - Upgrade directory components to fix accessibility bug
 - no ticket - upgrade pillow
-- T-2189 - empty password error
+- TT-2189 - empty password error
+- TT-2149 - Improve accessibility on enrolment start page
 
 ## [2019.11.20](https://github.com/uktrade/directory-sso-profile/releases/tag/2019.11.20)
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2019.10.30...2019.11.20)

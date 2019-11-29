@@ -6,8 +6,8 @@
   padding-top: 50px;
 
   li {
-    border-left: 0.18em solid $mid-grey;
-    color: $mid-grey;
+    border-left: 0.18em solid $govuk-secondary-text-colour;
+    color: $govuk-secondary-text-colour;
     counter-increment: progress-indicator-counter;
     font-weight: bold;
     list-style-position: outside;
@@ -35,9 +35,9 @@
     // Adds the default numbering
     &:before {
       background-color: $white;
-      border: 0.2em solid $mid-grey;
+      border: 0.2em solid $govuk-secondary-text-colour;
       border-radius: 50%;
-      color: $mid-grey;
+      color: $govuk-secondary-text-colour;
       content: counter(progress-indicator-counter);
       display: block;
       font-size: 80%;
