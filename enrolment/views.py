@@ -2,7 +2,6 @@ from urllib.parse import urlparse
 
 from directory_constants import urls, user_roles
 from formtools.wizard.views import NamedUrlSessionWizardView
-from requests.exceptions import HTTPError
 
 from django.contrib import messages
 from django.shortcuts import redirect
@@ -393,11 +392,6 @@ class IndividualUserEnrolmentView(BaseEnrolmentWizardView):
         constants.FINISHED: 'enrolment/individual-success.html',
     }
 
-    @property
-    def verification_link_url(self):
-        url = reverse('enrolment-individual', kwargs={'step': constants.VERIFICATION})
-        return self.request.build_absolute_uri(url)
-
     def get(self, *args, **kwargs):
         # at this point all the steps will be hidden as the user is logged
         # in and has a user profile, so the normal `get` method fails with
@@ -405,6 +399,11 @@ class IndividualUserEnrolmentView(BaseEnrolmentWizardView):
         if self.kwargs['step'] == constants.FINISHED:
             return self.done()
         return super().get(*args, **kwargs)
+
+    @property
+    def verification_link_url(self):
+        url = reverse('enrolment-individual', kwargs={'step': constants.VERIFICATION})
+        return self.request.build_absolute_uri(url)
 
     def get_template_names(self):
         return [self.templates[self.steps.current]]
@@ -534,7 +533,6 @@ class PreVerifiedEnrolmentView(BaseEnrolmentWizardView):
         constants.USER_ACCOUNT: 'enrolment/user-account.html',
         constants.VERIFICATION: 'enrolment/user-account-verification.html',
         constants.PERSONAL_INFO: 'enrolment/preverified-personal-details.html',
-        constants.FAILURE: 'enrolment/failure-pre-verified.html',
     }
 
     def get(self, *args, **kwargs):
@@ -547,6 +545,11 @@ class PreVerifiedEnrolmentView(BaseEnrolmentWizardView):
                 self.request.session.save()
             else:
                 return redirect(reverse('enrolment-start'))
+        # at this point all the steps will be hidden as the user is logged
+        # in and has a user profile, so the normal `get` method fails with
+        # IndexError, meaning `done` will not be hit. Working around this:
+        if self.steps.count == 0 or self.kwargs['step'] == constants.FINISHED:
+            return self.done()
         if self.steps.current == constants.PERSONAL_INFO:
             if not self.request.session.get(constants.SESSION_KEY_COMPANY_DATA):
                 return redirect(reverse('enrolment-start'))
@@ -557,15 +560,6 @@ class PreVerifiedEnrolmentView(BaseEnrolmentWizardView):
         if self.steps.current == constants.PERSONAL_INFO:
             context['company'] = self.request.session[constants.SESSION_KEY_COMPANY_DATA]
         return context
-
-    def done(self, form_list, **kwargs):
-        try:
-            self.claim_company(self.serialize_form_list(form_list))
-        except HTTPError:
-            return TemplateResponse(self.request, self.templates[constants.FAILURE])
-        else:
-            messages.success(self.request, 'Business profile created')
-            return redirect('business-profile')
 
     def claim_company(self, data):
         helpers.claim_company(
@@ -579,6 +573,13 @@ class PreVerifiedEnrolmentView(BaseEnrolmentWizardView):
         for form in form_list:
             data.update(form.cleaned_data)
         return data
+
+    def done(self, *args, **kwargs):
+        self.claim_company({
+            'given_name': self.request.user.first_name, 'family_name': self.request.user.last_name
+        })
+        messages.success(self.request, 'Business profile created')
+        return redirect('business-profile')
 
 
 class ResendVerificationCodeView(

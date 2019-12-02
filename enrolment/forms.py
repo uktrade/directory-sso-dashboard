@@ -134,7 +134,7 @@ class UserAccountVerification(forms.Form):
     email = forms.CharField(label='', widget=HiddenInput, disabled=True)
 
     code = forms.CharField(
-        label='Confirmation Code',
+        label='Five-digit code',
         max_length=5,
         min_length=5,
         widget=TextInput(attrs={'type': 'number'}),
