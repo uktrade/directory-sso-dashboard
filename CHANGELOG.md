@@ -10,6 +10,7 @@
 - TT-1608 - Member To Request Admin
 - No ticket - upgrade django
 - TT-2195 - UI for member requests to become Admin
+- TT-2212 - Feature flag admin requests
 
 ### Fixed bugs:
 - TT-1817 - Use correct input types for number fields

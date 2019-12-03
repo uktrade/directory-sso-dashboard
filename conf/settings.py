@@ -338,6 +338,7 @@ FAB_ADD_CASE_STUDY_URL = env.str('FAB_ADD_CASE_STUDY_URL')
 FEATURE_FLAGS = {
     'COUNTRY_SELECTOR_ON': False,
     'MAINTENANCE_MODE_ON': env.bool('FEATURE_MAINTENANCE_MODE_ENABLED', False),  # used by directory-components
+    'ADMIN_REQUESTS_ON': env.bool('FEATURE_ADMIN_REQUESTS_ENABLED', False),
 }
 
 # Healthcheck
