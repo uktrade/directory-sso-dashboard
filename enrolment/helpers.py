@@ -66,17 +66,11 @@ def user_has_company(sso_session_id):
 
 
 def get_is_enrolled(company_number):
-    key = f'{CACHE_KEY_IS_ENROLLED}-{company_number}'
-    value = cache.get(key)
-    if not value:
-        response = api_client.company.validate_company_number(company_number)
-        if response.status_code == 400:
-            value = True
-        else:
-            response.raise_for_status()
-            value = False
-        cache.set(key=key, value=value, timeout=60*60)
-    return value
+    response = api_client.company.validate_company_number(company_number)
+    if response.status_code == 400:
+        return True
+    response.raise_for_status()
+    return False
 
 
 def create_company_profile(data):

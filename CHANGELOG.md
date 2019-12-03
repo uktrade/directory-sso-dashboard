@@ -7,10 +7,9 @@
 - TT-1199 - Fixing accessibility issues
 - TT-2025 - Update success page content
 - No ticket - Removed old feature flagged items
-- TT-1608-member-request-admin-2
 - TT-1608 - Member To Request Admin
 - No ticket - upgrade django
-
+- TT-2195 - UI for member requests to become Admin
 
 ### Fixed bugs:
 - TT-1817 - Use correct input types for number fields
@@ -29,7 +28,9 @@
 - TT-1132 - Improve contrast of breadcrumbs and feedback link
 - TT-1132 - Upgrade directory components to fix accessibility bug
 - no ticket - upgrade pillow
-- T-2189 - empty password error
+- TT-2189 - empty password error
+- TT-2149 - Improve accessibility on enrolment start page
+- TT-1855 - Remove "is enrolled" caching 
 
 ## [2019.11.20](https://github.com/uktrade/directory-sso-profile/releases/tag/2019.11.20)
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2019.10.30...2019.11.20)

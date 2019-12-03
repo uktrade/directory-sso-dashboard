@@ -1821,7 +1821,7 @@ def test_claim_preverified_no_key(
 def test_claim_preverified_bad_key(client, mock_retrieve_preverified_company):
     mock_retrieve_preverified_company.return_value = create_response(status_code=404)
 
-    url = reverse('enrolment-pre-verified', kwargs={'step': 'user-account'})
+    url = reverse('enrolment-pre-verified', kwargs={'step': constants.USER_ACCOUNT})
     response = client.get(url, {'key': '123'})
 
     assert response.status_code == 302
@@ -1832,7 +1832,7 @@ def test_claim_preverified_exposes_company(
     submit_pre_verified_step, mock_claim_company, client, steps_data,
     preverified_company_data, user
 ):
-    url = reverse('enrolment-pre-verified', kwargs={'step': 'user-account'})
+    url = reverse('enrolment-pre-verified', kwargs={'step': constants.USER_ACCOUNT})
     response = client.get(url, {'key': 'some-key'})
 
     assert response.status_code == 200
@@ -1855,10 +1855,9 @@ def test_claim_preverified_exposes_company(
 
 
 def test_claim_preverified_success(
-    submit_pre_verified_step, mock_claim_company, client, steps_data,
-    user
+    submit_pre_verified_step, mock_claim_company, client, steps_data, user
 ):
-    url = reverse('enrolment-pre-verified', kwargs={'step': 'user-account'})
+    url = reverse('enrolment-pre-verified', kwargs={'step': constants.USER_ACCOUNT})
     response = client.get(url, {'key': 'some-key'})
 
     assert response.status_code == 200
@@ -1873,6 +1872,11 @@ def test_claim_preverified_success(
 
     response = submit_pre_verified_step(steps_data[constants.PERSONAL_INFO])
     assert response.status_code == 302
+
+    user.has_user_profile = True
+    user.first_name = 'Foo'
+    user.last_name = 'Example'
+    client.force_login(user)
 
     response = client.get(response.url)
 
@@ -1886,32 +1890,27 @@ def test_claim_preverified_success(
     )
 
 
-def test_claim_preverified_failure(
-    submit_pre_verified_step, mock_claim_company, client, steps_data,
-    user
+def test_claim_preverified_success_logged_in(
+    submit_pre_verified_step, mock_create_user_profile, client, steps_data, user,
+    mock_claim_company
 ):
-    mock_claim_company.return_value = create_response(status_code=400)
-
-    url = reverse('enrolment-pre-verified', kwargs={'step': 'user-account'})
-    response = client.get(url, {'key': 'some-key'})
-
-    assert response.status_code == 200
-
-    response = submit_pre_verified_step(steps_data[constants.USER_ACCOUNT])
-    assert response.status_code == 302
-
-    response = submit_pre_verified_step(steps_data[constants.VERIFICATION])
-    assert response.status_code == 302
-
+    user.has_user_profile = True
+    user.first_name = 'Foo'
+    user.last_name = 'Example'
     client.force_login(user)
 
-    response = submit_pre_verified_step(steps_data[constants.PERSONAL_INFO])
+    url = reverse('enrolment-pre-verified', kwargs={'step': constants.USER_ACCOUNT})
+    response = client.get(url, {'key': 'some-key'})
+
     assert response.status_code == 302
-
-    response = client.get(response.url)
-
-    assert response.status_code == 200
-    assert response.template_name == 'enrolment/failure-pre-verified.html'
+    assert response.url == reverse('business-profile')
+    assert mock_create_user_profile.call_count == 0
+    assert mock_claim_company.call_count == 1
+    assert mock_claim_company.call_args == mock.call(
+        data={'name': 'Foo Example'},
+        key='some-key',
+        sso_session_id='123',
+    )
 
 
 @pytest.mark.parametrize('is_anon,expected', (
@@ -2026,14 +2025,11 @@ def test_individual_enrolment_submit_end_to_end(
 
 
 def test_individual_enrolment_submit_end_to_end_logged_in(
-    client, submit_individual_step, user,
-    mock_create_user_profile, steps_data
+    client, submit_individual_step, user, mock_create_user_profile, steps_data
 ):
     client.force_login(user)
 
-    url = reverse(
-        'enrolment-individual', kwargs={'step': constants.USER_ACCOUNT}
-    )
+    url = reverse('enrolment-individual', kwargs={'step': constants.USER_ACCOUNT})
     response = client.get(url)
     assert response.status_code == 302
 
