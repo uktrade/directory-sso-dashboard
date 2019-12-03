@@ -377,10 +377,7 @@ class AdminCollaboratorsListView(ManageCollaborationRequestMixin, SuccessMessage
         collaborators = helpers.collaborator_list(self.request.user.session_id)
         requests = helpers.collaboration_request_list(self.request.user.session_id)
         requests = [c for c in requests if not c['accepted']]
-        return super().get_context_data(
-            collaborators=collaborators, collaboration_requests=requests,
-            FEATURE_ADMIN_REQUESTS_ON=settings.FEATURE_FLAGS['ADMIN_REQUESTS_ON'], **kwargs,
-        )
+        return super().get_context_data(collaborators=collaborators, collaboration_requests=requests, **kwargs)
 
 
 class MemberDisconnectFromCompany(DisconnectFromCompanyMixin, SuccessMessageMixin, FormView):
