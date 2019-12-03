@@ -11,6 +11,7 @@ from django.core.files.storage import DefaultStorage
 from django.shortcuts import redirect, Http404
 from django.utils.functional import cached_property
 from django.views.generic import FormView
+from django.conf import settings
 
 import core.mixins
 import core.forms
@@ -110,6 +111,7 @@ class BusinessProfileView(MemberSendAdminRequestMixin, SuccessMessageMixin, Form
                     sso_session_id=self.request.user.session_id,
                     sso_id=self.request.user.id
                 ),
+                'FEATURE_ADMIN_REQUESTS_ON': settings.FEATURE_FLAGS['ADMIN_REQUESTS_ON'],
             })
         return context
 
@@ -375,7 +377,10 @@ class AdminCollaboratorsListView(ManageCollaborationRequestMixin, SuccessMessage
         collaborators = helpers.collaborator_list(self.request.user.session_id)
         requests = helpers.collaboration_request_list(self.request.user.session_id)
         requests = [c for c in requests if not c['accepted']]
-        return super().get_context_data(collaborators=collaborators, collaboration_requests=requests, **kwargs)
+        return super().get_context_data(
+            collaborators=collaborators, collaboration_requests=requests,
+            FEATURE_ADMIN_REQUESTS_ON=settings.FEATURE_FLAGS['ADMIN_REQUESTS_ON'], **kwargs,
+        )
 
 
 class MemberDisconnectFromCompany(DisconnectFromCompanyMixin, SuccessMessageMixin, FormView):
