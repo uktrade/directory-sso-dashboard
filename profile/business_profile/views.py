@@ -1,7 +1,7 @@
 from directory_constants import user_roles
 from directory_api_client.client import api_client
 from formtools.wizard.views import NamedUrlSessionWizardView
-from raven.contrib.django.raven_compat.models import client as sentry_client
+import sentry_sdk
 from requests.exceptions import HTTPError, RequestException
 
 from django.contrib import messages
@@ -148,15 +148,11 @@ class BaseFormView(FormView):
     def send_update_error_to_sentry(user, api_response):
         # This is needed to not include POST data (e.g. binary image), which
         # was causing sentry to fail at sending
-        sentry_client.context.clear()
-        sentry_client.user_context(
+        sentry_sdk.set_user(
             {'hashed_uuid': user.hashed_uuid, 'user_email': user.email}
         )
-        sentry_client.captureMessage(
-            message='Updating company profile failed',
-            data={},
-            extra={'api_response': str(api_response.content)}
-        )
+        sentry_sdk.set_extra('api_response', str(api_response.content))
+        sentry_sdk.capture_message('Updating company profile failed')
 
 
 class SocialLinksFormView(BaseFormView):
