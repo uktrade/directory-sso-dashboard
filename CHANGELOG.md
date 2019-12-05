@@ -3,6 +3,13 @@
 ## Pre-release
 
 ### Implemented enhancements
+
+### Fixed bugs:
+
+## [2019.12.04](https://github.com/uktrade/directory-sso-profile/releases/tag/2019.12.04)
+[Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2019.11.20..2019.12.04)
+
+### Implemented enhancements
 - TT-1828 - Increasing size of address preview field in registration journey
 - TT-1199 - Fixing accessibility issues
 - TT-2025 - Update success page content
