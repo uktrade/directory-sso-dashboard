@@ -4,6 +4,8 @@
 
 ### Implemented enhancements
 
+ - TT-1304 - Upgrade sentry client
+
 ### Fixed bugs:
 
 ## [2019.12.04](https://github.com/uktrade/directory-sso-profile/releases/tag/2019.12.04)
