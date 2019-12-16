@@ -3,10 +3,10 @@
 ## Pre-release
 
 ### Implemented enhancements
-
  - TT-1304 - Upgrade sentry client
 
 ### Fixed bugs:
+ - TT-2213 - Fixed typo
 
 ## [2019.12.04](https://github.com/uktrade/directory-sso-profile/releases/tag/2019.12.04)
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2019.11.20..2019.12.04)
