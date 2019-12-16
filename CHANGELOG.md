@@ -5,6 +5,7 @@
 ### Implemented enhancements
 
  - TT-1304 - Upgrade sentry client
+ - TT-1624 - Tidy up collaborator request page
 
 ### Fixed bugs:
 
