@@ -1,3 +1,4 @@
+import math
 import re
 
 from captcha.fields import ReCaptchaField
@@ -200,7 +201,7 @@ class CompaniesHouseBusinessDetails(forms.Form):
         disabled=True,
         required=False,
         container_css_classes='border-active-blue read-only-input-container',
-        widget=Textarea(attrs={'rows': 3})
+        widget=Textarea,
     )
     date_of_creation = forms.DateField(
         label='Incorporated on',
@@ -218,7 +219,7 @@ class CompaniesHouseBusinessDetails(forms.Form):
         disabled=True,
         required=False,
         container_css_classes='border-active-blue read-only-input-container',
-        widget=Textarea(attrs={'rows': 3}),
+        widget=Textarea,
     )
     sectors = forms.ChoiceField(
         label='Which industry is your company in?',
@@ -231,10 +232,13 @@ class CompaniesHouseBusinessDetails(forms.Form):
         required=False,
     )
 
-    def __init__(
-        self, initial, is_enrolled=False, *args, **kwargs
-    ):
+    def __init__(self, initial, is_enrolled=False, *args, **kwargs):
         super().__init__(initial=initial, *args, **kwargs)
+        for field_name in ['sic', 'address']:
+            if initial.get(field_name):
+                character_count = len(initial[field_name])
+                self.fields[field_name].widget.attrs['rows'] = math.ceil(character_count / 30)
+
         if is_enrolled:
             self.delete_already_enrolled_fields()
         # force the form to use the initial value rather than the value

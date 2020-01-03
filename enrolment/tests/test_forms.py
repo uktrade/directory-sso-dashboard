@@ -128,3 +128,9 @@ def test_sole_trader_search_address_too_short(address):
     assert form.errors['address'] == [
         forms.NonCompaniesHouseSearch.MESSAGE_INVALID_ADDRESS
     ]
+
+
+def test_companies_house_business_form_row_height():
+    form = forms.CompaniesHouseBusinessDetails(initial={'address': 'ddddd ' * 6})
+
+    assert form.fields['address'].widget.attrs['rows'] == 2
