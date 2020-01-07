@@ -7,6 +7,8 @@
 ### Fixed bugs:
 - TT-2191 - Content update
 - TT-2178 - Improve UI of address and nature of business textarea
+- TT-2232 - Remove spin-buttons from email verification field
+
 
 ## [2019.12.18](https://github.com/uktrade/directory-sso-profile/releases/tag/2019.12.18)
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2019.12.04...2019.12.18)
