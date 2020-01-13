@@ -10,6 +10,17 @@ textarea.form-control {
   width: 80%;
 }
 
+// remove spinner on input of number
+input[type='number'] {
+    -moz-appearance:textfield;
+}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+
 .hidden-input-container {
   display: none;
 }
