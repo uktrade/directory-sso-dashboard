@@ -3,6 +3,17 @@
 ## Pre-release
 
 ### Implemented enhancements
+
+### Fixed bugs:
+- TT-2191 - Content update
+- TT-2178 - Improve UI of address and nature of business textarea
+- TT-2232 - Remove spin-buttons from email verification field
+
+
+## [2019.12.18](https://github.com/uktrade/directory-sso-profile/releases/tag/2019.12.18)
+[Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2019.12.04...2019.12.18)
+
+### Implemented enhancements
  - TT-1304 - Upgrade sentry client
  - TT-1624 - Tidy up collaborator request page
 
@@ -10,7 +21,7 @@
  - TT-2213 - Fixed typo
 
 ## [2019.12.04](https://github.com/uktrade/directory-sso-profile/releases/tag/2019.12.04)
-[Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2019.11.20..2019.12.04)
+[Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2019.11.20...2019.12.04)
 
 ### Implemented enhancements
 - TT-1828 - Increasing size of address preview field in registration journey
