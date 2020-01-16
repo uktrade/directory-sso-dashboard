@@ -5,6 +5,7 @@
 ### Implemented enhancements
 
 ### Fixed bugs:
+- No ticket - Fix business profile load for user with no business
 
 ## [2020.01.14(https://github.com/uktrade/directory-sso-profile/releases/tag/2020.01.14)
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2019.12.18...2020.01.14)
