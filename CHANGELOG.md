@@ -3,6 +3,7 @@
 ## Pre-release
 
 ### Implemented enhancements
+- TT-1931 - Diabled in-browser validation
 
 ### Fixed bugs:
 - No ticket - Fix business profile load for user with no business
