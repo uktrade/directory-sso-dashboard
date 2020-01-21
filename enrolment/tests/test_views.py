@@ -246,10 +246,7 @@ def mock_get_company_admins(client):
         'mobile_number': '123436789',
         'role': user_roles.ADMIN
     }]
-    patch = mock.patch.object(
-        helpers, 'get_company_admins',
-        return_value=response
-    )
+    patch = mock.patch.object(views, 'get_company_admins', return_value=response)
     yield patch.start()
     patch.stop()
 
