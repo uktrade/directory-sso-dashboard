@@ -148,52 +148,18 @@ def test_notify_already_registered(mock_submit):
     assert mock_submit.call_args == mock.call(expected)
 
 
-@mock.patch.object(helpers.api_client.company, 'collaborator_list')
-def test_get_company_admin_ok(mock_get_collaborator_list):
-
-    data = [{
-        'sso_id': 1,
-        'company': '12345678',
-        'company_email': 'jim@example.com',
-        'date_joined': '2001-01-01T00:00:00.000000Z',
-        'is_company_owner': True,
-        'role': 'ADMIN',
-        'name': 'Jim'
-    }]
-
-    mock_get_collaborator_list.return_value = create_response(status_code=200, json_body=data)
-
-    admins_list = helpers.get_company_admins('123456')
-
-    assert mock_get_collaborator_list.call_count == 1
-    assert mock_get_collaborator_list.call_args == mock.call(sso_session_id='123456')
-    assert admins_list == data
-
-
-@mock.patch.object(helpers.api_client.company, 'collaborator_list')
-def test_get_company_admin_not_ok(mock_get_collaborator_list):
-    mock_get_collaborator_list.return_value = create_response(status_code=400)
-    with pytest.raises(HTTPError):
-        helpers.get_company_admins('123456')
-
-
-@mock.patch(
-    'directory_forms_api_client.client.forms_api_client.submit_generic'
-)
-@mock.patch('enrolment.helpers.get_company_admins')
-def test_notify_company_admins_member_joined_ok(mock_get_company_admins, mock_submit):
-    mock_get_company_admins.return_value = [{
-        'company_email': 'admin@xyzcorp.com',
-        'company': '12345',
-        'sso_id': 1,
-        'name': 'Jim Abc',
-        'mobile_number': '123456789',
-        'role': user_roles.ADMIN
-    }]
-
+@mock.patch('directory_forms_api_client.client.forms_api_client.submit_generic')
+def test_notify_company_admins_member_joined_ok(mock_submit):
     helpers.notify_company_admins_member_joined(
-        sso_session_id=1234,
-        email_data={
+        admins=[{
+            'company_email': 'admin@xyzcorp.com',
+            'company': '12345',
+            'sso_id': 1,
+            'name': 'Jim Abc',
+            'mobile_number': '123456789',
+            'role': user_roles.ADMIN
+        }],
+        data={
             'company_name': 'XYZ corp',
             'name': 'John Doe',
             'email': 'johndoe@xyz.com',
@@ -223,22 +189,19 @@ def test_notify_company_admins_member_joined_ok(mock_get_company_admins, mock_su
     })
 
 
-@mock.patch('enrolment.helpers.get_company_admins')
-def test_notify_company_admins_member_joined_not_ok(mock_get_company_admins):
-    mock_get_company_admins.return_value = []
-
-    with pytest.raises(AssertionError):
-        helpers.notify_company_admins_member_joined(
-            sso_session_id=1234,
-            email_data={
-                'company_name': 'XYZ corp',
-                'name': 'John Doe',
-                'email': 'johndoe@xyz.com',
-                'form_url': 'the/form/url',
-                'profile_remove_member_url': 'remove/member/url',
-                'report_abuse_url': 'report/abuse/url'
-            },
-            form_url=None)
+def test_notify_company_admins_member_joined_handles_no_admins():
+    helpers.notify_company_admins_member_joined(
+        admins=[],
+        data={
+            'company_name': 'XYZ corp',
+            'name': 'John Doe',
+            'email': 'johndoe@xyz.com',
+            'form_url': 'the/form/url',
+            'profile_remove_member_url': 'remove/member/url',
+            'report_abuse_url': 'report/abuse/url'
+        },
+        form_url=None
+    )
 
 
 @mock.patch.object(helpers.api_client.company, 'collaborator_create')
@@ -252,10 +215,12 @@ def test_add_collaborator(mock_add_collaborator):
     })
 
     assert mock_add_collaborator.call_count == 1
-    assert mock_add_collaborator.call_args == mock.call(sso_session_id=300, data={
-        'company': 1234,
-        'company_email': 'xyz@xyzcorp.com',
-        'name': 'Abc',
-        'mobile_number': '9876543210',
-        'role': user_roles.MEMBER
-    })
+    assert mock_add_collaborator.call_args == mock.call(
+        sso_session_id=300,
+        data={
+            'company': 1234,
+            'company_email': 'xyz@xyzcorp.com',
+            'name': 'Abc',
+            'mobile_number': '9876543210',
+        }
+    )

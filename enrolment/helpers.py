@@ -4,11 +4,10 @@ import re
 
 from directory_api_client import api_client
 from directory_ch_client import ch_search_api_client
-from directory_constants import choices, urls, user_roles
+from directory_constants import choices, urls
 from directory_forms_api_client import actions
 from directory_sso_api_client import sso_api_client
 import directory_components
-from core.helpers import get_company_admins
 
 from django.core.cache import cache
 from django.utils import formats
@@ -140,21 +139,19 @@ def regenerate_verification_code(email):
 def create_company_member(sso_session_id, data):
     response = api_client.company.collaborator_create(
         sso_session_id=sso_session_id,
-        data={**data, 'role': user_roles.MEMBER}
+        data=data
     )
     response.raise_for_status()
 
 
-def notify_company_admins_member_joined(sso_session_id, email_data, form_url):
-    company_admins = get_company_admins(sso_session_id)
-    assert company_admins, f"No admin found for {email_data['company_name']}"
-    for admin in company_admins:
+def notify_company_admins_member_joined(admins, data, form_url):
+    for admin in admins:
         action = actions.GovNotifyEmailAction(
             email_address=admin['company_email'],
             template_id=settings.GOV_NOTIFY_NEW_MEMBER_REGISTERED_TEMPLATE_ID,
             form_url=form_url
         )
-        response = action.save(email_data)
+        response = action.save(data)
         response.raise_for_status()
 
 
