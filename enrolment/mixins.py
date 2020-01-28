@@ -27,22 +27,6 @@ class RemotePasswordValidationError(ValueError):
         self.form = form
 
 
-class GA360Mixin(directory_components.mixins.GA360Mixin, abc.ABC):
-
-    @property
-    @abc.abstractmethod
-    def google_analytics_page_id():
-        raise NotImplementedError
-
-    def dispatch(self, *args, **kwargs):
-        self.set_ga360_payload(
-            page_id=self.google_analytics_page_id,
-            business_unit=settings.GA360_BUSINESS_UNIT,
-            site_section='Enrolment',
-        )
-        return super().dispatch(*args, **kwargs)
-
-
 class RedirectLoggedInMixin:
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
