@@ -8,7 +8,6 @@ import pytest
 
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sessions.backends import signed_cookies
-from django.utils import translation
 from django.urls import resolve, reverse
 from django.views.generic import TemplateView
 

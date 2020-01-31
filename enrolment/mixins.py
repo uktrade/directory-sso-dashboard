@@ -3,7 +3,6 @@ from urllib.parse import unquote
 
 from requests.exceptions import HTTPError
 
-from django.conf import settings
 from django.contrib import messages
 from django.http import QueryDict
 from django.shortcuts import redirect
@@ -12,7 +11,6 @@ from django.template.response import TemplateResponse
 
 from enrolment import helpers, constants
 from directory_sso_api_client import sso_api_client
-import directory_components.mixins
 
 
 class RestartOnStepSkipped:
