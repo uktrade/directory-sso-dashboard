@@ -37,7 +37,6 @@ class EnrolmentStartView(
     mixins.StepsListMixin,
     mixins.WriteUserIntentMixin,
     mixins.ReadUserIntentMixin,
-    mixins.GA360Mixin,
     TemplateView
 ):
     google_analytics_page_id = 'EnrolmentStartPage'
@@ -62,7 +61,7 @@ class BusinessTypeRoutingView(
     mixins.StepsListMixin,
     mixins.WriteUserIntentMixin,
     mixins.ReadUserIntentMixin,
-    mixins.GA360Mixin, FormView
+    FormView
 ):
     google_analytics_page_id = 'EnrolmentBusinessTypeChooser'
     form_class = forms.BusinessType
@@ -104,7 +103,6 @@ class BaseEnrolmentWizardView(
     mixins.StepsListMixin,
     mixins.ReadUserIntentMixin,
     mixins.CreateUserAccountMixin,
-    mixins.GA360Mixin,
     NamedUrlSessionWizardView
 ):
 
@@ -343,7 +341,6 @@ class NonCompaniesHouseEnrolmentView(mixins.CreateBusinessProfileMixin, BaseEnro
 
 class IndividualUserEnrolmentInterstitialView(
     mixins.ReadUserIntentMixin,
-    mixins.GA360Mixin,
     TemplateView
 ):
     google_analytics_page_id = 'IndividualEnrolmentInterstitial'
@@ -587,7 +584,6 @@ class ResendVerificationCodeView(
     mixins.ProgressIndicatorMixin,
     mixins.StepsListMixin,
     mixins.CreateUserAccountMixin,
-    mixins.GA360Mixin,
     NamedUrlSessionWizardView
 ):
 
@@ -669,7 +665,7 @@ class ResendVerificationCodeView(
 
 class EnrolmentOverseasBusinessView(
     mixins.ReadUserIntentMixin,
-    mixins.GA360Mixin, TemplateView
+    TemplateView
 ):
     google_analytics_page_id = 'OverseasBusinessEnrolment'
     template_name = 'enrolment/overseas-business.html'

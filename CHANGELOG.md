@@ -5,6 +5,7 @@
 ### Implemented enhancements
 - TT-1931 - Disabled in-browser validation
 - TT-2223 - Handle preverified company multiple users
+- MVP-41 - Add GA360 Context Processor and remove middleware and mixins
 
 ### Fixed bugs:
 - No ticket - Fix business profile load for user with no business

@@ -13,8 +13,8 @@ chardet==3.0.4            # via requests
 directory-api-client==21.0.0
 directory-ch-client==2.1.0
 directory-client-core==6.1.0  # via directory-api-client, directory-ch-client, directory-forms-api-client, directory-sso-api-client
-directory-components==35.6.1
-directory-constants==20.6.0  # via directory-components
+directory-components==35.13.0
+directory-constants==20.11.0  # via directory-components
 directory-forms-api-client==5.0.0
 directory-healthcheck==2.0.0
 directory-sso-api-client==6.2.0
@@ -50,6 +50,3 @@ sqlparse==0.3.0           # via django
 urllib3==1.24.3
 w3lib==1.21.0             # via directory-client-core
 whitenoise==4.1.2
-
-# The following packages are considered to be unsafe in a requirements file:
-# setuptools
