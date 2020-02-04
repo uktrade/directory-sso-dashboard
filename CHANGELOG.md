@@ -2,6 +2,9 @@
 
 ## Pre-release
 
+### Hotfix
+- No ticket - CVE-2020-5236 & CVE-2020-7471: Potential SQL injection via StringAgg(delimiter)
+
 ### Implemented enhancements
 - TT-1931 - Disabled in-browser validation
 - TT-2223 - Handle preverified company multiple users
