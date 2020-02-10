@@ -12,6 +12,7 @@ from django.views.generic import FormView, TemplateView
 
 import core.forms
 import core.mixins
+from core.helpers import get_company_admins
 from enrolment import constants, forms, helpers, mixins
 from directory_forms_api_client.helpers import FormSessionMixin
 
@@ -36,7 +37,6 @@ class EnrolmentStartView(
     mixins.StepsListMixin,
     mixins.WriteUserIntentMixin,
     mixins.ReadUserIntentMixin,
-    mixins.GA360Mixin,
     TemplateView
 ):
     google_analytics_page_id = 'EnrolmentStartPage'
@@ -61,7 +61,7 @@ class BusinessTypeRoutingView(
     mixins.StepsListMixin,
     mixins.WriteUserIntentMixin,
     mixins.ReadUserIntentMixin,
-    mixins.GA360Mixin, FormView
+    FormView
 ):
     google_analytics_page_id = 'EnrolmentBusinessTypeChooser'
     form_class = forms.BusinessType
@@ -103,7 +103,6 @@ class BaseEnrolmentWizardView(
     mixins.StepsListMixin,
     mixins.ReadUserIntentMixin,
     mixins.CreateUserAccountMixin,
-    mixins.GA360Mixin,
     NamedUrlSessionWizardView
 ):
 
@@ -258,8 +257,7 @@ class CompaniesHouseEnrolmentView(mixins.CreateBusinessProfileMixin, BaseEnrolme
 
     def done(self, form_list, form_dict, **kwargs):
         data = self.serialize_form_list(form_list)
-        is_enrolled = helpers.get_is_enrolled(data['company_number'])
-        if is_enrolled:
+        if helpers.get_is_enrolled(data['company_number']):
             helpers.create_company_member(
                 sso_session_id=self.request.user.session_id,
                 data={
@@ -270,24 +268,23 @@ class CompaniesHouseEnrolmentView(mixins.CreateBusinessProfileMixin, BaseEnrolme
                     'mobile_number': data.get('phone_number', ''),
                 }
             )
-
+            admins = get_company_admins(self.request.user.session_id)
             helpers.notify_company_admins_member_joined(
-                sso_session_id=self.request.user.session_id,
-                email_data={
+                admins=admins,
+                data={
                     'company_name': data['company_name'],
                     'name': self.request.user.full_name,
                     'email': self.request.user.email,
-                    'profile_remove_member_url': self.request.build_absolute_uri(
-                        reverse('business-profile-admin-tools')
+                    'profile_remove_member_url': (
+                        self.request.build_absolute_uri(reverse('business-profile-admin-tools'))
                     ),
-                    'report_abuse_url': urls.domestic.FEEDBACK
-                }, form_url=self.request.path)
-
+                    'report_abuse_url': urls.domestic.FEEDBACK,
+                },
+                form_url=self.request.path
+            )
             if self.request.user.role == user_roles.MEMBER:
                 messages.add_message(self.request, messages.SUCCESS, 'You are now linked to the profile.')
-
             return redirect(reverse('business-profile') + '?member_user_linked=true')
-
         else:
             return super().done(form_list, form_dict=form_dict, **kwargs)
 
@@ -344,7 +341,6 @@ class NonCompaniesHouseEnrolmentView(mixins.CreateBusinessProfileMixin, BaseEnro
 
 class IndividualUserEnrolmentInterstitialView(
     mixins.ReadUserIntentMixin,
-    mixins.GA360Mixin,
     TemplateView
 ):
     google_analytics_page_id = 'IndividualEnrolmentInterstitial'
@@ -540,8 +536,8 @@ class PreVerifiedEnrolmentView(BaseEnrolmentWizardView):
         if key:
             data = helpers.retrieve_preverified_company(key)
             if data:
-                self.request.session[constants.SESSION_KEY_COMPANY_DATA] = data
-                self.request.session[constants.SESSION_KEY_ENROL_KEY] = key
+                self.storage.extra_data[constants.SESSION_KEY_COMPANY_DATA] = data
+                self.storage.extra_data[constants.SESSION_KEY_ENROL_KEY] = key
                 self.request.session.save()
             else:
                 return redirect(reverse('enrolment-start'))
@@ -551,19 +547,19 @@ class PreVerifiedEnrolmentView(BaseEnrolmentWizardView):
         if self.steps.count == 0 or self.kwargs['step'] == constants.FINISHED:
             return self.done()
         if self.steps.current == constants.PERSONAL_INFO:
-            if not self.request.session.get(constants.SESSION_KEY_COMPANY_DATA):
+            if not self.storage.extra_data.get(constants.SESSION_KEY_COMPANY_DATA):
                 return redirect(reverse('enrolment-start'))
         return super().get(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         if self.steps.current == constants.PERSONAL_INFO:
-            context['company'] = self.request.session[constants.SESSION_KEY_COMPANY_DATA]
+            context['company'] = self.storage.extra_data[constants.SESSION_KEY_COMPANY_DATA]
         return context
 
     def claim_company(self, data):
         helpers.claim_company(
-            enrolment_key=self.request.session[constants.SESSION_KEY_ENROL_KEY],
+            enrolment_key=self.storage.extra_data[constants.SESSION_KEY_ENROL_KEY],
             personal_name=f'{data["given_name"]} {data["family_name"]}',
             sso_session_id=self.request.user.session_id,
         )
@@ -588,7 +584,6 @@ class ResendVerificationCodeView(
     mixins.ProgressIndicatorMixin,
     mixins.StepsListMixin,
     mixins.CreateUserAccountMixin,
-    mixins.GA360Mixin,
     NamedUrlSessionWizardView
 ):
 
@@ -670,7 +665,7 @@ class ResendVerificationCodeView(
 
 class EnrolmentOverseasBusinessView(
     mixins.ReadUserIntentMixin,
-    mixins.GA360Mixin, TemplateView
+    TemplateView
 ):
     google_analytics_page_id = 'OverseasBusinessEnrolment'
     template_name = 'enrolment/overseas-business.html'

@@ -8,7 +8,6 @@ import pytest
 
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sessions.backends import signed_cookies
-from django.utils import translation
 from django.urls import resolve, reverse
 from django.views.generic import TemplateView
 
@@ -246,10 +245,7 @@ def mock_get_company_admins(client):
         'mobile_number': '123436789',
         'role': user_roles.ADMIN
     }]
-    patch = mock.patch.object(
-        helpers, 'get_company_admins',
-        return_value=response
-    )
+    patch = mock.patch.object(views, 'get_company_admins', return_value=response)
     yield patch.start()
     patch.stop()
 
@@ -1030,8 +1026,7 @@ def test_companies_house_enrolment_submit_end_to_end_company_second_user(
     assert mock_get_company_admins.call_count == 1
     assert mock_gov_notify.call_count == 2
 
-    assert mock_has_editor_admin_request.call_count == 1
-    assert mock_has_editor_admin_request.call_args == mock.call(sso_session_id='123', sso_id=1)
+    assert mock_has_editor_admin_request.call_count == 0
 
 
 @mock.patch('directory_forms_api_client.client.forms_api_client.submit_generic')
@@ -2259,66 +2254,3 @@ def test_collaborator_enrolment_submit_end_to_end_already_has_profile(
     assert mock_create_user_profile.call_count == 0
     assert mock_collaborator_invite_accept.call_count == 1
     assert mock_collaborator_invite_accept.call_args == mock.call(invite_key='abc', sso_session_id='123')
-
-
-@pytest.mark.parametrize('url,expected_page_id', (
-    (reverse('enrolment-business-type'), 'EnrolmentBusinessTypeChooser'),
-    (reverse('enrolment-start'), 'EnrolmentStartPage'),
-    (reverse('enrolment-companies-house', kwargs={'step': constants.COMPANY_SEARCH}), 'CompaniesHouseEnrolment'),
-    (reverse('enrolment-sole-trader', kwargs={'step': constants.ADDRESS_SEARCH}), 'NonCompaniesHouseEnrolment'),
-    (reverse('enrolment-individual', kwargs={'step': constants.PERSONAL_INFO}), 'IndividualEnrolment'),
-    (reverse('enrolment-pre-verified', kwargs={'step': constants.PERSONAL_INFO}) + '?key=key', 'PreVerifiedEnrolment'),
-    (reverse('enrolment-overseas-business'), 'OverseasBusinessEnrolment'),
-))
-def test_google_analytics_settings(client, user, url, expected_page_id, settings):
-    user.has_user_profile = False
-    client.force_login(user)
-    response = client.get(url)
-
-    assert response.status_code == 200, response.url
-    assert response.context_data['ga360'] == {
-        'page_id': expected_page_id,
-        'business_unit': settings.GA360_BUSINESS_UNIT,
-        'site_section': 'Enrolment',
-        'user_id': user.hashed_uuid,
-        'login_status': True,
-        'site_language': translation.get_language(),
-    }
-
-
-@pytest.mark.parametrize('url,expected_page_id', (
-    (reverse('resend-verification', kwargs={'step': constants.RESEND_VERIFICATION}), 'ResendVerificationCode'),
-    (
-        reverse('enrolment-collaboration', kwargs={'step': constants.USER_ACCOUNT}) + '?invite_key=k',
-        'CollaboratorEnrolment'
-    ),
-))
-def test_google_analytics_settings_anon(client, url, expected_page_id, settings):
-    response = client.get(url)
-
-    assert response.status_code == 200, response.url
-    assert response.context_data['ga360'] == {
-        'page_id': expected_page_id,
-        'business_unit': settings.GA360_BUSINESS_UNIT,
-        'site_section': 'Enrolment',
-        'user_id': None,
-        'login_status': False,
-        'site_language': translation.get_language(),
-    }
-
-
-def test_google_analytics_settings_individual_interstitial(client, settings):
-    response = client.get(reverse('enrolment-business-type'), {'business-profile-intent': True})
-    assert response.status_code == 200
-
-    response = client.get(reverse('enrolment-individual-interstitial'))
-
-    assert response.status_code == 200, response.url
-    assert response.context_data['ga360'] == {
-        'page_id': 'IndividualEnrolmentInterstitial',
-        'business_unit': settings.GA360_BUSINESS_UNIT,
-        'site_section': 'Enrolment',
-        'user_id': None,
-        'login_status': False,
-        'site_language': translation.get_language(),
-    }
