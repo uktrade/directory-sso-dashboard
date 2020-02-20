@@ -3,7 +3,7 @@
 ## Pre-release
 
 ### Implemented enhancements
-- TT-1931 - Disabled in-browser validation
+- TT-1931 - Disabled in-browser validation for all forms
 - TT-2223 - Handle preverified company multiple users
 - MVP-41 - Add GA360 Context Processor and remove middleware and mixins
 - TT-1930 - Remove blue highlight from address field
