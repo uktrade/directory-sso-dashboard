@@ -107,12 +107,14 @@ class BusinessProfileView(MemberSendAdminRequestMixin, SuccessMessageMixin, Form
                 'export_opportunities_apply_url': urls.domestic.EXPORT_OPPORTUNITIES,
                 'is_profile_published': company['is_published_find_a_supplier'] if company else False,
                 'FAB_BUSINESS_PROFILE_URL': business_profile_url,
-                'has_admin_request': helpers.has_editor_admin_request(
-                    sso_session_id=self.request.user.session_id,
-                    sso_id=self.request.user.id
-                ),
                 'FEATURE_ADMIN_REQUESTS_ON': settings.FEATURE_FLAGS['ADMIN_REQUESTS_ON'],
             })
+            if company:
+                context['has_admin_request'] = helpers.has_editor_admin_request(
+                    sso_session_id=self.request.user.session_id,
+                    sso_id=self.request.user.id
+                )
+
         return context
 
 

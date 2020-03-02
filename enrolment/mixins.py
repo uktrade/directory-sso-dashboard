@@ -3,7 +3,6 @@ from urllib.parse import unquote
 
 from requests.exceptions import HTTPError
 
-from django.conf import settings
 from django.contrib import messages
 from django.http import QueryDict
 from django.shortcuts import redirect
@@ -12,7 +11,6 @@ from django.template.response import TemplateResponse
 
 from enrolment import helpers, constants
 from directory_sso_api_client import sso_api_client
-import directory_components.mixins
 
 
 class RestartOnStepSkipped:
@@ -25,22 +23,6 @@ class RestartOnStepSkipped:
 class RemotePasswordValidationError(ValueError):
     def __init__(self, form):
         self.form = form
-
-
-class GA360Mixin(directory_components.mixins.GA360Mixin, abc.ABC):
-
-    @property
-    @abc.abstractmethod
-    def google_analytics_page_id():
-        raise NotImplementedError
-
-    def dispatch(self, *args, **kwargs):
-        self.set_ga360_payload(
-            page_id=self.google_analytics_page_id,
-            business_unit=settings.GA360_BUSINESS_UNIT,
-            site_section='Enrolment',
-        )
-        return super().dispatch(*args, **kwargs)
 
 
 class RedirectLoggedInMixin:
