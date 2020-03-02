@@ -11,7 +11,7 @@
 {% block form_contents %}
     <h1 class="heading-large margin-top-90">Remove {{ company.name}} from your account</h1>
     <span>Please confirm you would like to remove the business profile from your account. You will be able to select a new business.</span>
-    <form method="post" enctype="multipart/form-data" class="no-default-margin">
+    <form method="post" enctype="multipart/form-data" class="no-default-margin" novalidate="novalidate">
         {{ form }}
          <button class="button">Remove business profile</button>
         <div class="padding-top-90">

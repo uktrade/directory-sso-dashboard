@@ -6,19 +6,24 @@
 
 ## Pre-release
 
-### Hotfix
-- No ticket - CVE-2020-5236 & CVE-2020-7471: Potential SQL injection via StringAgg(delimiter)
-
 ### Implemented enhancements
-- TT-1931 - Disabled in-browser validation
+- TT-1931 - Disabled in-browser validation for all forms
 - TT-2223 - Handle preverified company multiple users
 - MVP-41 - Add GA360 Context Processor and remove middleware and mixins
+- TT-1930 - Remove blue highlight from address field
 
 ### Fixed bugs:
 - No ticket - Fix business profile load for user with no business
 - TT-2254 - Cleaned up obsolete settings
 
-## [2020.01.14(https://github.com/uktrade/directory-sso-profile/releases/tag/2020.01.14)
+## [2020.02.04](https://github.com/uktrade/directory-sso-profile/releases/tag/2020.02.04)
+[Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2020.01.14...2020.02.04)
+
+### Hotfix
+- No ticket - CVE-2020-5236 & CVE-2020-7471: Potential SQL injection via StringAgg(delimiter)
+
+
+## [2020.01.14](https://github.com/uktrade/directory-sso-profile/releases/tag/2020.01.14)
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2019.12.18...2020.01.14)
 
 ### Fixed bugs:
