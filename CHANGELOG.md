@@ -1,6 +1,7 @@
 # Changelog
 
 ### Hotfix
+- XOT-1296 - replace cookie banner with cookie modal
 - No ticket - CVE-2020-5236 & CVE-2020-7471: Potential SQL injection via StringAgg(delimiter)
 
 ## Pre-release
