@@ -1203,6 +1203,7 @@ def test_business_profile_member_redirect(client, user, mock_retrieve_supplier, 
 
     context = response.context_data
 
+    assert context['has_admin_request'] is True
     assert context['fab_tab_classes'] == 'active'
     assert context['contact_us_url'] == (urls.domestic.CONTACT_US / 'domestic')
     assert context['export_opportunities_apply_url'] == urls.domestic.EXPORT_OPPORTUNITIES
@@ -1210,6 +1211,22 @@ def test_business_profile_member_redirect(client, user, mock_retrieve_supplier, 
     assert context['FAB_BUSINESS_PROFILE_URL'] == (
         urls.international.TRADE_FAS / 'suppliers' / company_profile_data['number'] / company_profile_data['slug']
     )
+
+
+def test_business_profile_member_no_company(client, user, mock_retrieve_supplier, mock_retrieve_company):
+    client.force_login(user)
+    mock_retrieve_supplier.return_value = create_response({'role': user_roles.MEMBER})
+    mock_retrieve_company.return_value = create_response(status_code=404)
+
+    url = reverse('business-profile')
+    response = client.get(url)
+
+    context = response.context_data
+
+    assert 'has_admin_request' not in context
+    assert context['fab_tab_classes'] == 'active'
+    assert context['contact_us_url'] == (urls.domestic.CONTACT_US / 'domestic')
+    assert context['export_opportunities_apply_url'] == urls.domestic.EXPORT_OPPORTUNITIES
 
 
 def test_fab_redirect(client, user):

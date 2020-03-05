@@ -7,7 +7,7 @@
         {% block breadcrumbs %}{% endblock %}
         <div class="grid-row margin-top-60">
             <div class="column-two-thirds">
-                <form method="post" enctype="multipart/form-data">
+                <form method="post" enctype="multipart/form-data" novalidate="novalidate">
                     {% csrf_token %}
                     {% block above_form %}
                         <h1 class="heading-xlarge margin-top-0">{% block step_title %}{% endblock %}</h1>
