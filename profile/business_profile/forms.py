@@ -289,7 +289,7 @@ class PublishForm(forms.Form):
 
     LABEL_UNPUBLISH_FAS = 'Untick to remove your profile from this service'
     LABEL_UNPUBLISH_ISD = 'Untick the box to cancel publication'
-    LABEL_ISD = 'Ready to publish on UK Investment Support Directory'
+    LABEL_ISD = 'Publish profile on UK Investment Support Directory'
     LABEL_FAS = 'Publish profile on great.gov.uk/trade/'
 
     is_published_investment_support_directory = forms.BooleanField(
