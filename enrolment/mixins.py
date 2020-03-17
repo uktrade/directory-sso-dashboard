@@ -228,7 +228,8 @@ class CreateUserAccountMixin:
                     constants.VERIFICATION,
                     {
                         form.add_prefix('email'): [form.cleaned_data['email']],
-                        form.add_prefix('code'): [None]
+                        form.add_prefix('code'): [None],
+                        form.add_prefix('remote_code_error'): error.response.json()['code'],
                     }
                 )
                 return self.render_revalidation_failure(

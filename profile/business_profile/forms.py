@@ -5,7 +5,6 @@ import directory_validators.url
 import directory_validators.string
 import directory_validators.file
 
-from django.conf import settings
 from django.forms import ImageField, SelectMultiple, Textarea, ValidationError
 from django.utils.safestring import mark_safe
 
@@ -265,7 +264,7 @@ class CaseStudyRichMediaForm(DynamicHelptextFieldsMixin, forms.Form):
         validators=[directory_validators.string.no_html],
     )
     testimonial_company = forms.CharField(
-        label="Company name of the source (optional)",
+        label='Company name of the source (optional)',
         max_length=255,
         required=False,
         validators=[directory_validators.string.no_html],
@@ -276,9 +275,7 @@ class LogoForm(forms.Form):
     logo = ImageField(
         help_text=(
             'For best results this should be a transparent PNG file of 600 x '
-            '600 pixels and no more than 2MB'.format(
-                int(settings.VALIDATOR_MAX_LOGO_SIZE_BYTES / 1024 / 1014)
-            )
+            '600 pixels and no more than 2MB'
         ),
         required=True,
         validators=[directory_validators.file.logo_filesize, directory_validators.file.image_format]
