@@ -1251,7 +1251,10 @@ def test_confirm_user_verify_code_incorrect_code(
 ):
     submit_step = submit_step_builder(company_type)
 
-    mock_confirm_verification_code.return_value = create_response(status_code=400)
+    mock_confirm_verification_code.return_value = create_response(
+        status_code=400,
+        json_body={'code': ['Invalid code']}
+    )
 
     response = submit_step(steps_data[constants.USER_ACCOUNT])
     assert response.status_code == 302
@@ -1269,7 +1272,10 @@ def test_confirm_user_verify_code_manual_email(
     company_type, submit_step_builder, mock_confirm_verification_code, steps_data,
     client
 ):
-    mock_confirm_verification_code.return_value = create_response(status_code=400)
+    mock_confirm_verification_code.return_value = create_response(
+        status_code=400,
+        json_body={'code': ['Invalid code']}
+    )
     submit_step = submit_step_builder(company_type)
 
     response = submit_step(

@@ -84,11 +84,8 @@ def send_verification_code_email(email, verification_code, form_url, verificatio
         email_address=email,
         form_url=form_url,
     )
-
     expiry_date = parse_datetime(verification_code['expiration_date'])
-    formatted_expiry_date = formats.date_format(
-        expiry_date, "DATETIME_FORMAT"
-    )
+    formatted_expiry_date = formats.date_format(expiry_date, 'DATETIME_FORMAT')
     response = action.save({
         'code': verification_code['code'],
         'expiry_date': formatted_expiry_date,
