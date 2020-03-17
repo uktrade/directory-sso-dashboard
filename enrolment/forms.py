@@ -46,7 +46,7 @@ class BusinessType(forms.Form):
         (
             constants.NON_COMPANIES_HOUSE_COMPANY,
             (
-                'I\'m a sole trader or I represent another type of UK '
+                "I'm a sole trader or I represent another type of UK "
                 'business not registered with Companies House'
             )
         ),
@@ -150,10 +150,16 @@ class UserAccountVerification(forms.Form):
     def clean_code(self):
         return str(self.cleaned_data['code'])
 
+    def clean(self):
+        if self.data.get(self.add_prefix('remote_code_error')):
+            self.errors.clear()
+            raise ValidationError({'code': self.data[self.add_prefix('remote_code_error')]})
+        super().clean()
+
 
 class CompaniesHouseCompanySearch(forms.Form):
     MESSAGE_COMPANY_NOT_FOUND = (
-        "<p>Your business name is not listed.</p>"
+        '<p>Your business name is not listed.</p>'
         "<p>Check that you've entered the right name.</p>"
     )
     MESSAGE_COMPANY_NOT_ACTIVE = 'Company not active.'
@@ -227,7 +233,7 @@ class CompaniesHouseBusinessDetails(forms.Form):
         container_css_classes='margin-top-30 margin-bottom-30',
     )
     website = forms.URLField(
-        label='What\'s your business web address (optional)',
+        label="What's your business web address (optional)",
         help_text='The website address must start with http:// or https://',
         required=False,
     )
@@ -328,7 +334,7 @@ class NonCompaniesHouseSearch(CleanAddressMixin, forms.Form):
         choices=INDUSTRY_CHOICES,
     )
     website = forms.URLField(
-        label='What\'s your business web address (optional)',
+        label="What's your business web address (optional)",
         help_text='The website address must start with http:// or https://',
         required=False,
     )

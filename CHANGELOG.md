@@ -5,7 +5,7 @@
 ### Implemented enhancements
 
 ### Fixed bugs
-
+- TT-2276 - Removed reference to "schedule publish"
 
 ## [2020.03.05](https://github.com/uktrade/directory-sso-profile/releases/tag/2020.03.05)
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2020.02.04...2020.03.05)
