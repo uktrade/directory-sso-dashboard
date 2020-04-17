@@ -14,7 +14,7 @@ def test_exporting_is_great_handles_auth(mock_get, settings):
     client.get_exops_data(2)
 
     mock_get.assert_called_once_with(
-        'http://b.co/api/profile_dashboard',
+        'http://b.co/export-opportunities/api/profile_dashboard',
         params={'sso_user_id': 2, 'shared_secret': 123},
         auth=helpers.exopps_client.auth
     )
