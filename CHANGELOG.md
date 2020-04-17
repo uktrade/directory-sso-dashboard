@@ -3,6 +3,7 @@
 ## Pre-release
 
 ## Hotfix
+- XOT-1335 - Fix Export Opportunities endpoint
 - No ticket - v3 ci pipeline manifest.yml file fix
 
 ### Implemented enhancements
