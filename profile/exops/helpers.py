@@ -22,7 +22,7 @@ class ExportingIsGreatClient:
     )
     base_url = settings.EXPORTING_OPPORTUNITIES_API_BASE_URL
     endpoints = {
-        'opportunities': 'api/profile_dashboard'
+        'exops_data': 'export-opportunities/api/profile_dashboard'
     }
     secret = settings.EXPORTING_OPPORTUNITIES_API_SECRET
 
@@ -33,7 +33,7 @@ class ExportingIsGreatClient:
 
     def get_exops_data(self, hashed_sso_id):
         params = {'sso_user_id': hashed_sso_id}
-        return self.get(self.endpoints['opportunities'], params)
+        return self.get(self.endpoints['exops_data'], params)
 
 
 exopps_client = ExportingIsGreatClient()
