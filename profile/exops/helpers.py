@@ -6,8 +6,8 @@ import requests
 from django.conf import settings
 
 
-def get_opportunities(sso_id):
-    response = exopps_client.get_opportunities(sso_id)
+def get_exops_data(hashed_sso_id):
+    response = exopps_client.get_exops_data(hashed_sso_id)
     if response.status_code == http.client.FORBIDDEN:
         return None
     elif response.status_code == http.client.OK:
@@ -31,8 +31,8 @@ class ExportingIsGreatClient:
         url = urlparse.urljoin(self.base_url, partial_url)
         return requests.get(url, params=params, auth=self.auth)
 
-    def get_opportunities(self, sso_id):
-        params = {'sso_user_id': sso_id}
+    def get_exops_data(self, hashed_sso_id):
+        params = {'sso_user_id': hashed_sso_id}
         return self.get(self.endpoints['opportunities'], params)
 
 

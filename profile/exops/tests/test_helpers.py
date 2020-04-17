@@ -11,7 +11,7 @@ def test_exporting_is_great_handles_auth(mock_get, settings):
     username = settings.EXPORTING_OPPORTUNITIES_API_BASIC_AUTH_USERNAME
     password = settings.EXPORTING_OPPORTUNITIES_API_BASIC_AUTH_PASSWORD
 
-    client.get_opportunities(2)
+    client.get_exops_data(2)
 
     mock_get.assert_called_once_with(
         'http://b.co/api/profile_dashboard',
