@@ -35,9 +35,9 @@
 									{{ alert.term }} in all countries
 								{% endif %}
 							{% elif alert.countries %}
-								all exops_data in {{ alert.countries|join:", " }}
+								all opportunities in {{ alert.countries|join:", " }}
 							{% else %}
-								all exops_data
+								all opportunities
 							{% endif %}
 
 						</span>
