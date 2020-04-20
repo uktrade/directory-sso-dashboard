@@ -11,7 +11,7 @@ def response_factory(status_code):
     return Mock(return_value=create_response(status_code=status_code))
 
 
-@patch.object(exopps_client, 'get_opportunities', response_factory(200))
+@patch.object(exopps_client, 'get_exops_data', response_factory(200))
 def test_export_opportunities_applications_exposes_context(client, settings, user):
     client.force_login(user)
     settings.EXPORTING_OPPORTUNITIES_SEARCH_URL = 'http://find'
@@ -23,7 +23,7 @@ def test_export_opportunities_applications_exposes_context(client, settings, use
     assert context_data['EXPORTING_OPPORTUNITIES_SEARCH_URL'] == 'http://find'
 
 
-@patch.object(exopps_client, 'get_opportunities', response_factory(200))
+@patch.object(exopps_client, 'get_exops_data', response_factory(200))
 def test_export_opportunities_email_alerts_exposes_context(client, settings, user):
     client.force_login(user)
     settings.EXPORTING_OPPORTUNITIES_SEARCH_URL = 'http://find'
@@ -47,7 +47,7 @@ def test_opportunities_email_alerts_unauthenticated(client):
     assert response.status_code == 302
 
 
-@patch.object(exopps_client, 'get_opportunities', response_factory(403))
+@patch.object(exopps_client, 'get_exops_data', response_factory(403))
 def test_opportunities_applications_retrieve_not_found(client, user):
     client.force_login(user)
 
@@ -58,7 +58,7 @@ def test_opportunities_applications_retrieve_not_found(client, user):
     ]
 
 
-@patch.object(exopps_client, 'get_opportunities', response_factory(200))
+@patch.object(exopps_client, 'get_exops_data', response_factory(200))
 def test_opportunities_applications_retrieve_found(client, user):
     client.force_login(user)
 
@@ -69,7 +69,7 @@ def test_opportunities_applications_retrieve_found(client, user):
     ]
 
 
-@patch.object(exopps_client, 'get_opportunities', response_factory(500))
+@patch.object(exopps_client, 'get_exops_data', response_factory(500))
 def test_opportunities_applications_retrieve_error(client, user):
     client.force_login(user)
 
@@ -80,7 +80,7 @@ def test_opportunities_applications_retrieve_error(client, user):
     ]
 
 
-@patch.object(exopps_client, 'get_opportunities', response_factory(403))
+@patch.object(exopps_client, 'get_exops_data', response_factory(403))
 def test_opportunities_email_alerts_retrieve_not_found(client, user):
     client.force_login(user)
 
@@ -91,7 +91,7 @@ def test_opportunities_email_alerts_retrieve_not_found(client, user):
     ]
 
 
-@patch.object(exopps_client, 'get_opportunities', response_factory(200))
+@patch.object(exopps_client, 'get_exops_data', response_factory(200))
 def test_opportunities_email_alerts_retrieve_found(client, user):
     client.force_login(user)
 
@@ -102,7 +102,7 @@ def test_opportunities_email_alerts_retrieve_found(client, user):
     ]
 
 
-@patch.object(exopps_client, 'get_opportunities', response_factory(500))
+@patch.object(exopps_client, 'get_exops_data', response_factory(500))
 def test_opportunities_email_alerts_retrieve_error(client, user):
     client.force_login(user)
 
