@@ -1,14 +1,17 @@
 # Changelog
 
-## Pre-release
-
-## Hotfix
-- XOT-1335 - Fix Export Opportunities endpoint
-- No ticket - v3 ci pipeline manifest.yml file fix
+## Pre-Release
 
 ### Implemented enhancements
 
 ### Fixed bugs
+
+## [2020.04.20](https://github.com/uktrade/directory-sso-profile/releases/tag/2020.04.20)
+[Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2020.03.05...2020.04.20)
+
+### Fixed Bugs
+- XOT-1335 - Fix Export Opportunities endpoint
+- No ticket - v3 ci pipeline manifest.yml file fix
 - TT-2276 - Removed reference to "schedule publish"
 
 ## [2020.03.05](https://github.com/uktrade/directory-sso-profile/releases/tag/2020.03.05)
