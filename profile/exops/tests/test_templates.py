@@ -3,7 +3,7 @@ from django.template.loader import render_to_string
 
 def render_html(email_alerts):
     context = {
-        'opportunities': {
+        'exops_data': {
             'email_alerts': email_alerts
         }
     }

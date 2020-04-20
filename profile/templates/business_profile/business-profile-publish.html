@@ -19,7 +19,7 @@
     <form method="post" enctype="multipart/form-data" class="no-default-margin margin-bottom-45" novalidate="novalidate">
         <h1 class="heading-large margin-top-0">Publishing your profile on great.gov.uk</h1>
         {% if company.is_uk_isd_company %}
-            <p>You can publish your profile on 2 great.gov.uk platforms – great.gov.uk/trade and great.gov.uk UK Investment Support Directory.</p>
+            <p>You can publish your profile on 2 great.gov.uk platforms – great.gov.uk/trade/ and great.gov.uk UK Investment Support Directory.</p>
             <p>You can publish on either or both of these.</p>
             <p>Choose where you want to publish below.</p>
         {% endif %}
@@ -29,7 +29,7 @@
             {% with company.is_published_investment_support_directory as is_published %}
                 <div class="publish-box border-medium {{ is_published|yesno:'border-teal,border-stone-60' }}">
                     <h2 class="heading-small">{{ is_published|yesno:"Already published on great.gov.uk UK Investment Support Directory,Publish on great.gov.uk UK Investment Support Directory" }}</h2>
-                    <p>This business profile is ready to be published on UK Investment Support Directory on great.gov.uk. We'll email you when it goes live.</p>
+                    <p>This business profile is ready to be published on UK Investment Support Directory on great.gov.uk.</p>
                     {% include 'directory_components/form_widgets/form_field.html' with field=form.is_published_investment_support_directory %}
                 </div>
             {% endwith %}

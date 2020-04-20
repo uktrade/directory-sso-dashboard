@@ -101,6 +101,8 @@ Temporary Items
 
 # JS
 node_modules/
+yarn.lock
+packge-lock.json
 
 .env
 conf/env/secrets-do-not-commit

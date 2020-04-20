@@ -1,18 +1,31 @@
 # Changelog
 
-### Hotfix
-- XOT-1296 - replace cookie banner with cookie modal
-- No ticket - CVE-2020-5236 & CVE-2020-7471: Potential SQL injection via StringAgg(delimiter)
+## Pre-Release
 
-## Pre-release
+### Implemented enhancements
+
+### Fixed bugs
+
+## [2020.04.20](https://github.com/uktrade/directory-sso-profile/releases/tag/2020.04.20)
+[Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2020.03.05...2020.04.20)
+
+### Fixed Bugs
+- XOT-1335 - Fix Export Opportunities endpoint
+- No ticket - v3 ci pipeline manifest.yml file fix
+- TT-2276 - Removed reference to "schedule publish"
+
+## [2020.03.05](https://github.com/uktrade/directory-sso-profile/releases/tag/2020.03.05)
+[Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2020.02.04...2020.03.05)
 
 ### Implemented enhancements
 - TT-1931 - Disabled in-browser validation for all forms
 - TT-2223 - Handle preverified company multiple users
 - MVP-41 - Add GA360 Context Processor and remove middleware and mixins
 - TT-1930 - Remove blue highlight from address field
+- XOT-1296 - replace cookie banner with cookie modal
+- No ticket - CVE-2020-5236 & CVE-2020-7471: Potential SQL injection via StringAgg(delimiter)
 
-### Fixed bugs:
+### Fixed bugs
 - No ticket - Fix business profile load for user with no business
 - TT-2254 - Cleaned up obsolete settings
 

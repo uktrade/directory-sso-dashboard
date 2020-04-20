@@ -36,7 +36,7 @@ def test_create_user_password_confirm_empty():
 
     assert form.is_valid() is False
     assert "Passwords don't match" in form.errors['password_confirmed']
-    assert "This field is required." in form.errors['password']
+    assert 'This field is required.' in form.errors['password']
 
 
 def test_verification_code_empty_email():
