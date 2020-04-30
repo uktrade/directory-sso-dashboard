@@ -5,6 +5,7 @@
 ### Implemented enhancements
 
 ### Fixed bugs
+- TT-2223 - Handle verification letter sent
 
 ## [2020.04.20](https://github.com/uktrade/directory-sso-profile/releases/tag/2020.04.20)
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2020.03.05...2020.04.20)
