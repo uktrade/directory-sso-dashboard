@@ -93,20 +93,24 @@ class BusinessProfileView(MemberSendAdminRequestMixin, SuccessMessageMixin, Form
             template_name = self.template_name_not_fab_user
         return [template_name]
 
-    def get_context_data(self, **kwargs):
+    def get_company(self):
         if self.request.user.is_authenticated and self.request.user.company:
-            company = self.request.user.company.serialize_for_template()
-            business_profile_url = urls.international.TRADE_FAS / 'suppliers' / company['number'] / company['slug']
-        else:
-            company = None
-            business_profile_url = ''
+            return self.request.user.company.serialize_for_template()
+
+    def get_business_profile_url(self):
+        company = self.get_company()
+        if company and company['number']:
+            return urls.international.TRADE_FAS / 'suppliers' / company['number'] / company['slug']
+
+    def get_context_data(self, **kwargs):
+        company = self.get_company()
         context = super().get_context_data(fab_tab_classes='active', company=company, **kwargs)
         if self.request.user.role == user_roles.MEMBER:
             context.update({
                 'contact_us_url': urls.domestic.CONTACT_US / 'domestic',
                 'export_opportunities_apply_url': urls.domestic.EXPORT_OPPORTUNITIES,
                 'is_profile_published': company['is_published_find_a_supplier'] if company else False,
-                'FAB_BUSINESS_PROFILE_URL': business_profile_url,
+                'FAB_BUSINESS_PROFILE_URL': self.get_business_profile_url(),
                 'FEATURE_ADMIN_REQUESTS_ON': settings.FEATURE_FLAGS['ADMIN_REQUESTS_ON'],
             })
             if company:
