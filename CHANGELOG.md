@@ -6,6 +6,7 @@
 
 ### Fixed bugs
 - TT-2223 - Handle verification letter sent
+- TT-1861 - Improve confusing content on remove from account button
 
 ## [2020.04.20](https://github.com/uktrade/directory-sso-profile/releases/tag/2020.04.20)
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2020.03.05...2020.04.20)
