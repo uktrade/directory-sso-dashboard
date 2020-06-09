@@ -53,7 +53,7 @@
         {% if not company.is_verified and company.is_identity_check_message_sent %}
             <p>We will be in contact shortly and have sent you a confirmation email to {{ request.user.email }}</p>
         {% else %}
-            <p>Your business profile hasn't been published yet. Fill in the last few details to complete and publish.</p>
+            <p>Now that you've created a user account, complete the last few steps to publish your business profile</p>
         {% endif %}
     </div>
     <div id="alerts-top" class="grid-row alerts-container margin-bottom-15 margin-top-30">
@@ -81,7 +81,12 @@
                     <p>For security reasons, we need to check you're who you say you are.</p>
                 </div>
                 <div class="column-one-third alerts-button-container">
-                    <a class="button button-ghost-white" href="{{ services_urls.fab }}verify/">Confirm your identity</a>
+                    {% if company.is_verification_letter_sent %}
+                        <a class="button button-ghost-white" href="{{ services_urls.fab }}verify/letter-confirm/">Enter identity confirmation code</a>
+                    {% else %}
+                        <a class="button button-ghost-white" href="{{ services_urls.fab }}verify/">Confirm your identity</a>
+                    {% endif %}
+
                 </div>
             {% elif not company.is_identity_check_message_sent %}
                 <div class="column-two-thirds flag-red-text">
