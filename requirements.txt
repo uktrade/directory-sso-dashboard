@@ -6,29 +6,29 @@
 #
 attrs==19.2.0             # via jsonschema
 beautifulsoup4==4.8.0     # via directory-components
-boto3==1.7.30             # via -r requirements.in
+boto3==1.7.30
 botocore==1.10.84         # via boto3, s3transfer
 certifi==2019.9.11        # via requests, sentry-sdk
 chardet==3.0.4            # via requests
-directory-api-client==21.0.0  # via -r requirements.in
-directory-ch-client==2.1.0  # via -r requirements.in
+directory-api-client==21.0.0
+directory-ch-client==2.1.0
 directory-client-core==6.1.0  # via directory-api-client, directory-ch-client, directory-forms-api-client, directory-sso-api-client
-directory-components==35.15.2  # via -r requirements.in
+directory-components==35.15.2
 directory-constants==20.11.0  # via directory-components
-directory-forms-api-client==5.0.0  # via -r requirements.in
-directory-healthcheck==2.0.0  # via -r requirements.in
-directory-sso-api-client==6.2.0  # via -r requirements.in
-directory-validators==6.0.1  # via -r requirements.in
-django-environ==0.4.5     # via -r requirements.in
-django-formtools==2.1     # via -r requirements.in
+directory-forms-api-client==5.0.0
+directory-healthcheck==2.0.0
+directory-sso-api-client==6.2.0
+directory-validators==6.0.1
+django-environ==0.4.5
+django-formtools==2.1
 django-health-check==3.8.0  # via directory-healthcheck
-django-recaptcha==2.0.5   # via -r requirements.in
-django-redis==4.10.0      # via -r requirements.in
-django-storages==1.7.1    # via -r requirements.in
-django==2.2.10            # via -r requirements.in, directory-api-client, directory-ch-client, directory-client-core, directory-components, directory-constants, directory-healthcheck, directory-validators, django-formtools, django-recaptcha, django-redis, django-storages, sigauth
-djangorestframework==3.9.4  # via -r requirements.in, sigauth
+django-recaptcha==2.0.5
+django-redis==4.10.0
+django-storages==1.7.1
+django==2.2.13
+djangorestframework==3.9.4
 docutils==0.15.2          # via botocore
-gunicorn==19.5.0          # via -r requirements.in
+gunicorn==19.5.0
 idna==2.8                 # via requests
 jmespath==0.9.4           # via boto3, botocore
 jsonschema==3.0.2         # via directory-components
@@ -40,16 +40,16 @@ pyrsistent==0.15.4        # via jsonschema
 python-dateutil==2.8.0    # via botocore
 pytz==2017.2              # via directory-validators, django
 redis==3.3.8              # via django-redis
-requests==2.21.0          # via -r requirements.in, directory-api-client, directory-ch-client, directory-client-core
+requests==2.21.0
 s3transfer==0.1.13        # via boto3
-sentry-sdk==0.13.4        # via -r requirements.in
-sigauth==4.1.0            # via -r requirements.in, directory-client-core
+sentry-sdk==0.13.4
+sigauth==4.1.0
 six==1.12.0               # via jsonschema, mohawk, pyrsistent, python-dateutil, w3lib
 soupsieve==1.9.4          # via beautifulsoup4
 sqlparse==0.3.0           # via django
-urllib3==1.24.3           # via -r requirements.in, directory-validators, requests, sentry-sdk
+urllib3==1.24.3
 w3lib==1.21.0             # via directory-client-core
-whitenoise==4.1.2         # via -r requirements.in
+whitenoise==4.1.2
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
