@@ -4,6 +4,7 @@
 
 ### Implemented enhancements
 ### Fixed bugs
+- No ticket - Upgrade django to fix vulnerability
 
 ## [2020.06.10](https://github.com/uktrade/directory-sso-profile/releases/tag/2020.06.10)
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2020.04.20...2020.06.10)
