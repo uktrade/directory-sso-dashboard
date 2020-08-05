@@ -3,7 +3,8 @@
 ## Pre-Release
 
 ### Implemented enhancements
-
+ - No ticket - Dependencies upgrade
+ 
 ### Fixed bugs
 - TT-2223 - Handle verification letter sent
 - TT-1861 - Improve confusing content on remove from account button

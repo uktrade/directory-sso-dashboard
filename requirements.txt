@@ -18,7 +18,7 @@ directory-constants==20.11.0  # via directory-components
 directory-forms-api-client==5.0.0  # via -r requirements.in
 directory-healthcheck==2.0.0  # via -r requirements.in
 directory-sso-api-client==6.2.0  # via -r requirements.in
-directory-validators==6.0.1  # via -r requirements.in
+directory-validators==6.0.3  # via -r requirements.in
 django-environ==0.4.5     # via -r requirements.in
 django-formtools==2.1     # via -r requirements.in
 django-health-check==3.8.0  # via directory-healthcheck
@@ -35,7 +35,7 @@ jsonschema==3.0.2         # via directory-components
 mohawk==0.3.4             # via sigauth
 monotonic==1.5            # via directory-ch-client, directory-client-core
 olefile==0.44             # via directory-validators
-pillow==6.2.2             # via directory-validators
+pillow==7.2.0             # via directory-validators
 pyrsistent==0.15.4        # via jsonschema
 python-dateutil==2.8.0    # via botocore
 pytz==2017.2              # via directory-validators, django
