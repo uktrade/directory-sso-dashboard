@@ -4,6 +4,7 @@
 
 ### Implemented enhancements
 ### Fixed bugs
+- No ticket - Dependencies upgrade
 - No ticket - Upgrade django to fix vulnerability
 - No ticket - fix stuck codecov
 
