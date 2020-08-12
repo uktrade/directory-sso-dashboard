@@ -9,6 +9,7 @@
 - No ticket - Upgrade django to fix vulnerability
 - No ticket - fix stuck codecov
 - GAA-5 - upgrade-captcha-v3
+- GAA-28 - duplicate h1s
 
 ## [2020.06.10](https://github.com/uktrade/directory-sso-profile/releases/tag/2020.06.10)
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2020.04.20...2020.06.10)
