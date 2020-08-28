@@ -3,6 +3,7 @@
 ## Pre-Release
 
 ### Implemented enhancements
+
 ### Fixed bugs
 - No ticket - Dependencies upgrade
 - No ticket - Upgrade django to fix vulnerability

@@ -6,7 +6,7 @@ pytest-django>=3.5.1<4.0.0
 pytest-sugar
 flake8
 pytest-catchlog
-codecov
+codecov==2.1.7
 freezegun
 pytest-xdist
 codecov==2.1.7
