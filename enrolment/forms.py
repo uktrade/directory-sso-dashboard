@@ -2,6 +2,7 @@ import math
 import re
 
 from captcha.fields import ReCaptchaField
+from captcha.widgets import ReCaptchaV3
 from directory_components import forms
 from directory_constants import choices
 
@@ -102,9 +103,11 @@ class UserAccount(forms.Form):
         label='Confirm password',
         widget=PasswordInput,
     )
+
     captcha = ReCaptchaField(
         label='',
         label_suffix='',
+        widget=ReCaptchaV3()
     )
     terms_agreed = forms.BooleanField(label=TERMS_LABEL)
 

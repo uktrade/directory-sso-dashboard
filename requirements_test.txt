@@ -29,7 +29,7 @@ django-health-check==3.8.0  # via -r requirements.txt, directory-healthcheck
 django-recaptcha==2.0.5   # via -r requirements.txt
 django-redis==4.10.0      # via -r requirements.txt
 django-storages==1.7.1    # via -r requirements.txt
-django==2.2.10            # via -r requirements.txt, directory-api-client, directory-ch-client, directory-client-core, directory-components, directory-constants, directory-healthcheck, directory-validators, django-formtools, django-recaptcha, django-redis, django-storages, sigauth
+django==2.2.13            # via -r requirements.txt, directory-api-client, directory-ch-client, directory-client-core, directory-components, directory-constants, directory-healthcheck, directory-validators, django-formtools, django-recaptcha, django-redis, django-storages, sigauth
 djangorestframework==3.9.4  # via -r requirements.txt, sigauth
 docutils==0.15.2          # via -r requirements.txt, botocore
 entrypoints==0.3          # via flake8

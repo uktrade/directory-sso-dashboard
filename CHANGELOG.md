@@ -3,8 +3,16 @@
 ## Pre-Release
 
 ### Implemented enhancements
- - No ticket - Dependencies upgrade
- 
+
+### Fixed bugs
+- No ticket - Dependencies upgrade
+- No ticket - Upgrade django to fix vulnerability
+- No ticket - fix stuck codecov
+- GAA-5 - upgrade-captcha-v3
+
+## [2020.06.10](https://github.com/uktrade/directory-sso-profile/releases/tag/2020.06.10)
+[Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2020.04.20...2020.06.10)
+
 ### Fixed bugs
 - TT-2223 - Handle verification letter sent
 - TT-1861 - Improve confusing content on remove from account button
