@@ -9,3 +9,4 @@ pytest-catchlog
 codecov==2.1.7
 freezegun
 pytest-xdist
+codecov==2.1.7

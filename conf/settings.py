@@ -292,6 +292,7 @@ REST_FRAMEWORK = {
 # Google captcha
 RECAPTCHA_PUBLIC_KEY = env.str('RECAPTCHA_PUBLIC_KEY')
 RECAPTCHA_PRIVATE_KEY = env.str('RECAPTCHA_PRIVATE_KEY')
+RECAPTCHA_REQUIRED_SCORE = env.int('RECAPTCHA_REQUIRED_SCORE', 0.5)
 # NOCAPTCHA = True turns on version 2 of recaptcha
 NOCAPTCHA = env.bool('NOCAPTCHA', True)
 SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
