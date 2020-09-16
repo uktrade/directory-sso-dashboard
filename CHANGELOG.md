@@ -5,6 +5,10 @@
 ### Implemented enhancements
 
 ### Fixed bugs
+
+## [2020.09.16](https://github.com/uktrade/directory-sso-profile/releases/tag/2020.09.16)
+[Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2020.06.10...2020.09.16)
+### Fixed bugs
 - No ticket - Dependencies upgrade
 - No ticket - Upgrade django to fix vulnerability
 - No ticket - fix stuck codecov
