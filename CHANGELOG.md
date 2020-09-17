@@ -5,6 +5,7 @@
 ### Implemented enhancements
 
 ### Fixed bugs
+- GAA-27 - directory-components version bump
 
 ## [2020.09.16](https://github.com/uktrade/directory-sso-profile/releases/tag/2020.09.16)
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2020.06.10...2020.09.16)
