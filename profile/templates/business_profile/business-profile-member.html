@@ -30,7 +30,7 @@
                 </div>
                 {% if company %}
                 <div class="margin-top-30 margin-bottom-30">
-                    <h1 class="heading-large">{{ company.name }} business profile already exists</h1>
+                    <h2 class="heading-large">{{ company.name }} business profile already exists</h2>
 
                     <p>
                         A profile for this business was created on {{ company.created|parse_date:"%Y-%m-%dT%H:%M:%S.%fZ"|date:"M d, Y" }} at {{ company.created|parse_date:"%Y-%m-%dT%H:%M:%S.%fZ"|time:"g:i A" }}.
@@ -62,13 +62,13 @@
                 <div class="grid-row">
                     <div class="column-two-thirds">
                         {% if has_admin_request %}
-                            <h1 class="heading-large margin-top-0">Your request is awaiting approval</h1>
+                            <h2 class="heading-large margin-top-0">Your request is awaiting approval</h2>
                             <p>We'll let you know when you've been given approval.</p>
                             <form method="post" enctype="multipart/form-data" class="no-default-margin" novalidate="novalidate">
                                 You can <button type="submit" class="link" name="{{ form.action.name }}" value="{{ form.SEND_REMINDER }}">resend request</button> or if you are having problems please <a class="link" href="{{ contact_us_url }}">Contact us</a>.
                             </form>
                         {% else %}
-                            <h1 class="heading-large margin-top-0">You can request to become administrator for the business profile</h1>
+                            <h2 class="heading-large margin-top-0">You can request to become administrator for the business profile</h2>
                             <p>You can send a request to the business profile administrators, so they can give you permission to add or change information about the business. We'll let you know when they do.</p>
                             <form method="post" enctype="multipart/form-data" class="no-default-margin" novalidate="novalidate">
                                 <button type="submit" class="button padding-left-90 padding-right-90" value="{{ form.SEND_REQUEST}}" name="{{ form.action.name }}">Request</button>
