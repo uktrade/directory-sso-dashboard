@@ -3,7 +3,8 @@
 ## Pre-Release
 
 ### Implemented enhancements
-
+ - No ticket - Dependencies upgrade
+ 
 ### Fixed bugs
 - GAA-27 - directory-components version bump
 
