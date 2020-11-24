@@ -11,6 +11,17 @@
 ## [2020.09.16](https://github.com/uktrade/directory-sso-profile/releases/tag/2020.09.16)
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2020.06.10...2020.09.16)
 ### Fixed bugs
+
+## [1.0.0](https://github.com/uktrade/directory-sso-profile/releases/tag/1.0.0)
+[Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2020.09.16...1.0.0)
+
+### Fixed bugs
+- GAA-27 - directory-components version bump
+- No Ticket fix typo on registration
+
+## [2020.09.16](https://github.com/uktrade/directory-sso-profile/releases/tag/2020.09.16)
+[Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2020.06.10...2020.09.16)
+### Fixed bugs
 - No ticket - Dependencies upgrade
 - No ticket - Upgrade django to fix vulnerability
 - No ticket - fix stuck codecov
