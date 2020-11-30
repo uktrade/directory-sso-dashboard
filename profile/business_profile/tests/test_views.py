@@ -1146,3 +1146,31 @@ def test_fab_redirect_landing(client, user):
 
     assert response.status_code == 302
     assert response.url == urls.domestic.SINGLE_SIGN_ON_PROFILE / 'business-profile/'
+
+
+def _check_template_use(response, template_name):
+    for template in response.templates:
+        if template.name == template_name:
+            return
+
+    assert False, f'Did not find template {template_name} in use in response'
+
+
+@mock.patch.object(api_client.supplier, 'disconnect_from_company')
+def test_business_user_disconnect(mock_disconnect_from_company, client, user):
+    mock_disconnect_from_company.return_value = create_response()
+    client.force_login(user)
+
+    url = reverse('disconnect-account')
+
+    # Quick check of GET
+    response = client.get(url)
+    _check_template_use(response, 'business_profile/disconnect-from-company.html')
+
+    response = client.post(url, follow=True)
+
+    assert mock_disconnect_from_company.call_count == 1
+    assert mock_disconnect_from_company.call_args == mock.call(user.session_id)
+
+    assert response.status_code == 200
+    assert response.redirect_chain == [('/profile/business-profile/', 302)]
