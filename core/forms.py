@@ -1,8 +1,6 @@
-from directory_constants import urls
 from directory_components import forms
-
+from directory_constants import urls
 from django.utils.safestring import mark_safe
-
 
 TERMS_LABEL = mark_safe(
     'Tick this box to accept the '
@@ -13,17 +11,10 @@ TERMS_LABEL = mark_safe(
 
 class PersonalDetails(forms.Form):
 
-    given_name = forms.CharField(
-        label='First name',
-    )
-    family_name = forms.CharField(
-        label='Last name',
-    )
+    given_name = forms.CharField(label='First name')
+    family_name = forms.CharField(label='Last name')
     job_title = forms.CharField()
-    phone_number = forms.CharField(
-        label='Phone number (optional)',
-        required=False
-    )
+    phone_number = forms.CharField(label='Phone number (optional)', required=False)
     confirmed_is_company_representative = forms.BooleanField(
         label=(
             'I confirm that I have the right to act for this business. I '

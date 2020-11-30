@@ -1,21 +1,19 @@
-from io import BytesIO
 import http
+from io import BytesIO
+from profile.business_profile import constants, forms, helpers, views
 from unittest import mock
 
-from directory_constants import user_roles
-from directory_api_client.client import api_client
-from formtools.wizard.views import normalize_name
 import pytest
+from directory_api_client.client import api_client
+from directory_constants import urls, user_roles
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.forms.forms import NON_FIELD_ERRORS
+from django.urls import reverse
+from formtools.wizard.views import normalize_name
 from PIL import Image, ImageDraw
 from requests.exceptions import HTTPError
 
-from django.core.files.uploadedfile import SimpleUploadedFile
-from django.urls import reverse
-from django.forms.forms import NON_FIELD_ERRORS
-
 from core.tests.helpers import create_response, submit_step_factory
-from profile.business_profile import constants, forms, helpers, views
-from directory_constants import urls
 
 
 def create_test_image(extension):
@@ -39,7 +37,7 @@ def company_profile_data():
         'number': '1234567',
         'slug': 'cool-company',
         'created': '2012-06-15T13:45:30.00000Z',
-        'modified': '2019-04-05T06:43:23.00000Z'
+        'modified': '2019-04-05T06:43:23.00000Z',
     }
 
 
@@ -57,8 +55,7 @@ def default_private_case_study(case_study_data):
 @pytest.fixture(autouse=True)
 def mock_case_study_retrieve(default_private_case_study):
     patch = mock.patch.object(
-        api_client.company, 'case_study_retrieve',
-        return_value=create_response(default_private_case_study)
+        api_client.company, 'case_study_retrieve', return_value=create_response(default_private_case_study)
     )
     yield patch.start()
     patch.stop()
@@ -96,8 +93,9 @@ def mock_update_company():
 @pytest.fixture(autouse=True)
 def mock_retrieve_supplier():
     patch = mock.patch.object(
-        api_client.supplier, 'retrieve_profile',
-        return_value=create_response({'is_company_owner': True, 'role': user_roles.ADMIN})
+        api_client.supplier,
+        'retrieve_profile',
+        return_value=create_response({'is_company_owner': True, 'role': user_roles.ADMIN}),
     )
     yield patch.start()
     patch.stop()
@@ -112,10 +110,12 @@ def mock_collaborator_role_update():
 
 @pytest.fixture(autouse=True)
 def mock_collaborator_list(user):
-    response = create_response([
-        {'sso_id': user.id, 'role': user_roles.ADMIN, 'company_email': user.email, 'name': 'jim example', },
-        {'sso_id': 1234, 'role': user_roles.EDITOR, 'company_email': 'jim@example.com', 'name': 'bob example', }
-    ])
+    response = create_response(
+        [
+            {'sso_id': user.id, 'role': user_roles.ADMIN, 'company_email': user.email, 'name': 'jim example'},
+            {'sso_id': 1234, 'role': user_roles.EDITOR, 'company_email': 'jim@example.com', 'name': 'bob example'},
+        ]
+    )
     patch = mock.patch.object(api_client.company, 'collaborator_list', return_value=response)
     yield patch.start()
     patch.stop()
@@ -123,10 +123,12 @@ def mock_collaborator_list(user):
 
 @pytest.fixture(autouse=True)
 def mock_collaboration_request_list(user):
-    response = create_response([
-        {'requestor_sso_id': user.id, 'uuid': 1234, 'name': 'jim example', 'accepted': False, },
-        {'requestor_sso_id': 1234, 'uuid': 1234,  'name': 'bob example', 'accepted': False, }
-    ])
+    response = create_response(
+        [
+            {'requestor_sso_id': user.id, 'uuid': 1234, 'name': 'jim example', 'accepted': False},
+            {'requestor_sso_id': 1234, 'uuid': 1234, 'name': 'bob example', 'accepted': False},
+        ]
+    )
     patch = mock.patch.object(api_client.company, 'collaboration_request_list', return_value=response)
     yield patch.start()
     patch.stop()
@@ -134,18 +136,20 @@ def mock_collaboration_request_list(user):
 
 @pytest.fixture(autouse=True)
 def mock_collaborator_invite_list(user):
-    response = create_response([
-        {
-            'uuid': '7b4f5c1d-a299-4cb7-aa8e-261101c643de',
-            'collaborator_email': 'jim@example.com',
-            'company': 1,
-            'requestor': 2,
-            'requestor_email': 'requestor@testme.com',
-            'requestor_sso_id': 3,
-            'accepted': False,
-            'role': user_roles.EDITOR,
-        }
-    ])
+    response = create_response(
+        [
+            {
+                'uuid': '7b4f5c1d-a299-4cb7-aa8e-261101c643de',
+                'collaborator_email': 'jim@example.com',
+                'company': 1,
+                'requestor': 2,
+                'requestor_email': 'requestor@testme.com',
+                'requestor_sso_id': 3,
+                'accepted': False,
+                'role': user_roles.EDITOR,
+            }
+        ]
+    )
     patch = mock.patch.object(api_client.company, 'collaborator_invite_list', return_value=response)
     yield patch.start()
     patch.stop()
@@ -154,9 +158,7 @@ def mock_collaborator_invite_list(user):
 @pytest.fixture
 def submit_case_study_create_step(client):
     return submit_step_factory(
-        client=client,
-        url_name='business-profile-case-study',
-        view_class=views.CaseStudyWizardCreateView,
+        client=client, url_name='business-profile-case-study', view_class=views.CaseStudyWizardCreateView
     )
 
 
@@ -174,11 +176,9 @@ def submit_case_study_edit_step(client):
         assert response.status_code == 200
         return client.post(
             url,
-            {
-                view_name + '-current_step': step_name,
-                **{step_name + '-' + key: value for key, value in data.items()}
-            },
+            {view_name + '-current_step': step_name, **{step_name + '-' + key: value for key, value in data.items()}},
         )
+
     return submit_step
 
 
@@ -199,20 +199,16 @@ def case_study_data():
             'testimonial_job_title': 'Abstract hat maker',
             'testimonial_company': 'Imaginary hats Ltd',
             'image_one': SimpleUploadedFile(
-                name='image-one.png',
-                content=create_test_image('png').read(),
-                content_type='image/png',
+                name='image-one.png', content=create_test_image('png').read(), content_type='image/png'
             ),
             'image_two': SimpleUploadedFile(
-                name='image-two.png',
-                content=create_test_image('png').read(),
-                content_type='image/png',
+                name='image-two.png', content=create_test_image('png').read(), content_type='image/png'
             ),
             'image_three': '',
             'image_one_caption': 'nice image',
             'image_two_caption': 'thing',
             'image_three_caption': 'thing',
-        }
+        },
     }
 
 
@@ -225,9 +221,7 @@ def test_find_a_buyer_unauthenticated_enrolment(client):
     assert response.url == f'{enrolment_url}?next={profile_url}'
 
 
-def test_supplier_company_retrieve_found_business_profile_on(
-    mock_retrieve_company, client, company_profile_data, user
-):
+def test_supplier_company_retrieve_found_business_profile_on(mock_retrieve_company, client, company_profile_data, user):
     client.force_login(user)
     mock_retrieve_company.return_value = create_response(company_profile_data)
 
@@ -280,9 +274,7 @@ def test_edit_page_initial_data(client, url, company_profile_data, user):
     company = helpers.CompanyParser(company_profile_data)
 
     response = client.get(url)
-    assert response.context_data['form'].initial == (
-        company.serialize_for_form()
-    )
+    assert response.context_data['form'].initial == (company.serialize_for_form())
 
 
 success_urls = (
@@ -297,22 +289,15 @@ success_urls = (
 )
 
 
-@pytest.mark.parametrize(
-    'url,data,success_url', zip(edit_urls, edit_data, success_urls)
-)
-def test_edit_page_submmit_success(
-    client, mock_update_company, user, url, data, success_url
-):
+@pytest.mark.parametrize('url,data,success_url', zip(edit_urls, edit_data, success_urls))
+def test_edit_page_submmit_success(client, mock_update_company, user, url, data, success_url):
     client.force_login(user)
     response = client.post(url, data)
 
     assert response.status_code == 302
     assert response.url == success_url
     assert mock_update_company.call_count == 1
-    assert mock_update_company.call_args == mock.call(
-        sso_session_id=user.session_id,
-        data=data
-    )
+    assert mock_update_company.call_args == mock.call(sso_session_id=user.session_id, data=data)
 
 
 def test_publish_not_publishable(client, user, mock_retrieve_company, company_profile_data):
@@ -339,19 +324,13 @@ def test_publish_publishable(client, user, mock_retrieve_company):
 def test_edit_page_submmit_publish_success(client, mock_update_company, user):
     client.force_login(user)
     url = reverse('business-profile-publish')
-    data = {
-        'is_published_investment_support_directory': True,
-        'is_published_find_a_supplier': True,
-    }
+    data = {'is_published_investment_support_directory': True, 'is_published_find_a_supplier': True}
     response = client.post(url, data)
 
     assert response.status_code == 302
     assert response.url == reverse('business-profile')
     assert mock_update_company.call_count == 1
-    assert mock_update_company.call_args == mock.call(
-        sso_session_id=user.session_id,
-        data=data
-    )
+    assert mock_update_company.call_args == mock.call(sso_session_id=user.session_id, data=data)
 
 
 def test_edit_page_submmit_publish_context(client, company_profile_data, user):
@@ -369,11 +348,7 @@ def test_edit_page_logo_submmit_success(client, mock_update_company, user):
     client.force_login(user)
     url = reverse('business-profile-logo')
     data = {
-        'logo': SimpleUploadedFile(
-            name='image.png',
-            content=create_test_image('png').read(),
-            content_type='image/png',
-        )
+        'logo': SimpleUploadedFile(name='image.png', content=create_test_image('png').read(), content_type='image/png')
     }
 
     response = client.post(url, data)
@@ -381,16 +356,11 @@ def test_edit_page_logo_submmit_success(client, mock_update_company, user):
     assert response.status_code == 302
     assert response.url == reverse('business-profile')
     assert mock_update_company.call_count == 1
-    assert mock_update_company.call_args == mock.call(
-        sso_session_id=user.session_id,
-        data={'logo': mock.ANY}
-    )
+    assert mock_update_company.call_args == mock.call(sso_session_id=user.session_id, data={'logo': mock.ANY})
 
 
 @pytest.mark.parametrize('url,data', zip(edit_urls, edit_data))
-def test_edit_page_submmit_error(
-    client, mock_update_company, url, data, user
-):
+def test_edit_page_submmit_error(client, mock_update_company, url, data, user):
     client.force_login(user)
     mock_update_company.return_value = create_response(status_code=400)
 
@@ -398,10 +368,7 @@ def test_edit_page_submmit_error(
         client.post(url, data)
 
 
-def test_case_study_create(
-    submit_case_study_create_step, mock_case_study_create, case_study_data,
-    client, user
-):
+def test_case_study_create(submit_case_study_create_step, mock_case_study_create, case_study_data, client, user):
     client.force_login(user)
 
     response = submit_case_study_create_step(case_study_data[views.BASIC])
@@ -418,9 +385,14 @@ def test_case_study_create(
 
 
 def test_case_study_edit_foo(
-    submit_case_study_edit_step, mock_case_study_retrieve, client,
-    mock_case_study_update, case_study_data,
-    default_private_case_study, user, rf
+    submit_case_study_edit_step,
+    mock_case_study_retrieve,
+    client,
+    mock_case_study_update,
+    case_study_data,
+    default_private_case_study,
+    user,
+    rf,
 ):
     client.force_login(user)
 
@@ -434,51 +406,33 @@ def test_case_study_edit_foo(
 
     assert response.url == reverse('business-profile')
     assert mock_case_study_update.call_count == 1
-    data = {
-        **default_private_case_study,
-        'image_one': mock.ANY,
-        'image_two': mock.ANY,
-    }
+    data = {**default_private_case_study, 'image_one': mock.ANY, 'image_two': mock.ANY}
     del data['image_three']
 
-    assert mock_case_study_update.call_args == mock.call(
-        case_study_id='1',
-        data=data,
-        sso_session_id='123'
-    )
+    assert mock_case_study_update.call_args == mock.call(case_study_id='1', data=data, sso_session_id='123')
 
 
-def test_case_study_edit_not_found(
-    mock_case_study_retrieve, client, user
-):
+def test_case_study_edit_not_found(mock_case_study_retrieve, client, user):
     mock_case_study_retrieve.return_value = create_response(status_code=404)
 
     client.force_login(user)
-    url = reverse(
-        'business-profile-case-study-edit', kwargs={'id': '1', 'step': views.BASIC}
-    )
+    url = reverse('business-profile-case-study-edit', kwargs={'id': '1', 'step': views.BASIC})
 
     response = client.get(url)
 
     assert response.status_code == 404
 
 
-def test_case_study_edit_found(
-    mock_case_study_retrieve, client, user
-):
+def test_case_study_edit_found(mock_case_study_retrieve, client, user):
     client.force_login(user)
-    url = reverse(
-        'business-profile-case-study-edit', kwargs={'id': '1', 'step': views.BASIC}
-    )
+    url = reverse('business-profile-case-study-edit', kwargs={'id': '1', 'step': views.BASIC})
 
     response = client.get(url)
 
     assert response.status_code == 200
 
 
-def test_business_details_sole_trader(
-    settings, mock_retrieve_company, client, user
-):
+def test_business_details_sole_trader(settings, mock_retrieve_company, client, user):
     client.force_login(user)
     mock_retrieve_company.return_value = create_response({'company_type': 'SOLE_TRADER'})
 
@@ -487,15 +441,10 @@ def test_business_details_sole_trader(
     response = client.get(url)
 
     assert response.status_code == 200
-    assert isinstance(
-        response.context_data['form'],
-        forms.NonCompaniesHouseBusinessDetailsForm
-    )
+    assert isinstance(response.context_data['form'], forms.NonCompaniesHouseBusinessDetailsForm)
 
 
-def test_business_details_companies_house(
-    settings, client, mock_retrieve_company, user
-):
+def test_business_details_companies_house(settings, client, mock_retrieve_company, user):
     client.force_login(user)
     mock_retrieve_company.return_value = create_response({'company_type': 'COMPANIES_HOUSE'})
 
@@ -504,29 +453,18 @@ def test_business_details_companies_house(
     response = client.get(url)
 
     assert response.status_code == 200
-    assert isinstance(
-        response.context_data['form'], forms.CompaniesHouseBusinessDetailsForm
-    )
+    assert isinstance(response.context_data['form'], forms.CompaniesHouseBusinessDetailsForm)
 
 
-@pytest.mark.parametrize('choice,expected_url', (
+@pytest.mark.parametrize(
+    'choice,expected_url',
     (
-        forms.ExpertiseRoutingForm.REGION,
-        reverse('business-profile-expertise-regional')
+        (forms.ExpertiseRoutingForm.REGION, reverse('business-profile-expertise-regional')),
+        (forms.ExpertiseRoutingForm.COUNTRY, reverse('business-profile-expertise-countries')),
+        (forms.ExpertiseRoutingForm.INDUSTRY, reverse('business-profile-expertise-industries')),
+        (forms.ExpertiseRoutingForm.LANGUAGE, reverse('business-profile-expertise-languages')),
     ),
-    (
-        forms.ExpertiseRoutingForm.COUNTRY,
-        reverse('business-profile-expertise-countries'),
-    ),
-    (
-        forms.ExpertiseRoutingForm.INDUSTRY,
-        reverse('business-profile-expertise-industries'),
-    ),
-    (
-        forms.ExpertiseRoutingForm.LANGUAGE,
-        reverse('business-profile-expertise-languages'),
-    ),
-))
+)
 def test_add_expertise_routing(settings, choice, expected_url, client, user):
     client.force_login(user)
 
@@ -561,9 +499,7 @@ def test_expertise_products_services_routing_form_context(client, settings, comp
     assert response.context_data['company'] == company.serialize_for_template()
 
 
-@pytest.mark.parametrize('choice', (
-    item for item, _ in forms.ExpertiseProductsServicesRoutingForm.CHOICES if item
-))
+@pytest.mark.parametrize('choice', (item for item, _ in forms.ExpertiseProductsServicesRoutingForm.CHOICES if item))
 def test_expertise_products_services_routing_form(choice, client, settings, user):
     client.force_login(user)
 
@@ -571,150 +507,106 @@ def test_expertise_products_services_routing_form(choice, client, settings, user
 
     response = client.post(url, {'choice': choice})
 
-    assert response.url == reverse(
-        'business-profile-expertise-products-services',
-        kwargs={'category': choice}
-    )
+    assert response.url == reverse('business-profile-expertise-products-services', kwargs={'category': choice})
 
 
 def test_products_services_form_prepopulate(mock_retrieve_company, company_profile_data, client, user):
     client.force_login(user)
-    mock_retrieve_company.return_value = create_response({
-        **company_profile_data,
-        'expertise_products_services': {
-            constants.LEGAL: [
-                'Company incorporation',
-                'Employment',
-            ],
-            constants.PUBLICITY: [
-                'Public Relations',
-                'Branding',
-            ]
+    mock_retrieve_company.return_value = create_response(
+        {
+            **company_profile_data,
+            'expertise_products_services': {
+                constants.LEGAL: ['Company incorporation', 'Employment'],
+                constants.PUBLICITY: ['Public Relations', 'Branding'],
+            },
         }
-    })
-
-    url = reverse(
-        'business-profile-expertise-products-services',
-        kwargs={'category': constants.PUBLICITY}
     )
+
+    url = reverse('business-profile-expertise-products-services', kwargs={'category': constants.PUBLICITY})
     response = client.get(url)
 
-    assert response.context_data['form'].initial == {
-        'expertise_products_services': 'Public Relations|Branding'
-    }
+    assert response.context_data['form'].initial == {'expertise_products_services': 'Public Relations|Branding'}
 
 
 def test_products_services_other_form(mock_retrieve_company, company_profile_data, client, user):
     client.force_login(user)
-    mock_retrieve_company.return_value = create_response({
-        **company_profile_data,
-        'expertise_products_services': {
-            constants.LEGAL: [
-                'Company incorporation',
-                'Employment',
-            ],
-            constants.OTHER: [
-                'Foo',
-                'Bar',
-            ]
+    mock_retrieve_company.return_value = create_response(
+        {
+            **company_profile_data,
+            'expertise_products_services': {
+                constants.LEGAL: ['Company incorporation', 'Employment'],
+                constants.OTHER: ['Foo', 'Bar'],
+            },
         }
-    })
+    )
 
     url = reverse('business-profile-expertise-products-services-other')
     response = client.get(url)
 
-    assert response.context_data['form'].initial == {
-        'expertise_products_services': 'Foo, Bar'
-    }
+    assert response.context_data['form'].initial == {'expertise_products_services': 'Foo, Bar'}
 
 
 def test_products_services_other_form_update(
     client, mock_retrieve_company, mock_update_company, user, company_profile_data
 ):
     client.force_login(user)
-    mock_retrieve_company.return_value = create_response({
-        **company_profile_data,
-        'expertise_products_services': {
-            constants.LEGAL: [
-                'Company incorporation',
-                'Employment',
-            ],
-            constants.OTHER: [
-                'Foo',
-                'Bar',
-            ]
+    mock_retrieve_company.return_value = create_response(
+        {
+            **company_profile_data,
+            'expertise_products_services': {
+                constants.LEGAL: ['Company incorporation', 'Employment'],
+                constants.OTHER: ['Foo', 'Bar'],
+            },
         }
-    })
+    )
 
     url = reverse('business-profile-expertise-products-services-other')
 
-    client.post(
-        url,
-        {'expertise_products_services': 'Baz,Zad'}
-    )
+    client.post(url, {'expertise_products_services': 'Baz,Zad'})
 
     assert mock_update_company.call_count == 1
     assert mock_update_company.call_args == mock.call(
         data={
             'expertise_products_services': {
-                constants.LEGAL: [
-                    'Company incorporation',
-                    'Employment',
-                ],
-                constants.OTHER: ['Baz', 'Zad']
+                constants.LEGAL: ['Company incorporation', 'Employment'],
+                constants.OTHER: ['Baz', 'Zad'],
             }
         },
-        sso_session_id='123'
+        sso_session_id='123',
     )
 
 
 def test_products_services_form_update(client, mock_retrieve_company, mock_update_company, user, company_profile_data):
     client.force_login(user)
-    mock_retrieve_company.return_value = create_response({
-        **company_profile_data,
-        'expertise_products_services': {
-            constants.LEGAL: [
-                'Company incorporation',
-                'Employment',
-            ],
-            constants.PUBLICITY: [
-                'Public Relations',
-                'Branding',
-            ]
+    mock_retrieve_company.return_value = create_response(
+        {
+            **company_profile_data,
+            'expertise_products_services': {
+                constants.LEGAL: ['Company incorporation', 'Employment'],
+                constants.PUBLICITY: ['Public Relations', 'Branding'],
+            },
         }
-    })
+    )
 
-    url = reverse(
-        'business-profile-expertise-products-services',
-        kwargs={'category': constants.PUBLICITY}
-    )
-    client.post(
-        url,
-        {'expertise_products_services': ['Social Media']}
-    )
+    url = reverse('business-profile-expertise-products-services', kwargs={'category': constants.PUBLICITY})
+    client.post(url, {'expertise_products_services': ['Social Media']})
 
     assert mock_update_company.call_count == 1
     assert mock_update_company.call_args == mock.call(
         data={
             'expertise_products_services': {
-                constants.LEGAL: [
-                    'Company incorporation',
-                    'Employment'
-                ],
-                constants.PUBLICITY: ['Social Media']
+                constants.LEGAL: ['Company incorporation', 'Employment'],
+                constants.PUBLICITY: ['Social Media'],
             }
         },
-        sso_session_id='123'
+        sso_session_id='123',
     )
 
 
 def test_products_services_exposes_category(client, user):
     client.force_login(user)
 
-    url = reverse(
-        'business-profile-expertise-products-services',
-        kwargs={'category': constants.BUSINESS_SUPPORT}
-    )
+    url = reverse('business-profile-expertise-products-services', kwargs={'category': constants.BUSINESS_SUPPORT})
     response = client.get(url)
 
     assert response.context_data['category'] == 'business support'
@@ -738,12 +630,7 @@ def test_personal_details(client, mock_create_user_profile, user):
     assert mock_create_user_profile.call_count == 1
     assert mock_create_user_profile.call_args == mock.call(
         sso_session_id=user.session_id,
-        data={
-            'first_name': 'Foo',
-            'last_name': 'Example',
-            'job_title': 'Exampler',
-            'mobile_phone_number': '1232342'
-        }
+        data={'first_name': 'Foo', 'last_name': 'Example', 'job_title': 'Exampler', 'mobile_phone_number': '1232342'},
     )
 
 
@@ -836,10 +723,12 @@ def test_edit_collaborator_retrieve(client, user):
 
 @pytest.mark.parametrize('action', (forms.CHANGE_COLLABORATOR_TO_MEMBER, forms.CHANGE_COLLABORATOR_TO_ADMIN))
 def test_edit_collaborator_change_editor_to_other(mock_collaborator_list, client, user, action):
-    mock_collaborator_list.return_value = create_response([
-        {'sso_id': user.id, 'role': user_roles.ADMIN, 'company_email': user.email},
-        {'sso_id': 1234, 'role': user_roles.EDITOR, 'company_email': 'jim@example.com'}
-    ])
+    mock_collaborator_list.return_value = create_response(
+        [
+            {'sso_id': user.id, 'role': user_roles.ADMIN, 'company_email': user.email},
+            {'sso_id': 1234, 'role': user_roles.EDITOR, 'company_email': 'jim@example.com'},
+        ]
+    )
     client.force_login(user)
 
     url = reverse('business-profile-admin-collaborator-edit', kwargs={'sso_id': 1234})
@@ -851,10 +740,12 @@ def test_edit_collaborator_change_editor_to_other(mock_collaborator_list, client
 
 @pytest.mark.parametrize('action', [forms.CHANGE_COLLABORATOR_TO_ADMIN])
 def test_edit_collaborator_change_member_to_other(mock_collaborator_list, client, user, action):
-    mock_collaborator_list.return_value = create_response([
-        {'sso_id': user.id, 'role': user_roles.ADMIN, 'company_email': user.email},
-        {'sso_id': 1234, 'role': user_roles.MEMBER, 'company_email': 'jim@example.com'}
-    ])
+    mock_collaborator_list.return_value = create_response(
+        [
+            {'sso_id': user.id, 'role': user_roles.ADMIN, 'company_email': user.email},
+            {'sso_id': 1234, 'role': user_roles.MEMBER, 'company_email': 'jim@example.com'},
+        ]
+    )
     client.force_login(user)
 
     url = reverse('business-profile-admin-collaborator-edit', kwargs={'sso_id': 1234})
@@ -866,10 +757,12 @@ def test_edit_collaborator_change_member_to_other(mock_collaborator_list, client
 
 @pytest.mark.parametrize('action', [forms.CHANGE_COLLABORATOR_TO_MEMBER])
 def test_edit_collaborator_change_admin_to_other(mock_collaborator_list, client, user, action):
-    mock_collaborator_list.return_value = create_response([
-        {'sso_id': user.id, 'role': user_roles.ADMIN, 'company_email': user.email},
-        {'sso_id': 1234, 'role': user_roles.ADMIN, 'company_email': 'jim@example.com'}
-    ])
+    mock_collaborator_list.return_value = create_response(
+        [
+            {'sso_id': user.id, 'role': user_roles.ADMIN, 'company_email': user.email},
+            {'sso_id': 1234, 'role': user_roles.ADMIN, 'company_email': 'jim@example.com'},
+        ]
+    )
     client.force_login(user)
 
     url = reverse('business-profile-admin-collaborator-edit', kwargs={'sso_id': 1234})
@@ -933,11 +826,11 @@ def test_admin_disconnect(mock_disconnect_from_company, client, user):
     assert mock_disconnect_from_company.call_args == mock.call(user.session_id)
 
 
-@pytest.mark.parametrize('count,expected', ((1, True), (2, False),))
+@pytest.mark.parametrize('count,expected', ((1, True), (2, False)))
 def test_admin_disconnect_is_sole_collaborator(mock_collaborator_list, count, expected, client, user):
     collaborators = [
         {'sso_id': user.id, 'role': user_roles.ADMIN, 'company_email': user.email},
-        {'sso_id': 1234, 'role': user_roles.ADMIN, 'company_email': 'jim@example.com'}
+        {'sso_id': 1234, 'role': user_roles.ADMIN, 'company_email': 'jim@example.com'},
     ]
     mock_collaborator_list.return_value = create_response(collaborators[:count])
     client.force_login(user)
@@ -1014,11 +907,14 @@ def test_admin_invite_administrator_change_role(mock_collaborator_role_update, c
     )
 
 
-@pytest.mark.parametrize('url', (
-    reverse('business-profile-admin-invite-administrator'),
-    reverse('business-profile-admin-invite-collaborator'),
-    reverse('business-profile-admin-collaborator-edit', kwargs={'sso_id': '123'})
-))
+@pytest.mark.parametrize(
+    'url',
+    (
+        reverse('business-profile-admin-invite-administrator'),
+        reverse('business-profile-admin-invite-collaborator'),
+        reverse('business-profile-admin-collaborator-edit', kwargs={'sso_id': '123'}),
+    ),
+)
 def test_admin_not_admin_role(mock_retrieve_supplier, client, user, url):
     mock_retrieve_supplier.return_value = create_response({'is_company_owner': False, 'role': user_roles.EDITOR})
     client.force_login(user)
@@ -1029,13 +925,16 @@ def test_admin_not_admin_role(mock_retrieve_supplier, client, user, url):
     assert response.url.startswith(reverse('business-profile'))
 
 
-@pytest.mark.parametrize('url', (
-    reverse('business-profile-admin-invite-administrator'),
-    reverse('business-profile-admin-invite-collaborator'),
-    reverse('business-profile-admin-collaborator-edit', kwargs={'sso_id': '123'}),
-    reverse('business-profile-admin-tools'),
-    reverse('business-profile-admin-disconnect'),
-))
+@pytest.mark.parametrize(
+    'url',
+    (
+        reverse('business-profile-admin-invite-administrator'),
+        reverse('business-profile-admin-invite-collaborator'),
+        reverse('business-profile-admin-collaborator-edit', kwargs={'sso_id': '123'}),
+        reverse('business-profile-admin-tools'),
+        reverse('business-profile-admin-disconnect'),
+    ),
+)
 def test_admin_anon_user(client, settings, url):
     response = client.get(url)
 
@@ -1164,7 +1063,7 @@ def test_member_send_admin_reminder(mock_collaboration_request_notify, client, u
             'company_name': user.company.data['name'],
             'name': user.full_name,
             'email': user.email,
-            'login_url': 'http://testserver/profile/business-profile/admin/'
+            'login_url': 'http://testserver/profile/business-profile/admin/',
         },
         form_url=reverse('business-profile'),
         sso_session_id=user.session_id,
@@ -1178,7 +1077,7 @@ def test_member_send_admin_request_error(mock_collaboration_request_create, clie
 
     url = reverse('business-profile')
     with pytest.raises(HTTPError):
-        client.post(url,  {'action': 'send_request'})
+        client.post(url, {'action': 'send_request'})
 
 
 @mock.patch.object(api_client.company, 'collaboration_request_create')
@@ -1188,7 +1087,7 @@ def test_member_send_admin_request_error_400(mock_collaboration_request_create, 
     client.force_login(user)
 
     url = reverse('business-profile')
-    response = client.post(url,  {'action': 'send_request'})
+    response = client.post(url, {'action': 'send_request'})
     assert response.status_code == 200
     assert response.context_data['form'].is_valid() is False
     assert response.context_data['form'].errors == {NON_FIELD_ERRORS: errors}

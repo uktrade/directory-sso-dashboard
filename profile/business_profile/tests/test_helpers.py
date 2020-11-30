@@ -1,19 +1,22 @@
+from profile.business_profile import helpers
 from unittest import mock
 
+import pytest
 from directory_api_client import api_client
 from directory_constants import company_types
-import pytest
 
 from core.tests.helpers import create_response
-from profile.business_profile import helpers
 
 
-@pytest.mark.parametrize('value,expected', (
-    (company_types.COMPANIES_HOUSE, True),
-    (company_types.SOLE_TRADER, False),
-    (company_types.CHARITY, False),
-    (company_types.PARTNERSHIP, False),
-))
+@pytest.mark.parametrize(
+    'value,expected',
+    (
+        (company_types.COMPANIES_HOUSE, True),
+        (company_types.SOLE_TRADER, False),
+        (company_types.CHARITY, False),
+        (company_types.PARTNERSHIP, False),
+    ),
+)
 def test_profile_parser_is_in_companies_house(value, expected):
     parser = helpers.CompanyParser({'company_type': value})
 
@@ -74,9 +77,7 @@ def test_collaboration_request_reminder(mock_get_company_admins, mock_notify_ema
 
     mock_notify_email.return_value = create_response(status_code=200)
     data = {'name': 'jimbo', 'company_name': 'test_company'}
-    helpers.notify_company_admins_collaboration_request_reminder(
-        sso_session_id=1, email_data=data, form_url='my_url',
-    )
+    helpers.notify_company_admins_collaboration_request_reminder(sso_session_id=1, email_data=data, form_url='my_url')
 
     assert mock_get_company_admins.call_count == 1
     assert mock_get_company_admins.call_args == mock.call(1)
@@ -86,7 +87,12 @@ def test_collaboration_request_reminder(mock_get_company_admins, mock_notify_ema
         {
             'data': {'name': 'jimbo', 'company_name': 'test_company'},
             'meta': {
-                'action_name': 'gov-notify-email', 'form_url': 'my_url', 'sender': {}, 'spam_control': {},
-                'template_id': settings.GOV_NOTIFY_COLLABORATION_REQUEST_RESENT, 'email_address': 'test@test123.com'
-            }
-         })
+                'action_name': 'gov-notify-email',
+                'form_url': 'my_url',
+                'sender': {},
+                'spam_control': {},
+                'template_id': settings.GOV_NOTIFY_COLLABORATION_REQUEST_RESENT,
+                'email_address': 'test@test123.com',
+            },
+        }
+    )
