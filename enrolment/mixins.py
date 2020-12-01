@@ -1,16 +1,15 @@
 import abc
 from urllib.parse import unquote
 
-from requests.exceptions import HTTPError
-
+from directory_sso_api_client import sso_api_client
 from django.contrib import messages
 from django.http import QueryDict
 from django.shortcuts import redirect
-from django.urls import reverse
 from django.template.response import TemplateResponse
+from django.urls import reverse
+from requests.exceptions import HTTPError
 
-from enrolment import helpers, constants
-from directory_sso_api_client import sso_api_client
+from enrolment import constants, helpers
 
 
 class RestartOnStepSkipped:
@@ -73,12 +72,7 @@ class StepsListMixin(abc.ABC):
             labels.remove(label)
 
     def get_context_data(self, *args, **kwargs):
-        return super().get_context_data(
-            step_labels=self.step_labels,
-            step_number=1,
-            *args,
-            **kwargs,
-        )
+        return super().get_context_data(step_labels=self.step_labels, step_number=1, *args, **kwargs)
 
 
 class ProgressIndicatorMixin:
@@ -95,12 +89,10 @@ class ProgressIndicatorMixin:
 
     def get(self, *args, **kwargs):
         if (
-            constants.SESSION_KEY_INGRESS_ANON not in self.storage.extra_data and
-            self.kwargs['step'] == self.steps.first
+            constants.SESSION_KEY_INGRESS_ANON not in self.storage.extra_data
+            and self.kwargs['step'] == self.steps.first
         ):
-            self.storage.extra_data[constants.SESSION_KEY_INGRESS_ANON] = bool(
-                self.request.user.is_anonymous
-            )
+            self.storage.extra_data[constants.SESSION_KEY_INGRESS_ANON] = bool(self.request.user.is_anonymous)
         return super().get(*args, **kwargs)
 
     def should_show_anon_progress_indicator(self):
@@ -117,14 +109,10 @@ class ProgressIndicatorMixin:
         return counter
 
     def get_context_data(self, *args, **kwargs):
-        return {
-            **super().get_context_data(*args, **kwargs),
-            'step_number': self.step_counter[self.steps.current],
-        }
+        return {**super().get_context_data(*args, **kwargs), 'step_number': self.step_counter[self.steps.current]}
 
 
 class CreateUserAccountMixin:
-
     @property
     def verification_link_url(self):
         raise NotImplementedError
@@ -137,8 +125,8 @@ class CreateUserAccountMixin:
         # - user submitted the first step then followed the email from another
         # device
         skipped_first_step = (
-            self.kwargs['step'] == constants.VERIFICATION and
-            constants.USER_ACCOUNT not in self.storage.data['step_data']
+            self.kwargs['step'] == constants.VERIFICATION
+            and constants.USER_ACCOUNT not in self.storage.data['step_data']
         )
         if skipped_first_step:
             return False
@@ -158,17 +146,14 @@ class CreateUserAccountMixin:
     condition_dict = {
         constants.USER_ACCOUNT: user_account_condition,
         constants.VERIFICATION: verification_condition,
-        constants.PERSONAL_INFO: personal_info_condition
+        constants.PERSONAL_INFO: personal_info_condition,
     }
 
     def dispatch(self, *args, **kwargs):
         try:
             return super().dispatch(*args, **kwargs)
         except RemotePasswordValidationError as error:
-            return self.render_revalidation_failure(
-                failed_step=constants.USER_ACCOUNT,
-                form=error.form
-            )
+            return self.render_revalidation_failure(failed_step=constants.USER_ACCOUNT, form=error.form)
 
     def get_form_initial(self, step):
         form_initial = super().get_form_initial(step)
@@ -181,8 +166,7 @@ class CreateUserAccountMixin:
     def process_step(self, form):
         if form.prefix == constants.USER_ACCOUNT:
             response = sso_api_client.user.create_user(
-                email=form.cleaned_data['email'],
-                password=form.cleaned_data['password'],
+                email=form.cleaned_data['email'], password=form.cleaned_data['password']
             )
             if response.status_code == 400:
                 errors = response.json()
@@ -200,7 +184,7 @@ class CreateUserAccountMixin:
                     email=user_details['email'],
                     verification_code=user_details['verification_code'],
                     form_url=self.request.path,
-                    verification_link=self.verification_link_url
+                    verification_link=self.verification_link_url,
                 )
         return super().process_step(form)
 
@@ -211,16 +195,12 @@ class CreateUserAccountMixin:
         return response
 
     def get_context_data(self, **kwargs):
-        return super().get_context_data(
-            new_enrollment_condition=self.new_enrollment_condition(),
-            **kwargs
-        )
+        return super().get_context_data(new_enrollment_condition=self.new_enrollment_condition(), **kwargs)
 
     def validate_code(self, form, response):
         try:
             upstream_response = helpers.confirm_verification_code(
-                email=form.cleaned_data['email'],
-                verification_code=form.cleaned_data['code'],
+                email=form.cleaned_data['email'], verification_code=form.cleaned_data['code']
             )
         except HTTPError as error:
             if error.response.status_code in [400, 404]:
@@ -230,25 +210,19 @@ class CreateUserAccountMixin:
                         form.add_prefix('email'): [form.cleaned_data['email']],
                         form.add_prefix('code'): [None],
                         form.add_prefix('remote_code_error'): error.response.json()['code'],
-                    }
+                    },
                 )
-                return self.render_revalidation_failure(
-                    failed_step=constants.VERIFICATION,
-                    form=form
-                )
+                return self.render_revalidation_failure(failed_step=constants.VERIFICATION, form=form)
             else:
                 raise
         else:
-            cookies = helpers.parse_set_cookie_header(
-                upstream_response.headers['set-cookie']
-            )
+            cookies = helpers.parse_set_cookie_header(upstream_response.headers['set-cookie'])
             response.cookies.update(cookies)
             self.storage.extra_data['is_new_enrollment'] = True
             return response
 
 
 class CreateBusinessProfileMixin:
-
     def __new__(cls, *args, **kwargs):
         assert constants.FINISHED in cls.templates
         return super().__new__(cls)
@@ -270,22 +244,21 @@ class CreateBusinessProfileMixin:
             'phone_number',
             'postal_code',
             'sic',
-            'website'
+            'website',
         ]
-        return {
-            key: value for key, value in data.items()
-            if value and key in whitelist
-        }
+        return {key: value for key, value in data.items() if value and key in whitelist}
 
     def create_company_profile(self, data):
         user = self.request.user
-        helpers.create_company_profile({
-            'sso_id': user.id,
-            'company_email': user.email,
-            'contact_email_address': user.email,
-            'name': user.full_name,
-            **data,
-        })
+        helpers.create_company_profile(
+            {
+                'sso_id': user.id,
+                'company_email': user.email,
+                'contact_email_address': user.email,
+                'name': user.full_name,
+                **data,
+            }
+        )
 
     # For user that started their journey from sso-profile, take them directly
     # to their business profile, otherwise show them the success page.
@@ -310,6 +283,7 @@ class CreateBusinessProfileMixin:
 
 class ReadUserIntentMixin:
     """Expose whether the user's intent is to create a business profile"""
+
     LABEL_BUSINESS = 'create a business profile'
     LABEL_ACCOUNT = 'create an account'
     LABEL_BACKFILL_DETAILS = 'update your details'
@@ -323,18 +297,12 @@ class ReadUserIntentMixin:
     def get_user_journey_verb(self):
         if self.has_backfill_details_intent_in_session():
             return self.LABEL_BACKFILL_DETAILS
-        if (
-            self.has_business_profile_intent_in_session() or
-            self.request.user.is_authenticated
-        ):
+        if self.has_business_profile_intent_in_session() or self.request.user.is_authenticated:
             return self.LABEL_BUSINESS
         return self.LABEL_ACCOUNT
 
     def get_context_data(self, **kwargs):
-        return super().get_context_data(
-            user_journey_verb=self.get_user_journey_verb(),
-            **kwargs
-        )
+        return super().get_context_data(user_journey_verb=self.get_user_journey_verb(), **kwargs)
 
 
 class WriteUserIntentMixin:

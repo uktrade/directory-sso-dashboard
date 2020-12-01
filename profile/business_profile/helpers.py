@@ -1,12 +1,12 @@
 import http
 
-from directory_api_client.client import api_client
-from directory_forms_api_client import actions
-from core.helpers import get_company_admins
-from directory_constants import company_types, user_roles
 import directory_components.helpers
-
+from directory_api_client.client import api_client
+from directory_constants import company_types, user_roles
+from directory_forms_api_client import actions
 from django.conf import settings
+
+from core.helpers import get_company_admins
 
 
 def get_company_profile(sso_session_id):
@@ -26,7 +26,6 @@ def get_supplier_profile(sso_id):
 
 
 class CompanyParser(directory_components.helpers.CompanyParser):
-
     @property
     def is_in_companies_house(self):
         return self.data.get('company_type') == company_types.COMPANIES_HOUSE
@@ -57,11 +56,7 @@ class CompanyParser(directory_components.helpers.CompanyParser):
     def serialize_for_form(self):
         if not self.data:
             return {}
-        return {
-            **self.data,
-            'date_of_creation': self.date_of_creation,
-            'address': self.address,
-        }
+        return {**self.data, 'date_of_creation': self.date_of_creation, 'address': self.address}
 
 
 def collaborator_list(sso_session_id):
@@ -149,7 +144,7 @@ def notify_company_admins_collaboration_request_reminder(sso_session_id, email_d
         action = actions.GovNotifyEmailAction(
             email_address=admin['company_email'],
             template_id=settings.GOV_NOTIFY_COLLABORATION_REQUEST_RESENT,
-            form_url=form_url
+            form_url=form_url,
         )
         response = action.save(email_data)
         response.raise_for_status()
