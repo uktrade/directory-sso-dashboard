@@ -35,11 +35,11 @@ class BusinessType(forms.Form):
     CHOICES = (
         (
             constants.COMPANIES_HOUSE_COMPANY,
-            ('I represent a limited company (Ltd), a public limited  ' 'company (PLC) or a Royal Charter company'),
+            ('I represent a limited company (Ltd), a public limited company (PLC) or a Royal Charter company'),
         ),
         (
             constants.NON_COMPANIES_HOUSE_COMPANY,
-            ("I'm a sole trader or I represent another type of UK " 'business not registered with Companies House'),
+            ("I'm a sole trader or I represent another type of UK business not registered with Companies House"),
         ),
         (constants.NOT_COMPANY, ('I pay taxes in the UK but do not represent a business')),
         (constants.OVERSEAS_COMPANY, ('My business or organisation is not registered in the UK')),
@@ -126,7 +126,7 @@ class UserAccountVerification(forms.Form):
 
 class CompaniesHouseCompanySearch(forms.Form):
     MESSAGE_COMPANY_NOT_FOUND = (
-        '<p>Your business name is not listed.</p>' "<p>Check that you've entered the right name.</p>"
+        "<p>Your business name is not listed.</p><p>Check that you've entered the right name.</p>"
     )
     MESSAGE_COMPANY_NOT_ACTIVE = 'Company not active.'
     company_name = forms.CharField(label='Registered company name')

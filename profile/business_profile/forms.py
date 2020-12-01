@@ -86,7 +86,7 @@ class CaseStudyBasicInfoForm(forms.Form):
     )
     description = forms.CharField(
         label='Describe your case study or project',
-        help_text=('Describe your project or case study in greater detail. ' 'You have up to 1,000 characters to use.'),
+        help_text=('Describe your project or case study in greater detail. You have up to 1,000 characters to use.'),
         max_length=1000,
         validators=[validators.does_not_contain_email, directory_validators.string.no_html],
         widget=Textarea,
@@ -104,7 +104,7 @@ class CaseStudyBasicInfoForm(forms.Form):
             'study or project. Keywords should be separated by '
             'commas.'
         ),
-        help_text=('These keywords will help potential overseas buyers ' 'find your case study.'),
+        help_text=('These keywords will help potential overseas buyers find your case study.'),
         max_length=1000,
         widget=Textarea,
         validators=[
@@ -190,7 +190,7 @@ class CaseStudyRichMediaForm(DynamicHelptextFieldsMixin, forms.Form):
         validators=[directory_validators.file.case_study_image_filesize, directory_validators.file.image_format],
     )
     image_two_caption = forms.CharField(
-        label=('Add a caption that tells visitors what this second image ' 'represents'),
+        label=('Add a caption that tells visitors what this second image represents'),
         help_text='Maximum 120 characters',
         max_length=120,
         widget=Textarea,
@@ -202,7 +202,7 @@ class CaseStudyRichMediaForm(DynamicHelptextFieldsMixin, forms.Form):
         validators=[directory_validators.file.case_study_image_filesize, directory_validators.file.image_format],
     )
     image_three_caption = forms.CharField(
-        label=('Add a caption that tells visitors what this third image ' 'represents'),
+        label=('Add a caption that tells visitors what this third image represents'),
         help_text='Maximum 120 characters',
         max_length=120,
         widget=Textarea,
@@ -246,9 +246,7 @@ class CaseStudyRichMediaForm(DynamicHelptextFieldsMixin, forms.Form):
 
 class LogoForm(forms.Form):
     logo = ImageField(
-        help_text=(
-            'For best results this should be a transparent PNG file of 600 x ' '600 pixels and no more than 2MB'
-        ),
+        help_text=('For best results this should be a transparent PNG file of 600 x 600 pixels and no more than 2MB'),
         required=True,
         validators=[directory_validators.file.logo_filesize, directory_validators.file.image_format],
     )
