@@ -43,8 +43,6 @@ jobs:
       - image: circleci/python:3.6.6
     steps:
       - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
       - run:
           name: Run Black in check mode
           command: |
