@@ -38,11 +38,11 @@ django==2.2.13            # via -r requirements.in, directory-api-client, direct
 djangorestframework==3.9.4  # via -r requirements.in, sigauth
 docutils==0.15.2          # via botocore
 execnet==1.7.1            # via pytest-xdist
-flake8==3.3.0             # via -r requirements_test.in
+flake8==3.8.4             # via -r requirements_test.in
 freezegun==0.3.12         # via -r requirements_test.in
 gunicorn==19.5.0          # via -r requirements.in
 idna==2.8                 # via requests
-importlib-metadata==0.23  # via pluggy, pytest
+importlib-metadata==0.23  # via flake8, pluggy, pytest
 isort==5.6.4              # via -r requirements_test.in
 jmespath==0.9.4           # via boto3, botocore
 jsonschema==3.0.2         # via directory-components
@@ -58,8 +58,8 @@ pillow==7.2.0             # via directory-validators
 pluggy==0.13.0            # via pytest
 pre-commit-hooks==3.3.0   # via -r requirements_test.in
 py==1.8.0                 # via pytest, pytest-catchlog
-pycodestyle==2.3.1        # via flake8
-pyflakes==1.5.0           # via flake8
+pycodestyle==2.6.0        # via flake8
+pyflakes==2.2.0           # via flake8
 pyparsing==2.4.2          # via packaging
 pyrsistent==0.15.4        # via jsonschema
 pytest-catchlog==1.2.2    # via -r requirements_test.in
