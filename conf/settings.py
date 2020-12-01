@@ -87,7 +87,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.messages.context_processors.messages',
                 'directory_components.context_processors.urls_processor',
-                ('directory_components.context_processors.' 'header_footer_processor'),
+                'directory_components.context_processors.header_footer_processor',
                 'directory_components.context_processors.sso_processor',
                 'directory_components.context_processors.ga360',
                 'directory_components.context_processors.analytics',
