@@ -5,19 +5,15 @@ from captcha.fields import ReCaptchaField
 from captcha.widgets import ReCaptchaV3
 from directory_components import forms
 from directory_constants import choices
-
 from django.forms import HiddenInput, PasswordInput, Textarea, TextInput, ValidationError
-from django.utils.safestring import mark_safe
 from django.http.request import QueryDict
+from django.utils.safestring import mark_safe
 
 from core.forms import TERMS_LABEL
 from enrolment import constants, helpers
 from enrolment.widgets import PostcodeInput, RadioSelect
 
-
-INDUSTRY_CHOICES = (
-    (('', 'Please select'),) + choices.INDUSTRIES + (('OTHER', 'Other'),)
-)
+INDUSTRY_CHOICES = (('', 'Please select'),) + choices.INDUSTRIES + (('OTHER', 'Other'),)
 
 
 class CleanAddressMixin:
@@ -39,30 +35,14 @@ class BusinessType(forms.Form):
     CHOICES = (
         (
             constants.COMPANIES_HOUSE_COMPANY,
-            (
-                'I represent a limited company (Ltd), a public limited  '
-                'company (PLC) or a Royal Charter company'
-            )
+            ('I represent a limited company (Ltd), a public limited company (PLC) or a Royal Charter company'),
         ),
         (
             constants.NON_COMPANIES_HOUSE_COMPANY,
-            (
-                "I'm a sole trader or I represent another type of UK "
-                'business not registered with Companies House'
-            )
+            ("I'm a sole trader or I represent another type of UK business not registered with Companies House"),
         ),
-        (
-            constants.NOT_COMPANY,
-            (
-                'I pay taxes in the UK but do not represent a business'
-            )
-        ),
-        (
-            constants.OVERSEAS_COMPANY,
-            (
-                'My business or organisation is not registered in the UK'
-            )
-        ),
+        (constants.NOT_COMPANY, ('I pay taxes in the UK but do not represent a business')),
+        (constants.OVERSEAS_COMPANY, ('My business or organisation is not registered in the UK')),
     )
     choice = forms.ChoiceField(
         label='',
@@ -91,24 +71,11 @@ class UserAccount(forms.Form):
     )
     MESSAGE_NOT_MATCH = "Passwords don't match"
 
-    email = forms.EmailField(
-        label='Your email address'
-    )
-    password = forms.CharField(
-        label='Set a password',
-        help_text=mark_safe(PASSWORD_HELP_TEXT),
-        widget=PasswordInput,
-    )
-    password_confirmed = forms.CharField(
-        label='Confirm password',
-        widget=PasswordInput,
-    )
+    email = forms.EmailField(label='Your email address')
+    password = forms.CharField(label='Set a password', help_text=mark_safe(PASSWORD_HELP_TEXT), widget=PasswordInput)
+    password_confirmed = forms.CharField(label='Confirm password', widget=PasswordInput)
 
-    captcha = ReCaptchaField(
-        label='',
-        label_suffix='',
-        widget=ReCaptchaV3()
-    )
+    captcha = ReCaptchaField(label='', label_suffix='', widget=ReCaptchaV3())
     terms_agreed = forms.BooleanField(label=TERMS_LABEL)
 
     def clean(self):
@@ -125,10 +92,7 @@ class UserAccount(forms.Form):
 
 
 class UserAccountCollaboration(UserAccount):
-    email = forms.EmailField(
-        label='Your email address',
-        disabled=True
-    )
+    email = forms.EmailField(label='Your email address', disabled=True)
 
 
 class UserAccountVerification(forms.Form):
@@ -142,7 +106,7 @@ class UserAccountVerification(forms.Form):
         max_length=5,
         min_length=5,
         widget=TextInput(attrs={'type': 'number'}),
-        error_messages={'required': MESSAGE_INVALID_CODE}
+        error_messages={'required': MESSAGE_INVALID_CODE},
     )
 
     def __init__(self, *args, **kwargs):
@@ -162,8 +126,7 @@ class UserAccountVerification(forms.Form):
 
 class CompaniesHouseCompanySearch(forms.Form):
     MESSAGE_COMPANY_NOT_FOUND = (
-        '<p>Your business name is not listed.</p>'
-        "<p>Check that you've entered the right name.</p>"
+        "<p>Your business name is not listed.</p><p>Check that you've entered the right name.</p>"
     )
     MESSAGE_COMPANY_NOT_ACTIVE = 'Company not active.'
     company_name = forms.CharField(label='Registered company name')
@@ -201,9 +164,7 @@ class CompaniesHouseBusinessDetails(forms.Form):
 
     company_name = forms.CharField(label='Registered company name')
     company_number = forms.CharField(
-        disabled=True,
-        required=False,
-        container_css_classes='border-active-blue read-only-input-container'
+        disabled=True, required=False, container_css_classes='border-active-blue read-only-input-container'
     )
     sic = forms.CharField(
         label='Nature of business',
@@ -219,11 +180,7 @@ class CompaniesHouseBusinessDetails(forms.Form):
         required=False,
         container_css_classes='border-active-blue read-only-input-container',
     )
-    postal_code = forms.CharField(
-        disabled=True,
-        required=False,
-        container_css_classes='hidden-input-container',
-    )
+    postal_code = forms.CharField(disabled=True, required=False, container_css_classes='hidden-input-container')
     address = forms.CharField(
         disabled=True,
         required=False,
@@ -268,10 +225,7 @@ class CompaniesHouseBusinessDetails(forms.Form):
         del self.fields['website']
 
     def initial_to_data(self, field_name):
-        self.data.setlist(
-            self.add_prefix(field_name),
-            [self.initial[field_name]]
-        )
+        self.data.setlist(self.add_prefix(field_name), [self.initial[field_name]])
 
     def clean_date_of_creation(self):
         if self.cleaned_data['date_of_creation']:
@@ -289,17 +243,11 @@ class CompaniesHouseBusinessDetails(forms.Form):
 
 
 class IndividualPersonalDetails(forms.Form):
-    given_name = forms.CharField(
-        label='First name',
-    )
-    family_name = forms.CharField(
-        label='Last name',
-    )
+    given_name = forms.CharField(label='First name')
+    family_name = forms.CharField(label='Last name')
     job_title = forms.CharField()
     phone_number = forms.CharField(
-        label='Phone number (optional)',
-        required=False,
-        widget=TextInput(attrs={'type': 'tel'})
+        label='Phone number (optional)', required=False, widget=TextInput(attrs={'type': 'tel'})
     )
 
     def __init__(self, ask_terms_agreed=False, *args, **kwargs):
@@ -311,17 +259,12 @@ class IndividualPersonalDetails(forms.Form):
 class NonCompaniesHouseSearch(CleanAddressMixin, forms.Form):
 
     MESSAGE_INVALID_ADDRESS = 'Address should be at least two lines.'
-    COMPANY_TYPES = [('', 'Please select'), ] + [
+    COMPANY_TYPES = [('', 'Please select')] + [
         (value, label) for value, label in choices.COMPANY_TYPES if value != 'COMPANIES_HOUSE'
     ]
 
-    company_type = forms.ChoiceField(
-        label='Business category',
-        choices=COMPANY_TYPES
-    )
-    company_name = forms.CharField(
-        label='Business name'
-    )
+    company_type = forms.ChoiceField(label='Business category', choices=COMPANY_TYPES)
+    company_name = forms.CharField(label='Business name')
     postal_code = forms.CharField(
         label='Business postcode',
         widget=PostcodeInput(attrs={'id': 'id_postal_code'}),  # template js relies on this ID
@@ -332,10 +275,7 @@ class NonCompaniesHouseSearch(CleanAddressMixin, forms.Form):
         widget=Textarea(attrs={'rows': 6, 'id': 'id_address'}),  # template js relies on this ID
         required=False,
     )
-    sectors = forms.ChoiceField(
-        label='Which industry is your business in?',
-        choices=INDUSTRY_CHOICES,
-    )
+    sectors = forms.ChoiceField(label='Which industry is your business in?', choices=INDUSTRY_CHOICES)
     website = forms.URLField(
         label="What's your business web address (optional)",
         help_text='The website address must start with http:// or https://',
@@ -347,6 +287,4 @@ class NonCompaniesHouseSearch(CleanAddressMixin, forms.Form):
 
 
 class ResendVerificationCode(forms.Form):
-    email = forms.EmailField(
-        label='Your email address'
-    )
+    email = forms.EmailField(label='Your email address')

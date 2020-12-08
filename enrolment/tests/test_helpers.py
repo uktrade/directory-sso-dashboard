@@ -1,15 +1,13 @@
 from unittest import mock
 
-from directory_constants import urls
 import pytest
-from requests.exceptions import HTTPError
-
+from directory_constants import urls, user_roles
 from django.conf import settings
 from django.core.cache import cache
+from requests.exceptions import HTTPError
 
-from enrolment import helpers
 from core.tests.helpers import create_response
-from directory_constants import user_roles
+from enrolment import helpers
 
 
 @mock.patch.object(helpers.ch_search_api_client.company, 'get_company_profile')
@@ -54,40 +52,28 @@ def test_get_company_profile_not_ok(mock_get_company_profile):
         helpers.get_companies_house_profile('123456')
 
 
-@mock.patch(
-    'directory_forms_api_client.client.forms_api_client.submit_generic'
-)
+@mock.patch('directory_forms_api_client.client.forms_api_client.submit_generic')
 def test_send_verification_code_email(mock_submit):
     email = 'gurdeep.atwal@digital.trade.gov.uk'
-    verification_code = {
-        'code': 12345,
-        'expiration_date': '2019-02-10T13:19:51.167097Z'
-    }
+    verification_code = {'code': 12345, 'expiration_date': '2019-02-10T13:19:51.167097Z'}
     form_url = 'test'
     verification_link = 'test/url/'
 
     mock_submit.return_value = create_response(status_code=201)
     helpers.send_verification_code_email(
-        email=email,
-        verification_code=verification_code,
-        form_url=form_url,
-        verification_link=verification_link
+        email=email, verification_code=verification_code, form_url=form_url, verification_link=verification_link
     )
 
     expected = {
-        'data': {
-            'code': 12345,
-            'expiry_date': '10 Feb 2019, 1:19 p.m.',
-            'verification_link': verification_link
-        },
+        'data': {'code': 12345, 'expiry_date': '10 Feb 2019, 1:19 p.m.', 'verification_link': verification_link},
         'meta': {
             'action_name': 'gov-notify-email',
             'form_url': form_url,
             'sender': {},
             'spam_control': {},
             'template_id': 'a1eb4b0c-9bab-44d3-ac2f-7585bf7da24c',
-            'email_address': email
-        }
+            'email_address': email,
+        },
     }
     assert mock_submit.call_count == 1
     assert mock_submit.call_args == mock.call(expected)
@@ -95,39 +81,25 @@ def test_send_verification_code_email(mock_submit):
 
 @mock.patch.object(helpers.sso_api_client.user, 'verify_verification_code')
 def test_confirm_verification_code(mock_confirm_code):
-    helpers.confirm_verification_code(
-        email='test@example.com',
-        verification_code='1234',
-    )
+    helpers.confirm_verification_code(email='test@example.com', verification_code='1234')
     assert mock_confirm_code.call_count == 1
-    assert mock_confirm_code.call_args == mock.call({
-        'email': 'test@example.com', 'code': '1234'
-    })
+    assert mock_confirm_code.call_args == mock.call({'email': 'test@example.com', 'code': '1234'})
 
 
 @mock.patch.object(helpers.sso_api_client.user, 'regenerate_verification_code')
 def test_confirm_regenerate_code(mock_regenerate_code):
-    helpers.regenerate_verification_code(
-        email='test@example.com',
-     )
+    helpers.regenerate_verification_code(email='test@example.com')
     assert mock_regenerate_code.call_count == 1
-    assert mock_regenerate_code.call_args == mock.call({
-        'email': 'test@example.com',
-    })
+    assert mock_regenerate_code.call_args == mock.call({'email': 'test@example.com'})
 
 
-@mock.patch(
-    'directory_forms_api_client.client.forms_api_client.submit_generic'
-)
+@mock.patch('directory_forms_api_client.client.forms_api_client.submit_generic')
 def test_notify_already_registered(mock_submit):
     email = 'test@test123.com'
     form_url = 'test'
 
     mock_submit.return_value = create_response(status_code=201)
-    helpers.notify_already_registered(
-        email=email,
-        form_url=form_url,
-    )
+    helpers.notify_already_registered(email=email, form_url=form_url)
 
     expected = {
         'data': {
@@ -141,8 +113,8 @@ def test_notify_already_registered(mock_submit):
             'sender': {},
             'spam_control': {},
             'template_id': settings.GOV_NOTIFY_ALREADY_REGISTERED_TEMPLATE_ID,
-            'email_address': email
-        }
+            'email_address': email,
+        },
     }
     assert mock_submit.call_count == 1
     assert mock_submit.call_args == mock.call(expected)
@@ -151,42 +123,45 @@ def test_notify_already_registered(mock_submit):
 @mock.patch('directory_forms_api_client.client.forms_api_client.submit_generic')
 def test_notify_company_admins_member_joined_ok(mock_submit):
     helpers.notify_company_admins_member_joined(
-        admins=[{
-            'company_email': 'admin@xyzcorp.com',
-            'company': '12345',
-            'sso_id': 1,
-            'name': 'Jim Abc',
-            'mobile_number': '123456789',
-            'role': user_roles.ADMIN
-        }],
+        admins=[
+            {
+                'company_email': 'admin@xyzcorp.com',
+                'company': '12345',
+                'sso_id': 1,
+                'name': 'Jim Abc',
+                'mobile_number': '123456789',
+                'role': user_roles.ADMIN,
+            }
+        ],
         data={
             'company_name': 'XYZ corp',
             'name': 'John Doe',
             'email': 'johndoe@xyz.com',
             'profile_remove_member_url': 'remove/member/url',
-            'report_abuse_url': 'report/abuse/url'
+            'report_abuse_url': 'report/abuse/url',
         },
-        form_url='the/form/url')
+        form_url='the/form/url',
+    )
 
-    assert mock_submit.call_args == mock.call({
-        'data': {
-            'company_name': 'XYZ corp',
-            'name': 'John Doe',
-            'email': 'johndoe@xyz.com',
-            'profile_remove_member_url': 'remove/member/url',
-            'report_abuse_url': 'report/abuse/url'
-        },
-        'meta': {
-            'action_name': 'gov-notify-email',
-            'form_url': 'the/form/url',
-            'sender': {},
-            'spam_control': {},
-            'template_id': (
-                settings.GOV_NOTIFY_NEW_MEMBER_REGISTERED_TEMPLATE_ID
-            ),
-            'email_address': 'admin@xyzcorp.com'
+    assert mock_submit.call_args == mock.call(
+        {
+            'data': {
+                'company_name': 'XYZ corp',
+                'name': 'John Doe',
+                'email': 'johndoe@xyz.com',
+                'profile_remove_member_url': 'remove/member/url',
+                'report_abuse_url': 'report/abuse/url',
+            },
+            'meta': {
+                'action_name': 'gov-notify-email',
+                'form_url': 'the/form/url',
+                'sender': {},
+                'spam_control': {},
+                'template_id': (settings.GOV_NOTIFY_NEW_MEMBER_REGISTERED_TEMPLATE_ID),
+                'email_address': 'admin@xyzcorp.com',
+            },
         }
-    })
+    )
 
 
 def test_notify_company_admins_member_joined_handles_no_admins():
@@ -198,29 +173,22 @@ def test_notify_company_admins_member_joined_handles_no_admins():
             'email': 'johndoe@xyz.com',
             'form_url': 'the/form/url',
             'profile_remove_member_url': 'remove/member/url',
-            'report_abuse_url': 'report/abuse/url'
+            'report_abuse_url': 'report/abuse/url',
         },
-        form_url=None
+        form_url=None,
     )
 
 
 @mock.patch.object(helpers.api_client.company, 'collaborator_create')
 def test_add_collaborator(mock_add_collaborator):
 
-    helpers.create_company_member(sso_session_id=300, data={
-        'company': 1234,
-        'company_email': 'xyz@xyzcorp.com',
-        'name': 'Abc',
-        'mobile_number': '9876543210',
-    })
+    helpers.create_company_member(
+        sso_session_id=300,
+        data={'company': 1234, 'company_email': 'xyz@xyzcorp.com', 'name': 'Abc', 'mobile_number': '9876543210'},
+    )
 
     assert mock_add_collaborator.call_count == 1
     assert mock_add_collaborator.call_args == mock.call(
         sso_session_id=300,
-        data={
-            'company': 1234,
-            'company_email': 'xyz@xyzcorp.com',
-            'name': 'Abc',
-            'mobile_number': '9876543210',
-        }
+        data={'company': 1234, 'company_email': 'xyz@xyzcorp.com', 'name': 'Abc', 'mobile_number': '9876543210'},
     )

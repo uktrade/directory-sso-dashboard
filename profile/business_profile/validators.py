@@ -1,6 +1,5 @@
 from django.forms import ValidationError
 
-
 MESSAGE_REMOVE_EMAIL = 'Please remove the email address.'
 
 
