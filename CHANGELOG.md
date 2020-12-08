@@ -3,10 +3,12 @@
 ## Pre-Release
 
 ### Implemented enhancements
-
-- GP2-1068 - adopt Black auto-formatting + provide optional pre-commit config
-
+ - No ticket - Dependencies upgrade
+ 
 ### Fixed bugs
+
+- GAA-27 - directory-components version bump
+- GP2-1068 - adopt Black auto-formatting + provide optional pre-commit config
 
 ## [1.0.0](https://github.com/uktrade/directory-sso-profile/releases/tag/1.0.0)
 
