@@ -2,7 +2,6 @@ import http
 import urllib.parse as urlparse
 
 import requests
-
 from django.conf import settings
 
 
@@ -21,9 +20,7 @@ class ExportingIsGreatClient:
         settings.EXPORTING_OPPORTUNITIES_API_BASIC_AUTH_PASSWORD,
     )
     base_url = settings.EXPORTING_OPPORTUNITIES_API_BASE_URL
-    endpoints = {
-        'exops_data': 'export-opportunities/api/profile_dashboard'
-    }
+    endpoints = {'exops_data': 'export-opportunities/api/profile_dashboard'}
     secret = settings.EXPORTING_OPPORTUNITIES_API_SECRET
 
     def get(self, partial_url, params):

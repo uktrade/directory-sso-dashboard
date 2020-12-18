@@ -1,34 +1,24 @@
 from urllib.parse import urlparse
 
 from directory_constants import urls, user_roles
-from formtools.wizard.views import NamedUrlSessionWizardView
-
+from directory_forms_api_client.helpers import FormSessionMixin
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 from django.utils.functional import cached_property
 from django.views.generic import FormView, TemplateView
+from formtools.wizard.views import NamedUrlSessionWizardView
 
 import core.forms
 import core.mixins
 from core.helpers import get_company_admins
 from enrolment import constants, forms, helpers, mixins
-from directory_forms_api_client.helpers import FormSessionMixin
 
-
-URL_NON_COMPANIES_HOUSE_ENROLMENT = reverse_lazy(
-    'enrolment-sole-trader', kwargs={'step': constants.USER_ACCOUNT}
-)
-URL_COMPANIES_HOUSE_ENROLMENT = reverse_lazy(
-    'enrolment-companies-house', kwargs={'step': constants.USER_ACCOUNT}
-)
-URL_INDIVIDUAL_ENROLMENT = reverse_lazy(
-    'enrolment-individual', kwargs={'step': constants.USER_ACCOUNT}
-)
-URL_OVERSEAS_BUSINESS_ENROLMNET = reverse_lazy(
-    'enrolment-overseas-business'
-)
+URL_NON_COMPANIES_HOUSE_ENROLMENT = reverse_lazy('enrolment-sole-trader', kwargs={'step': constants.USER_ACCOUNT})
+URL_COMPANIES_HOUSE_ENROLMENT = reverse_lazy('enrolment-companies-house', kwargs={'step': constants.USER_ACCOUNT})
+URL_INDIVIDUAL_ENROLMENT = reverse_lazy('enrolment-individual', kwargs={'step': constants.USER_ACCOUNT})
+URL_OVERSEAS_BUSINESS_ENROLMNET = reverse_lazy('enrolment-overseas-business')
 
 
 class EnrolmentStartView(
@@ -37,7 +27,7 @@ class EnrolmentStartView(
     mixins.StepsListMixin,
     mixins.WriteUserIntentMixin,
     mixins.ReadUserIntentMixin,
-    TemplateView
+    TemplateView,
 ):
     google_analytics_page_id = 'EnrolmentStartPage'
     template_name = 'enrolment/start.html'
@@ -61,7 +51,7 @@ class BusinessTypeRoutingView(
     mixins.StepsListMixin,
     mixins.WriteUserIntentMixin,
     mixins.ReadUserIntentMixin,
-    FormView
+    FormView,
 ):
     google_analytics_page_id = 'EnrolmentBusinessTypeChooser'
     form_class = forms.BusinessType
@@ -103,9 +93,8 @@ class BaseEnrolmentWizardView(
     mixins.StepsListMixin,
     mixins.ReadUserIntentMixin,
     mixins.CreateUserAccountMixin,
-    NamedUrlSessionWizardView
+    NamedUrlSessionWizardView,
 ):
-
     def dispatch(self, request, *args, **kwargs):
         is_authentication_required = self.kwargs['step'] not in [constants.USER_ACCOUNT, constants.VERIFICATION]
         if is_authentication_required and request.user.is_anonymous:
@@ -210,7 +199,7 @@ class CompaniesHouseEnrolmentView(mixins.CreateBusinessProfileMixin, BaseEnrolme
 
     condition_dict = {
         constants.ADDRESS_SEARCH: address_search_condition,
-        **mixins.CreateUserAccountMixin.condition_dict
+        **mixins.CreateUserAccountMixin.condition_dict,
     }
 
     def get_form_kwargs(self, step=None):
@@ -250,10 +239,7 @@ class CompaniesHouseEnrolmentView(mixins.CreateBusinessProfileMixin, BaseEnrolme
         return context
 
     def serialize_form_list(self, form_list):
-        return {
-            **super().serialize_form_list(form_list),
-            'company_type': 'COMPANIES_HOUSE',
-        }
+        return {**super().serialize_form_list(form_list), 'company_type': 'COMPANIES_HOUSE'}
 
     def done(self, form_list, form_dict, **kwargs):
         data = self.serialize_form_list(form_list)
@@ -266,7 +252,7 @@ class CompaniesHouseEnrolmentView(mixins.CreateBusinessProfileMixin, BaseEnrolme
                     'company_email': self.request.user.email,
                     'name': self.request.user.full_name,
                     'mobile_number': data.get('phone_number', ''),
-                }
+                },
             )
             admins = get_company_admins(self.request.user.session_id)
             helpers.notify_company_admins_member_joined(
@@ -280,7 +266,7 @@ class CompaniesHouseEnrolmentView(mixins.CreateBusinessProfileMixin, BaseEnrolme
                     ),
                     'report_abuse_url': urls.domestic.FEEDBACK,
                 },
-                form_url=self.request.path
+                form_url=self.request.path,
             )
             if self.request.user.role == user_roles.MEMBER:
                 messages.add_message(self.request, messages.SUCCESS, 'You are now linked to the profile.')
@@ -300,10 +286,7 @@ class NonCompaniesHouseEnrolmentView(mixins.CreateBusinessProfileMixin, BaseEnro
     ]
 
     progress_conf = helpers.ProgressIndicatorConf(
-        step_counter_user={
-            constants.ADDRESS_SEARCH: 2,
-            constants.PERSONAL_INFO: 3,
-        },
+        step_counter_user={constants.ADDRESS_SEARCH: 2, constants.PERSONAL_INFO: 3},
         step_counter_anon={
             constants.USER_ACCOUNT: 2,
             constants.VERIFICATION: 3,
@@ -339,18 +322,13 @@ class NonCompaniesHouseEnrolmentView(mixins.CreateBusinessProfileMixin, BaseEnro
         return context
 
 
-class IndividualUserEnrolmentInterstitialView(
-    mixins.ReadUserIntentMixin,
-    TemplateView
-):
+class IndividualUserEnrolmentInterstitialView(mixins.ReadUserIntentMixin, TemplateView):
     google_analytics_page_id = 'IndividualEnrolmentInterstitial'
     template_name = 'enrolment/individual-interstitial.html'
 
     def dispatch(self, request, *args, **kwargs):
         if not self.has_business_profile_intent_in_session():
-            url = reverse(
-                'enrolment-individual', kwargs={'step': constants.PERSONAL_INFO}
-            )
+            url = reverse('enrolment-individual', kwargs={'step': constants.PERSONAL_INFO})
             return redirect(url)
         return super().dispatch(request, *args, **kwargs)
 
@@ -361,18 +339,12 @@ class IndividualUserEnrolmentView(BaseEnrolmentWizardView):
         constants.PROGRESS_STEP_LABEL_BUSINESS_TYPE,
         constants.PROGRESS_STEP_LABEL_INDIVIDUAL_USER_ACCOUNT,
         constants.PROGRESS_STEP_LABEL_VERIFICATION,
-        constants.PROGRESS_STEP_LABEL_PERSONAL_INFO
+        constants.PROGRESS_STEP_LABEL_PERSONAL_INFO,
     ]
 
     progress_conf = helpers.ProgressIndicatorConf(
-        step_counter_user={
-            constants.PERSONAL_INFO: 3
-        },
-        step_counter_anon={
-            constants.USER_ACCOUNT: 2,
-            constants.VERIFICATION: 3,
-            constants.PERSONAL_INFO: 4
-        },
+        step_counter_user={constants.PERSONAL_INFO: 3},
+        step_counter_anon={constants.USER_ACCOUNT: 2, constants.VERIFICATION: 3, constants.PERSONAL_INFO: 4},
     )
 
     form_list = (
@@ -413,18 +385,12 @@ class CollaboratorEnrolmentView(BaseEnrolmentWizardView):
     steps_list_labels = [
         constants.PROGRESS_STEP_LABEL_INDIVIDUAL_USER_ACCOUNT,
         constants.PROGRESS_STEP_LABEL_VERIFICATION,
-        constants.PROGRESS_STEP_LABEL_PERSONAL_INFO
+        constants.PROGRESS_STEP_LABEL_PERSONAL_INFO,
     ]
 
     progress_conf = helpers.ProgressIndicatorConf(
-        step_counter_user={
-            constants.PERSONAL_INFO: 2
-        },
-        step_counter_anon={
-            constants.USER_ACCOUNT: 1,
-            constants.VERIFICATION: 2,
-            constants.PERSONAL_INFO: 3
-        },
+        step_counter_user={constants.PERSONAL_INFO: 2},
+        step_counter_anon={constants.USER_ACCOUNT: 1, constants.VERIFICATION: 2, constants.PERSONAL_INFO: 3},
     )
 
     form_list = (
@@ -438,7 +404,7 @@ class CollaboratorEnrolmentView(BaseEnrolmentWizardView):
         constants.VERIFICATION: 'enrolment/user-account-verification.html',
         constants.PERSONAL_INFO: 'enrolment/collaborator-personal-details.html',
         constants.FINISHED: 'enrolment/individual-success.html',
-        constants.INVITE_EXPIRED: 'enrolment/individual-collaborator-invite-expired.html'
+        constants.INVITE_EXPIRED: 'enrolment/individual-collaborator-invite-expired.html',
     }
 
     @property
@@ -456,12 +422,10 @@ class CollaboratorEnrolmentView(BaseEnrolmentWizardView):
                     'description': (
                         'This invitation has expired, please contact your business profile administrator to request a '
                         f'new invitation or <a href="{contact_url}"">contact us.</a>'
-                    )
+                    ),
                 }
                 return TemplateResponse(
-                    request=self.request,
-                    template=self.templates[constants.INVITE_EXPIRED],
-                    context=context,
+                    request=self.request, template=self.templates[constants.INVITE_EXPIRED], context=context
                 )
         # at this point all the steps will be hidden as the user is logged
         # in and has a user profile, so the normal `get` method fails with
@@ -484,7 +448,7 @@ class CollaboratorEnrolmentView(BaseEnrolmentWizardView):
         return helpers.collaborator_invite_retrieve(self.request.session[constants.SESSION_KEY_INVITE_KEY])
 
     def get_context_data(self, **kwargs):
-        return super().get_context_data(collaborator_invition=self.collaborator_invition, **kwargs,)
+        return super().get_context_data(collaborator_invition=self.collaborator_invition, **kwargs)
 
     def get_form_initial(self, step):
         form_initial = super().get_form_initial(step)
@@ -512,11 +476,7 @@ class PreVerifiedEnrolmentView(BaseEnrolmentWizardView):
 
     progress_conf = helpers.ProgressIndicatorConf(
         step_counter_user={constants.PERSONAL_INFO: 1},
-        step_counter_anon={
-            constants.USER_ACCOUNT: 1,
-            constants.VERIFICATION: 2,
-            constants.PERSONAL_INFO: 3,
-        },
+        step_counter_anon={constants.USER_ACCOUNT: 1, constants.VERIFICATION: 2, constants.PERSONAL_INFO: 3},
     )
 
     form_list = (
@@ -571,9 +531,7 @@ class PreVerifiedEnrolmentView(BaseEnrolmentWizardView):
         return data
 
     def done(self, *args, **kwargs):
-        self.claim_company({
-            'given_name': self.request.user.first_name, 'family_name': self.request.user.last_name
-        })
+        self.claim_company({'given_name': self.request.user.first_name, 'family_name': self.request.user.last_name})
         messages.success(self.request, 'Business profile created')
         return redirect('business-profile')
 
@@ -584,7 +542,7 @@ class ResendVerificationCodeView(
     mixins.ProgressIndicatorMixin,
     mixins.StepsListMixin,
     mixins.CreateUserAccountMixin,
-    NamedUrlSessionWizardView
+    NamedUrlSessionWizardView,
 ):
 
     google_analytics_page_id = 'ResendVerificationCode'
@@ -604,10 +562,7 @@ class ResendVerificationCodeView(
         # logged in users should not get here
         step_counter_user={},
     )
-    steps_list_labels = [
-        constants.PROGRESS_STEP_LABEL_RESEND_VERIFICATION,
-        constants.PROGRESS_STEP_LABEL_VERIFICATION,
-    ]
+    steps_list_labels = [constants.PROGRESS_STEP_LABEL_RESEND_VERIFICATION, constants.PROGRESS_STEP_LABEL_VERIFICATION]
 
     @property
     def verification_link_url(self):
@@ -627,10 +582,7 @@ class ResendVerificationCodeView(
             url = URL_INDIVIDUAL_ENROLMENT
         else:
             url = reverse('enrolment-business-type')
-        response = self.validate_code(
-            form=form,
-            response=redirect(url)
-        )
+        response = self.validate_code(form=form, response=redirect(url))
         return response
 
     def process_step(self, form):
@@ -651,7 +603,7 @@ class ResendVerificationCodeView(
             verification_missing_url=urls.domestic.CONTACT_US / 'triage/great-account/verification-missing/',
             contact_url=urls.domestic.CONTACT_US / 'domestic/',
             *args,
-            **kwargs
+            **kwargs,
         )
 
     def get_form_initial(self, step):
@@ -663,9 +615,6 @@ class ResendVerificationCodeView(
         return form_initial
 
 
-class EnrolmentOverseasBusinessView(
-    mixins.ReadUserIntentMixin,
-    TemplateView
-):
+class EnrolmentOverseasBusinessView(mixins.ReadUserIntentMixin, TemplateView):
     google_analytics_page_id = 'OverseasBusinessEnrolment'
     template_name = 'enrolment/overseas-business.html'

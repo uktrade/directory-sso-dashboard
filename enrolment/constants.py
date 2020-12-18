@@ -31,12 +31,8 @@ SESSION_KEY_BACKFILL_DETAILS_INTENT = 'BACKFILL_DETAILS_INTENT'
 SESSION_KEY_EXPORT_OPPORTUNITY_INTENT = 'EXPORT_OPPORTUNITY_INTENT'
 SESSION_KEY_INVITE_KEY = 'INVITE_KEY'
 
-PROGRESS_STEP_LABEL_USER_ACCOUNT = (
-    'Enter your business email address and set a password'
-)
-PROGRESS_STEP_LABEL_INDIVIDUAL_USER_ACCOUNT = (
-    'Enter your email address and set a password'
-)
+PROGRESS_STEP_LABEL_USER_ACCOUNT = 'Enter your business email address and set a password'
+PROGRESS_STEP_LABEL_INDIVIDUAL_USER_ACCOUNT = 'Enter your email address and set a password'
 PROGRESS_STEP_LABEL_VERIFICATION = 'Enter your confirmation code'
 PROGRESS_STEP_LABEL_RESEND_VERIFICATION = 'Resend verification'
 PROGRESS_STEP_LABEL_PERSONAL_INFO = 'Enter your personal details'

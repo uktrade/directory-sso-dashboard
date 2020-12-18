@@ -1,22 +1,21 @@
-from directory_constants import user_roles
-from directory_api_client.client import api_client
-from formtools.wizard.views import NamedUrlSessionWizardView
-import sentry_sdk
-from requests.exceptions import HTTPError, RequestException
+from profile.business_profile import forms, helpers
 
+import sentry_sdk
+from directory_api_client.client import api_client
+from directory_constants import urls, user_roles
+from django.conf import settings
 from django.contrib import messages
-from django.urls import reverse, reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.files.storage import DefaultStorage
-from django.shortcuts import redirect, Http404
+from django.shortcuts import Http404, redirect
+from django.urls import reverse, reverse_lazy
 from django.utils.functional import cached_property
 from django.views.generic import FormView
-from django.conf import settings
+from formtools.wizard.views import NamedUrlSessionWizardView
+from requests.exceptions import HTTPError, RequestException
 
-import core.mixins
 import core.forms
-from profile.business_profile import forms, helpers
-from directory_constants import urls
+import core.mixins
 
 BASIC = 'details'
 MEDIA = 'images'
@@ -46,10 +45,7 @@ class MemberSendAdminRequestMixin:
     def form_valid(self, form):
         try:
             if form.cleaned_data['action'] == form.SEND_REQUEST:
-                helpers.collaboration_request_create(
-                    sso_session_id=self.request.user.session_id,
-                    role=user_roles.ADMIN,
-                )
+                helpers.collaboration_request_create(sso_session_id=self.request.user.session_id, role=user_roles.ADMIN)
             elif form.cleaned_data['action'] == form.SEND_REMINDER:
                 helpers.notify_company_admins_collaboration_request_reminder(
                     sso_session_id=self.request.user.session_id,
@@ -58,7 +54,8 @@ class MemberSendAdminRequestMixin:
                         'name': self.request.user.full_name,
                         'email': self.request.user.email,
                         'login_url': self.request.build_absolute_uri(reverse('business-profile-admin-tools')),
-                    }, form_url=self.request.path
+                    },
+                    form_url=self.request.path,
                 )
         except HTTPError as error:
             if error.response.status_code == 400:
@@ -106,17 +103,18 @@ class BusinessProfileView(MemberSendAdminRequestMixin, SuccessMessageMixin, Form
         company = self.get_company()
         context = super().get_context_data(fab_tab_classes='active', company=company, **kwargs)
         if self.request.user.role == user_roles.MEMBER:
-            context.update({
-                'contact_us_url': urls.domestic.CONTACT_US / 'domestic',
-                'export_opportunities_apply_url': urls.domestic.EXPORT_OPPORTUNITIES,
-                'is_profile_published': company['is_published_find_a_supplier'] if company else False,
-                'FAB_BUSINESS_PROFILE_URL': self.get_business_profile_url(),
-                'FEATURE_ADMIN_REQUESTS_ON': settings.FEATURE_FLAGS['ADMIN_REQUESTS_ON'],
-            })
+            context.update(
+                {
+                    'contact_us_url': urls.domestic.CONTACT_US / 'domestic',
+                    'export_opportunities_apply_url': urls.domestic.EXPORT_OPPORTUNITIES,
+                    'is_profile_published': company['is_published_find_a_supplier'] if company else False,
+                    'FAB_BUSINESS_PROFILE_URL': self.get_business_profile_url(),
+                    'FEATURE_ADMIN_REQUESTS_ON': settings.FEATURE_FLAGS['ADMIN_REQUESTS_ON'],
+                }
+            )
             if company:
                 context['has_admin_request'] = helpers.has_editor_admin_request(
-                    sso_session_id=self.request.user.session_id,
-                    sso_id=self.request.user.id
+                    sso_session_id=self.request.user.session_id, sso_id=self.request.user.id
                 )
 
         return context
@@ -132,15 +130,11 @@ class BaseFormView(FormView):
     def form_valid(self, form):
         try:
             response = api_client.company.profile_update(
-                sso_session_id=self.request.user.session_id,
-                data=self.serialize_form(form)
+                sso_session_id=self.request.user.session_id, data=self.serialize_form(form)
             )
             response.raise_for_status()
         except RequestException:
-            self.send_update_error_to_sentry(
-                user=self.request.user,
-                api_response=response
-            )
+            self.send_update_error_to_sentry(user=self.request.user, api_response=response)
             raise
         else:
             if self.success_message:
@@ -154,9 +148,7 @@ class BaseFormView(FormView):
     def send_update_error_to_sentry(user, api_response):
         # This is needed to not include POST data (e.g. binary image), which
         # was causing sentry to fail at sending
-        sentry_sdk.set_user(
-            {'hashed_uuid': user.hashed_uuid, 'user_email': user.email}
-        )
+        sentry_sdk.set_user({'hashed_uuid': user.hashed_uuid, 'user_email': user.email})
         sentry_sdk.set_extra('api_response', str(api_response.content))
         sentry_sdk.capture_message('Updating company profile failed')
 
@@ -188,6 +180,7 @@ class WebsiteFormView(BaseFormView):
 class LogoFormView(BaseFormView):
     def get_initial(self):
         return {}
+
     form_class = forms.LogoForm
     template_name = 'business_profile/logo-form.html'
     success_message = 'Logo updated'
@@ -267,10 +260,7 @@ class PublishFormView(BaseFormView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_form_kwargs(self):
-        return {
-            **super().get_form_kwargs(),
-            'company': self.request.user.company.serialize_for_form()
-        }
+        return {**super().get_form_kwargs(), 'company': self.request.user.company.serialize_for_form()}
 
     def get_context_data(self, **kwargs):
         company = self.request.user.company.serialize_for_template()
@@ -283,10 +273,7 @@ class BaseCaseStudyWizardView(NamedUrlSessionWizardView):
 
     file_storage = DefaultStorage()
 
-    form_list = (
-        (BASIC, forms.CaseStudyBasicInfoForm),
-        (MEDIA, forms.CaseStudyRichMediaForm),
-    )
+    form_list = ((BASIC, forms.CaseStudyBasicInfoForm), (MEDIA, forms.CaseStudyRichMediaForm))
     templates = {
         BASIC: 'business_profile/case-study-basic-form.html',
         MEDIA: 'business_profile/case-study-media-form.html',
@@ -310,11 +297,9 @@ class BaseCaseStudyWizardView(NamedUrlSessionWizardView):
 
 
 class CaseStudyWizardEditView(BaseCaseStudyWizardView):
-
     def get_form_initial(self, step):
         response = api_client.company.case_study_retrieve(
-            sso_session_id=self.request.user.session_id,
-            case_study_id=self.kwargs['id'],
+            sso_session_id=self.request.user.session_id, case_study_id=self.kwargs['id']
         )
         if response.status_code == 404:
             raise Http404()
@@ -331,15 +316,13 @@ class CaseStudyWizardEditView(BaseCaseStudyWizardView):
         return redirect('business-profile')
 
     def get_step_url(self, step):
-        return reverse(
-            self.url_name, kwargs={'step': step, 'id': self.kwargs['id']}
-        )
+        return reverse(self.url_name, kwargs={'step': step, 'id': self.kwargs['id']})
 
 
 class CaseStudyWizardCreateView(BaseCaseStudyWizardView):
     def done(self, form_list, *args, **kwags):
         response = api_client.company.case_study_create(
-            sso_session_id=self.request.user.session_id, data=self.serialize_form_list(form_list),
+            sso_session_id=self.request.user.session_id, data=self.serialize_form_list(form_list)
         )
         response.raise_for_status()
         return redirect('business-profile')
@@ -352,13 +335,11 @@ class ManageCollaborationRequestMixin:
     def form_valid(self, form):
         if form.cleaned_data['action'] == form.DELETE:
             helpers.collaboration_request_delete(
-                sso_session_id=self.request.user.session_id,
-                request_key=form.cleaned_data['request_key'],
+                sso_session_id=self.request.user.session_id, request_key=form.cleaned_data['request_key']
             )
         elif form.cleaned_data['action'] == form.APPROVE:
             helpers.collaboration_request_accept(
-                sso_session_id=self.request.user.session_id,
-                request_key=form.cleaned_data['request_key'],
+                sso_session_id=self.request.user.session_id, request_key=form.cleaned_data['request_key']
             )
         return super().form_valid(form)
 
@@ -411,8 +392,7 @@ class AdminCollaboratorEditFormView(SuccessMessageMixin, FormView):
     @cached_property
     def collaborator(self):
         return helpers.retrieve_collaborator(
-            sso_session_id=self.request.user.session_id,
-            collaborator_sso_id=int(self.kwargs['sso_id'])
+            sso_session_id=self.request.user.session_id, collaborator_sso_id=int(self.kwargs['sso_id'])
         )
 
     def get_context_data(self, **kwargs):
@@ -425,19 +405,14 @@ class AdminCollaboratorEditFormView(SuccessMessageMixin, FormView):
     def form_valid(self, form):
         action = form.cleaned_data['action']
         if action == forms.REMOVE_COLLABORATOR:
-            helpers.remove_collaborator(
-                sso_session_id=self.request.user.session_id,
-                sso_id=self.collaborator['sso_id'],
-            )
+            helpers.remove_collaborator(sso_session_id=self.request.user.session_id, sso_id=self.collaborator['sso_id'])
         else:
             role = {
                 forms.CHANGE_COLLABORATOR_TO_MEMBER: user_roles.MEMBER,
                 forms.CHANGE_COLLABORATOR_TO_ADMIN: user_roles.ADMIN,
             }[action]
             helpers.collaborator_role_update(
-                sso_session_id=self.request.user.session_id,
-                sso_id=self.collaborator['sso_id'],
-                role=role,
+                sso_session_id=self.request.user.session_id, sso_id=self.collaborator['sso_id'], role=role
             )
         return super().form_valid(form)
 
@@ -476,7 +451,8 @@ class AdminInviteNewAdminFormView(SuccessMessageMixin, FormView):
         kwargs = super().get_form_kwargs()
         kwargs['collaborator_choices'] = [
             (item['sso_id'], item['name'] or item['company_email'])
-            for item in self.collaborators if item['role'] != user_roles.ADMIN
+            for item in self.collaborators
+            if item['role'] != user_roles.ADMIN
         ]
         return kwargs
 
@@ -490,13 +466,13 @@ class AdminInviteNewAdminFormView(SuccessMessageMixin, FormView):
                 helpers.collaborator_invite_create(
                     sso_session_id=self.request.user.session_id,
                     collaborator_email=form.cleaned_data['collaborator_email'],
-                    role=user_roles.ADMIN
+                    role=user_roles.ADMIN,
                 )
             else:
                 helpers.collaborator_role_update(
                     sso_session_id=self.request.user.session_id,
                     sso_id=form.cleaned_data['sso_id'],
-                    role=user_roles.ADMIN
+                    role=user_roles.ADMIN,
                 )
         except HTTPError as error:
             if error.response.status_code == 400:
@@ -521,10 +497,7 @@ class AdminInviteCollaboratorFormView(SuccessMessageMixin, FormView):
     def get_context_data(self, **kwargs):
         collaborator_invites = helpers.collaborator_invite_list(self.request.user.session_id)
         collaborator_invites_not_accepted = [c for c in collaborator_invites if not c['accepted']]
-        return super().get_context_data(
-            collaborator_invites=collaborator_invites_not_accepted,
-            **kwargs,
-        )
+        return super().get_context_data(collaborator_invites=collaborator_invites_not_accepted, **kwargs)
 
     def form_valid(self, form):
         try:
@@ -544,13 +517,12 @@ class AdminInviteCollaboratorFormView(SuccessMessageMixin, FormView):
 
 class AdminInviteCollaboratorDeleteFormView(SuccessMessageMixin, FormView):
     form_class = forms.AdminInviteCollaboratorDeleteForm
-    success_message = ('Invitation successfully deleted')
+    success_message = 'Invitation successfully deleted'
     success_url = reverse_lazy('business-profile-admin-invite-collaborator')
 
     def form_valid(self, form):
         helpers.collaborator_invite_delete(
-            sso_session_id=self.request.user.session_id,
-            invite_key=form.cleaned_data['invite_key'],
+            sso_session_id=self.request.user.session_id, invite_key=form.cleaned_data['invite_key']
         )
         return super().form_valid(form)
 
@@ -561,30 +533,20 @@ class ProductsServicesRoutingFormView(FormView):
     template_name = 'business_profile/products-services-routing-form.html'
 
     def form_valid(self, form):
-        url = reverse(
-            'business-profile-expertise-products-services',
-            kwargs={'category': form.cleaned_data['choice']}
-        )
+        url = reverse('business-profile-expertise-products-services', kwargs={'category': form.cleaned_data['choice']})
         return redirect(url)
 
     def get_context_data(self, **kwargs):
-        return super().get_context_data(
-            company=self.request.user.company.serialize_for_template(),
-            **kwargs,
-        )
+        return super().get_context_data(company=self.request.user.company.serialize_for_template(), **kwargs)
 
 
 class ProductsServicesFormView(BaseFormView):
     success_message = None
-    success_url = reverse_lazy(
-        'business-profile-expertise-products-services-routing'
-    )
+    success_url = reverse_lazy('business-profile-expertise-products-services-routing')
     field_name = 'expertise_products_services'
 
     def dispatch(self, *args, **kwargs):
-        form = forms.ExpertiseProductsServicesRoutingForm(
-            data={'choice': self.kwargs['category']}
-        )
+        form = forms.ExpertiseProductsServicesRoutingForm(data={'choice': self.kwargs['category']})
         if not form.is_valid():
             return redirect(self.success_url)
         return super().dispatch(*args, **kwargs)
@@ -593,10 +555,7 @@ class ProductsServicesFormView(BaseFormView):
     template_name = 'business_profile/products-services-form.html'
 
     def get_context_data(self, **kwargs):
-        return super().get_context_data(
-            category=self.kwargs['category'].replace('-', ' '),
-            **kwargs
-        )
+        return super().get_context_data(category=self.kwargs['category'].replace('-', ' '), **kwargs)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -619,9 +578,7 @@ class ProductsServicesFormView(BaseFormView):
 
 class ProductsServicesOtherFormView(BaseFormView):
     success_message = None
-    success_url = reverse_lazy(
-        'business-profile-expertise-products-services-routing'
-    )
+    success_url = reverse_lazy('business-profile-expertise-products-services-routing')
     field_name = 'expertise_products_services'
     form_class = forms.ExpertiseProductsServicesOtherForm
     template_name = 'business_profile/products-services-other-form.html'
@@ -640,9 +597,7 @@ class ProductsServicesOtherFormView(BaseFormView):
         }
 
 
-class PersonalDetailsFormView(
-    core.mixins.CreateUpdateUserProfileMixin, SuccessMessageMixin, FormView
-):
+class PersonalDetailsFormView(core.mixins.CreateUpdateUserProfileMixin, SuccessMessageMixin, FormView):
     template_name = 'business_profile/personal-details-form.html'
     form_class = core.forms.PersonalDetails
     success_url = reverse_lazy('business-profile')

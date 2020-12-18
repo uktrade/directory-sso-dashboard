@@ -17,19 +17,12 @@ def test_create_user_profile(mock_create_user_profile, mock_profile_update):
     }
     profile_name_data = {'name': data['first_name'] + ' ' + data['last_name']}
     mock_create_user_profile.return_value = create_response(status_code=201, json_body=data)
-    helpers.create_user_profile(
-        sso_session_id=1,
-        data=data
-    )
+    helpers.create_user_profile(sso_session_id=1, data=data)
     assert mock_create_user_profile.call_count == 1
-    assert mock_create_user_profile.call_args == mock.call(
-        sso_session_id=1, data=data
-    )
+    assert mock_create_user_profile.call_args == mock.call(sso_session_id=1, data=data)
 
     assert mock_profile_update.call_count == 1
-    assert mock_profile_update.call_args == mock.call(
-        sso_session_id=1, data=profile_name_data
-    )
+    assert mock_profile_update.call_args == mock.call(sso_session_id=1, data=profile_name_data)
 
 
 @pytest.mark.parametrize('status_code', [200, 404])
@@ -56,15 +49,17 @@ def test_update_user_profile(mock_update_user_profile, mock_profile_update, stat
 
 @mock.patch.object(helpers.api_client.company, 'collaborator_list')
 def test_get_company_admins(mock_collaborator_list):
-    data = [{
-        'sso_id': 1,
-        'company': '12345678',
-        'company_email': 'jim@example.com',
-        'date_joined': '2001-01-01T00:00:00.000000Z',
-        'is_company_owner': True,
-        'role': 'ADMIN',
-        'name': 'Jim'
-    }]
+    data = [
+        {
+            'sso_id': 1,
+            'company': '12345678',
+            'company_email': 'jim@example.com',
+            'date_joined': '2001-01-01T00:00:00.000000Z',
+            'is_company_owner': True,
+            'role': 'ADMIN',
+            'name': 'Jim',
+        }
+    ]
 
     mock_collaborator_list.return_value = create_response(status_code=200, json_body=data)
 

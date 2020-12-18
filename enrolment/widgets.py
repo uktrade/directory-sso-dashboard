@@ -1,5 +1,5 @@
-import django.forms
 import directory_components.forms
+import django.forms
 
 
 class PostcodeInput(django.forms.TextInput):

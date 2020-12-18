@@ -1,10 +1,10 @@
+from profile.business_profile import helpers
 from unittest import mock
 
-from directory_constants import user_roles
 import pytest
+from directory_constants import user_roles
 
 from sso import models
-from profile.business_profile import helpers
 
 
 def test_full_name_empty():
@@ -25,11 +25,9 @@ def test_is_company_admin_no_supplier(mock_supplier):
     assert models.SSOUser().is_company_admin is False
 
 
-@pytest.mark.parametrize('role,expected', (
-    (user_roles.ADMIN, True),
-    (user_roles.EDITOR, False),
-    (user_roles.MEMBER, False),
-))
+@pytest.mark.parametrize(
+    'role,expected', ((user_roles.ADMIN, True), (user_roles.EDITOR, False), (user_roles.MEMBER, False))
+)
 @mock.patch.object(models.SSOUser, 'supplier', new_callable=mock.PropertyMock)
 def test_is_company_admin(mock_supplier, role, expected):
     mock_supplier.return_value = {'role': role}

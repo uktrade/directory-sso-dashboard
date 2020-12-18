@@ -1,11 +1,10 @@
-from importlib import import_module, reload
 import sys
+from importlib import import_module, reload
 
-from formtools.wizard.views import normalize_name
 import requests
-
 from django.conf import settings
 from django.urls import clear_url_caches, reverse
+from formtools.wizard.views import normalize_name
 
 
 def create_response(json_body={}, status_code=200, content=None):
@@ -24,11 +23,9 @@ def submit_step_factory(client, url_name, view_class):
         step_name = step_name or next(step_names)
         return client.post(
             reverse(url_name, kwargs={'step': step_name}),
-            {
-                view_name + '-current_step': step_name,
-                **{step_name + '-' + key: value for key, value in data.items()}
-            },
+            {view_name + '-current_step': step_name, **{step_name + '-' + key: value for key, value in data.items()}},
         )
+
     return submit_step
 
 

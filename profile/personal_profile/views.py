@@ -1,8 +1,9 @@
-from django.urls import reverse_lazy
-from django.views.generic import TemplateView, FormView
-from django.contrib.messages.views import SuccessMessageMixin
-
 from profile.personal_profile import forms
+
+from django.contrib.messages.views import SuccessMessageMixin
+from django.urls import reverse_lazy
+from django.views.generic import FormView, TemplateView
+
 import core.mixins
 
 
