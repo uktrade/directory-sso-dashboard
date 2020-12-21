@@ -7,6 +7,7 @@
  
 ### Fixed bugs
 
+- GBAU-889 - directory-components version bump
 - GAA-27 - directory-components version bump
 - GP2-1068 - adopt Black auto-formatting + provide optional pre-commit config
 
