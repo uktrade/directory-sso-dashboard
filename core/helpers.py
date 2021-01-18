@@ -1,6 +1,6 @@
-from directory_sso_api_client import sso_api_client
 from directory_api_client.client import api_client
 from directory_constants import user_roles
+from directory_sso_api_client import sso_api_client
 
 
 def create_user_profile(sso_session_id, data):

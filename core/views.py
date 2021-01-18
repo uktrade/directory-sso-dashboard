@@ -1,11 +1,10 @@
-from directory_ch_client.client import ch_search_api_client
 import requests
+from directory_ch_client.client import ch_search_api_client
+from django.conf import settings
+from django.views.generic import RedirectView, TemplateView
 from requests.auth import HTTPBasicAuth
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-
-from django.views.generic import RedirectView, TemplateView
-from django.conf import settings
 
 from core import serializers
 
@@ -18,9 +17,7 @@ class CompaniesHouseSearchAPIView(GenericAPIView):
     def get(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.GET)
         serializer.is_valid(raise_exception=True)
-        response = ch_search_api_client.company.search_companies(
-            query=serializer.validated_data['term']
-        )
+        response = ch_search_api_client.company.search_companies(query=serializer.validated_data['term'])
         response.raise_for_status()
         return Response(response.json()['items'])
 
@@ -41,10 +38,7 @@ class AddressSearchAPIView(GenericAPIView):
         )
         if response.ok:
             data = [
-                {
-                    'text': address.replace(' ,', ''),
-                    'value': address.replace(' ,', '') + ', ' + postcode,
-                }
+                {'text': address.replace(' ,', ''), 'value': address.replace(' ,', '') + ', ' + postcode}
                 for address in response.json()['addresses']
             ]
         elif response.status_code == 400:
@@ -62,6 +56,4 @@ class AboutView(TemplateView):
     template_name = 'about.html'
 
     def get_context_data(self):
-        return {
-            'about_tab_classes': 'active'
-        }
+        return {'about_tab_classes': 'active'}

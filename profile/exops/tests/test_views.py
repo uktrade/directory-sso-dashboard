@@ -1,10 +1,10 @@
-from unittest.mock import patch, Mock
+from profile.exops import views
+from profile.exops.helpers import exopps_client
+from unittest.mock import Mock, patch
 
 from django.urls import reverse
 
 from core.tests.helpers import create_response
-from profile.exops import views
-from profile.exops.helpers import exopps_client
 
 
 def response_factory(status_code):
@@ -53,9 +53,7 @@ def test_opportunities_applications_retrieve_not_found(client, user):
 
     response = client.get(reverse('export-opportunities-applications'))
 
-    assert response.template_name == [
-        views.ExportOpportunitiesApplicationsView.template_name_not_exops_user
-    ]
+    assert response.template_name == [views.ExportOpportunitiesApplicationsView.template_name_not_exops_user]
 
 
 @patch.object(exopps_client, 'get_exops_data', response_factory(200))
@@ -64,9 +62,7 @@ def test_opportunities_applications_retrieve_found(client, user):
 
     response = client.get(reverse('export-opportunities-applications'))
 
-    assert response.template_name == [
-        views.ExportOpportunitiesApplicationsView.template_name_exops_user
-    ]
+    assert response.template_name == [views.ExportOpportunitiesApplicationsView.template_name_exops_user]
 
 
 @patch.object(exopps_client, 'get_exops_data', response_factory(500))
@@ -75,9 +71,7 @@ def test_opportunities_applications_retrieve_error(client, user):
 
     response = client.get(reverse('export-opportunities-applications'))
 
-    assert response.template_name == [
-        views.ExportOpportunitiesApplicationsView.template_name_error
-    ]
+    assert response.template_name == [views.ExportOpportunitiesApplicationsView.template_name_error]
 
 
 @patch.object(exopps_client, 'get_exops_data', response_factory(403))
@@ -86,9 +80,7 @@ def test_opportunities_email_alerts_retrieve_not_found(client, user):
 
     response = client.get(reverse('export-opportunities-email-alerts'))
 
-    assert response.template_name == [
-        views.ExportOpportunitiesEmailAlertsView.template_name_not_exops_user
-    ]
+    assert response.template_name == [views.ExportOpportunitiesEmailAlertsView.template_name_not_exops_user]
 
 
 @patch.object(exopps_client, 'get_exops_data', response_factory(200))
@@ -97,9 +89,7 @@ def test_opportunities_email_alerts_retrieve_found(client, user):
 
     response = client.get(reverse('export-opportunities-email-alerts'))
 
-    assert response.template_name == [
-        views.ExportOpportunitiesEmailAlertsView.template_name_exops_user
-    ]
+    assert response.template_name == [views.ExportOpportunitiesEmailAlertsView.template_name_exops_user]
 
 
 @patch.object(exopps_client, 'get_exops_data', response_factory(500))
@@ -108,6 +98,4 @@ def test_opportunities_email_alerts_retrieve_error(client, user):
 
     response = client.get(reverse('export-opportunities-email-alerts'))
 
-    assert response.template_name == [
-        views.ExportOpportunitiesEmailAlertsView.template_name_error
-    ]
+    assert response.template_name == [views.ExportOpportunitiesEmailAlertsView.template_name_error]

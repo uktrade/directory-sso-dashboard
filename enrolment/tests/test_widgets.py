@@ -15,22 +15,11 @@ def test_choice_field_help_text_widget():
     class Form(forms.Form):
         a = forms.ChoiceField(
             label='',
-            widget=widgets.RadioSelect(
-                help_text={
-                    'foo': 'Helptext for foo',
-                    'bar': 'Helptext for bar',
-                }
-            ),
-            choices=(
-                ('foo', 'foo label'),
-                ('bar', 'bar label'),
-                ('baz', 'baz label'),
-            ),
+            widget=widgets.RadioSelect(help_text={'foo': 'Helptext for foo', 'bar': 'Helptext for bar'}),
+            choices=(('foo', 'foo label'), ('bar', 'bar label'), ('baz', 'baz label')),
         )
 
-    span_class = (
-        'border-light-grey padding-left-30 padding-top-15 padding-bottom-15'
-    )
+    span_class = 'border-light-grey padding-left-30 padding-top-15 padding-bottom-15'
     expected = """
     <p class=" form-group">
         <div class="form-group">
@@ -62,6 +51,8 @@ def test_choice_field_help_text_widget():
             </ul>
         </div>
     </p>
-    """.format(span_class=span_class)
+    """.format(
+        span_class=span_class
+    )
 
     assert_html_equal(expected_html=expected, actual_html=Form().as_p())

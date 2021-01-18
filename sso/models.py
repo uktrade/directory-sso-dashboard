@@ -1,13 +1,11 @@
-from directory_constants import user_roles
-import directory_sso_api_client.models
-
-from django.utils.functional import cached_property
-
 from profile.business_profile import helpers
+
+import directory_sso_api_client.models
+from directory_constants import user_roles
+from django.utils.functional import cached_property
 
 
 class SSOUser(directory_sso_api_client.models.SSOUser):
-
     @cached_property
     def company(self):
         company = helpers.get_company_profile(self.session_id)

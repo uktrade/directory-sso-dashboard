@@ -6,11 +6,26 @@
  - No ticket - Dependencies upgrade
  
 ### Fixed bugs
+
+- GBAU-889 - directory-components version bump
 - GAA-27 - directory-components version bump
+- GP2-1068 - adopt Black auto-formatting + provide optional pre-commit config
+
+## [1.0.0](https://github.com/uktrade/directory-sso-profile/releases/tag/1.0.0)
+
+[Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2020.09.16...1.0.0)
+
+### Fixed bugs
+
+- GAA-27 - directory-components version bump
+- No Ticket fix typo on registration
 
 ## [2020.09.16](https://github.com/uktrade/directory-sso-profile/releases/tag/2020.09.16)
+
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2020.06.10...2020.09.16)
+
 ### Fixed bugs
+
 - No ticket - Dependencies upgrade
 - No ticket - Upgrade django to fix vulnerability
 - No ticket - fix stuck codecov
@@ -19,25 +34,31 @@
 - GAA-4 - Fieldset and legend on business type page
 
 ## [2020.06.10](https://github.com/uktrade/directory-sso-profile/releases/tag/2020.06.10)
+
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2020.04.20...2020.06.10)
 
 ### Fixed bugs
+
 - TT-2223 - Handle verification letter sent
 - TT-1861 - Improve confusing content on remove from account button
 - TT-1851 - Improve confusing content on the business profile page
 
 ## [2020.04.20](https://github.com/uktrade/directory-sso-profile/releases/tag/2020.04.20)
+
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2020.03.05...2020.04.20)
 
 ### Fixed Bugs
+
 - XOT-1335 - Fix Export Opportunities endpoint
 - No ticket - v3 ci pipeline manifest.yml file fix
 - TT-2276 - Removed reference to "schedule publish"
 
 ## [2020.03.05](https://github.com/uktrade/directory-sso-profile/releases/tag/2020.03.05)
+
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2020.02.04...2020.03.05)
 
 ### Implemented enhancements
+
 - TT-1931 - Disabled in-browser validation for all forms
 - TT-2223 - Handle preverified company multiple users
 - MVP-41 - Add GA360 Context Processor and remove middleware and mixins
@@ -46,38 +67,47 @@
 - No ticket - CVE-2020-5236 & CVE-2020-7471: Potential SQL injection via StringAgg(delimiter)
 
 ### Fixed bugs
+
 - No ticket - Fix business profile load for user with no business
 - TT-2254 - Cleaned up obsolete settings
 
 ## [2020.02.04](https://github.com/uktrade/directory-sso-profile/releases/tag/2020.02.04)
+
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2020.01.14...2020.02.04)
 
 ### Hotfix
+
 - No ticket - CVE-2020-5236 & CVE-2020-7471: Potential SQL injection via StringAgg(delimiter)
 
-
 ## [2020.01.14](https://github.com/uktrade/directory-sso-profile/releases/tag/2020.01.14)
+
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2019.12.18...2020.01.14)
 
 ### Fixed bugs:
+
 - TT-2191 - Content update
 - TT-2178 - Improve UI of address and nature of business textarea
 - TT-2232 - Remove spin-buttons from email verification field
 
 ## [2019.12.18](https://github.com/uktrade/directory-sso-profile/releases/tag/2019.12.18)
+
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2019.12.04...2019.12.18)
 
 ### Implemented enhancements
- - TT-1304 - Upgrade sentry client
- - TT-1624 - Tidy up collaborator request page
+
+- TT-1304 - Upgrade sentry client
+- TT-1624 - Tidy up collaborator request page
 
 ### Fixed bugs:
- - TT-2213 - Fixed typo
+
+- TT-2213 - Fixed typo
 
 ## [2019.12.04](https://github.com/uktrade/directory-sso-profile/releases/tag/2019.12.04)
+
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2019.11.20...2019.12.04)
 
 ### Implemented enhancements
+
 - TT-1828 - Increasing size of address preview field in registration journey
 - TT-1199 - Fixing accessibility issues
 - TT-2025 - Update success page content
@@ -88,6 +118,7 @@
 - TT-2212 - Feature flag admin requests
 
 ### Fixed bugs:
+
 - TT-1817 - Use correct input types for number fields
 - TT-1819 - Fix padding on success box
 - TT-1947 - Fix pencil icons
@@ -106,18 +137,22 @@
 - no ticket - upgrade pillow
 - TT-2189 - empty password error
 - TT-2149 - Improve accessibility on enrolment start page
-- TT-1855 - Remove "is enrolled" caching 
+- TT-1855 - Remove "is enrolled" caching
 
 ## [2019.11.20](https://github.com/uktrade/directory-sso-profile/releases/tag/2019.11.20)
+
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2019.10.30...2019.11.20)
 
 ## Hotfix
+
 - TT-2176 - Fix password form remembering old bad password
 
 ## [2019.10.30](https://github.com/uktrade/directory-sso-profile/releases/tag/2019.10.30)
+
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2019.08.14_1...2019.10.30)
 
 ### Implemented enhancements
+
 - GTRANSFORM-364 - text changes on page titles
 - GTRANSFORM-364 - add descriptive page titles to profile journey templates
 - TT-1725 - Send email to company admin when a new user is added to company profile
@@ -155,6 +190,7 @@
 - TT-1911 - Remove access to edit business profile for member user
 
 ### Fixed bugs:
+
 - TT-1728 - Not ask personal details to individual upgrading to business profile
 - No ticket - Remove obsolete settings
 - TT-1731 - Fix address error persistence issue when a valid postcode is entered on UI
@@ -173,13 +209,13 @@
 - TT-1807 - Hide Publish button on admin
 - TT-1857 - Companies House fix request manual verification
 - TT-1856 - fix persistent is_enroled msg
-- TT-1857   - Companies House fix request manual verification
+- TT-1857 - Companies House fix request manual verification
 - TT-1797 - correct page titles
 - TT-1819 - Fixing missing background image on tooltip on profile about page
 - TT-1899 - fix telephone display and correct case on personal details
 - TT-1789 - Wizard drops steps on changing business-type
-- TT-1904 - admin defaults to invite collaborators 
-- TT-1901 - show name in collaborators list 
+- TT-1904 - admin defaults to invite collaborators
+- TT-1901 - show name in collaborators list
 - TT-1914 - Reinstate missing terms tickbox
 - TT-1915 - Fix update profile error if user has no supplier
 - TT-1902 - Collaborator Invite UI bug fixes
@@ -189,16 +225,20 @@
 - TT-2038 - fix admin breadcrumbs
 
 ## [2019.08.14_1](https://github.com/uktrade/directory-sso-profile/releases/tag/2019.08.14_1)
+
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2019.08.14...2019.08.14_1)
 
 ## Hotfix
+
 - TT-1853 - 404-guidence-page
 
 ## [2019.08.14](https://github.com/uktrade/directory-sso-profile/releases/tag/2019.08.14)
+
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2019.06.25_2...2019.08.14)
 
 ### Implemented enhancements
-- TT-990  - Update registration journey of individual user
+
+- TT-990 - Update registration journey of individual user
 - TT-1566 - Handle overseas busienss enrolment
 - TT-1564 - Update registration journey SSO user with Companies House company
 - TT-1577 - Move company title under logo on mobile.
@@ -211,7 +251,7 @@
 - TT-1672 - Show banner prompting user to provide business or personal details if missing
 - TT-1634 - Show success page on companies house enrolment if no started from "start now"
 - TT-1632 - Show success page on non companies house enrolment if no started from "start now"
-- TT-1636 - please select pick lists tickets include TT-1638, TT-1640,  TT-1636
+- TT-1636 - please select pick lists tickets include TT-1638, TT-1640, TT-1636
 - No ticket - Increase flake 8 coverage to 120 lines
 - TT-1561 - Show different enrolment title depending on user journey
 - TT-1560 - Hide individual account interstitial if intent is create a business profile
@@ -222,7 +262,8 @@
 - TT-1645 - Fix progress indicator changing from long to short list in new session
 - No ticket - Upgraded django to 1.11.23 to fix vulnerabilityI
 
-## [07-17-2019 ](https://github.com/uktrade/directory-sso-profile/releases/tag/07-17-2019 )
+## [07-17-2019 ](https://github.com/uktrade/directory-sso-profile/releases/tag/07-17-2019)
+
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2019.06.05...07-17-2019)
 
 ### Implemented enhancements
@@ -234,19 +275,21 @@
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2019.05.16...2019.06.05)
 
 ### Implemented enhancements
+
 - [TT-1392] Fixed UI Bugs on ISD profile page
 - TT-1468 Rename "Back" to "Back to profile" in the products and services edit screen
 - no ticket - Removed the following obsolete feature flags:
-    + FEATURE_BUSINESS_PROFILE_ENABLED
-    + FEATURE_NEW_HEADER_FOOTER_ENABLED
-    + FEATURE_HEADER_SEARCH_ENABLED
-    + FEATURE_EXPERTISE_FIELDS_ENABLED
-    + FEATURE_NEW_ACCOUNT_JOURNEY_ENABLED
+  - FEATURE_BUSINESS_PROFILE_ENABLED
+  - FEATURE_NEW_HEADER_FOOTER_ENABLED
+  - FEATURE_HEADER_SEARCH_ENABLED
+  - FEATURE_EXPERTISE_FIELDS_ENABLED
+  - FEATURE_NEW_ACCOUNT_JOURNEY_ENABLED
 - no ticket - Fall over if redis is not available
 - TT-1501 update isd-url view profile url
 - TT-1321-industry-rewording
 
 ### Fixed bugs:
+
 - Upgrade django rest framework to fix security vulnerability
 
 ## [2019.05.16](https://github.com/uktrade/directory-sso-profile/releases/tag/2019.05.16)
@@ -254,15 +297,16 @@
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/2019.04.08...2019.05.16)
 
 ### Implemented enhancements
+
 - Move form choices to [Constants][directory-constants].
 - TT-1426 - Show links to public ISD and FAS profiles
 - TT-1423 - Improve content on ISD "other" products and services form
 
 ### Fixed bugs:
+
 - Upgraded urllib3 to fix [vulnerability](https://nvd.nist.gov/vuln/detail/CVE-2019-11324)
 - Removed old references to Docker.
 - TT-1271 - Show dropdown arrow on industry expertise input
 - TT-1415 - Allow products and services to be cleared
-[directory-constants]: https://github.com/uktrade/directory-constants
+  [directory-constants]: https://github.com/uktrade/directory-constants
 - TT-1417 - Populate "Other" products and services with keywords
-

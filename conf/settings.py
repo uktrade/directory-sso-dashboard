@@ -17,7 +17,6 @@ import environ
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
-
 env = environ.Env()
 for env_file in env.list('ENV_FILES', default=[]):
     env.read_env(f'conf/env/{env_file}')
@@ -88,16 +87,15 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.messages.context_processors.messages',
                 'directory_components.context_processors.urls_processor',
-                ('directory_components.context_processors.'
-                 'header_footer_processor'),
+                'directory_components.context_processors.header_footer_processor',
                 'directory_components.context_processors.sso_processor',
                 'directory_components.context_processors.ga360',
                 'directory_components.context_processors.analytics',
                 'directory_components.context_processors.feature_flags',
                 'directory_components.context_processors.cookie_notice',
-            ],
+            ]
         },
-    },
+    }
 ]
 
 WSGI_APPLICATION = 'conf.wsgi.application'
@@ -113,15 +111,10 @@ else:
 cache = {
     'BACKEND': 'django_redis.cache.RedisCache',
     'LOCATION': REDIS_URL,
-    'OPTIONS': {
-        'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-    }
+    'OPTIONS': {'CLIENT_CLASS': 'django_redis.client.DefaultClient'},
 }
 
-CACHES = {
-    'default': cache,
-    'api_fallback': cache,
-}
+CACHES = {'default': cache, 'api_fallback': cache}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
@@ -142,10 +135,7 @@ MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media')
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
 STATIC_HOST = env.str('STATIC_HOST', '')
 STATIC_URL = STATIC_HOST + '/static/'
-STATICFILES_STORAGE = env.str(
-    'STATICFILES_STORAGE',
-    'whitenoise.storage.CompressedManifestStaticFilesStorage'
-)
+STATICFILES_STORAGE = env.str('STATICFILES_STORAGE', 'whitenoise.storage.CompressedManifestStaticFilesStorage')
 
 
 # Public storage for uploaded logos and case study images
@@ -178,37 +168,18 @@ if DEBUG:
     LOGGING = {
         'version': 1,
         'disable_existing_loggers': False,
-        'filters': {
-            'require_debug_false': {
-                '()': 'django.utils.log.RequireDebugFalse'
-            }
-        },
-        'handlers': {
-            'console': {
-                'level': 'DEBUG',
-                'class': 'logging.StreamHandler',
-            },
-        },
+        'filters': {'require_debug_false': {'()': 'django.utils.log.RequireDebugFalse'}},
+        'handlers': {'console': {'level': 'DEBUG', 'class': 'logging.StreamHandler'}},
         'loggers': {
-            'django.request': {
-                'handlers': ['console'],
-                'level': 'ERROR',
-                'propagate': True,
-            },
-            '': {
-                'handlers': ['console'],
-                'level': 'DEBUG',
-                'propagate': False,
-            },
-        }
+            'django.request': {'handlers': ['console'], 'level': 'ERROR', 'propagate': True},
+            '': {'handlers': ['console'], 'level': 'DEBUG', 'propagate': False},
+        },
     }
 
 # Sentry
 if env.str('SENTRY_DSN', ''):
     sentry_sdk.init(
-        dsn=env.str('SENTRY_DSN'),
-        environment=env.str('SENTRY_ENVIRONMENT'),
-        integrations=[DjangoIntegration()]
+        dsn=env.str('SENTRY_DSN'), environment=env.str('SENTRY_ENVIRONMENT'), integrations=[DjangoIntegration()]
     )
 
 
@@ -283,11 +254,7 @@ DIRECTORY_HEALTHCHECK_BACKENDS = [
 ]
 
 
-REST_FRAMEWORK = {
-    'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework.renderers.JSONRenderer',
-    )
-}
+REST_FRAMEWORK = {'DEFAULT_RENDERER_CLASSES': ('rest_framework.renderers.JSONRenderer',)}
 
 # Google captcha
 RECAPTCHA_PUBLIC_KEY = env.str('RECAPTCHA_PUBLIC_KEY')
@@ -315,21 +282,17 @@ DIRECTORY_FORMS_API_DEFAULT_TIMEOUT = env.int('DIRECTORY_API_FORMS_DEFAULT_TIMEO
 
 # gov.uk notify
 CONFIRM_VERIFICATION_CODE_TEMPLATE_ID = env.str(
-    'CONFIRM_VERIFICATION_CODE_TEMPLATE_ID',
-    'a1eb4b0c-9bab-44d3-ac2f-7585bf7da24c'
+    'CONFIRM_VERIFICATION_CODE_TEMPLATE_ID', 'a1eb4b0c-9bab-44d3-ac2f-7585bf7da24c'
 )
 GOV_NOTIFY_ALREADY_REGISTERED_TEMPLATE_ID = env.str(
-    'GOV_NOTIFY_ALREADY_REGISTERED_TEMPLATE_ID',
-    '5c8cc5aa-a4f5-48ae-89e6-df5572c317ec'
+    'GOV_NOTIFY_ALREADY_REGISTERED_TEMPLATE_ID', '5c8cc5aa-a4f5-48ae-89e6-df5572c317ec'
 )
 GOV_NOTIFY_NEW_MEMBER_REGISTERED_TEMPLATE_ID = env.str(
-    'GOV_NOTIFY_NEW_MEMBER_REGISTERED_TEMPLATE_ID',
-    '439a8415-52d8-4975-b230-15cd34305bb5'
+    'GOV_NOTIFY_NEW_MEMBER_REGISTERED_TEMPLATE_ID', '439a8415-52d8-4975-b230-15cd34305bb5'
 )
 
 GOV_NOTIFY_COLLABORATION_REQUEST_RESENT = env.str(
-    'GOV_NOTIFY_COLLABORATION_REQUEST_RESENT',
-    '60c14d97-8e58-4e5f-96e9-e0ca49bc3b96'
+    'GOV_NOTIFY_COLLABORATION_REQUEST_RESENT', '60c14d97-8e58-4e5f-96e9-e0ca49bc3b96'
 )
 
 
