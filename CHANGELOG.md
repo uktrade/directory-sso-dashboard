@@ -1,5 +1,8 @@
 # Changelog
 
+### Hot Fixes
+- NOTICKET - fix-vulnerabilies
+
 ## Pre-Release
 
 ### Implemented enhancements
