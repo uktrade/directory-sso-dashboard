@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'enrolment',
     'health_check.cache',
     'directory_healthcheck',
+    'great_components',
 ]
 
 

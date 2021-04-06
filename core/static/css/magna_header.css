@@ -1,0 +1,87 @@
+.shared-magna-header {
+    background: #1E1348;
+    height: 110px;
+    z-index: auto;
+}
+.text-white {
+    color: #fff;
+}
+
+.magna-header {
+    position: relative;
+    z-index: 2;
+}
+.shared-magna-header #header-logo-link .header-logo {
+    height: 75px;
+}
+.magna-header .header-links {
+    display: flex;
+    flex-grow: 1;
+    justify-content: flex-end;
+}
+.magna-header ul {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+}
+.shared-magna-header .header-links a {
+    color: #fff;
+    font-family: "Overpass", Arial, Helvetica, Verdana;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 0;
+    line-height: 25px;
+    margin-bottom: 13px;
+    text-decoration: none;
+}
+
+
+
+.shared-magna-header .extra-links a {
+    color: #fff;
+    font-family: "Overpass", Arial, Helvetica, Verdana;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 0;
+    line-height: 25px;
+    text-align: right;
+    text-decoration: none;
+}
+.magna-header div {
+margin: 0;
+padding: 0;
+border: 0;
+box-sizing: border-box;
+font-size: 100%;
+vertical-align: baseline;
+}
+.shared-magna-header .header-links li {
+    align-items: flex-end;
+    margin: 0 16px;
+}
+
+.shared-magna-header .header-links button {
+    box-sizing: border-box;
+    height: 40px;
+    width: 114px;
+    border: 2px solid #fff;
+    background-color: #1E1348;
+    color: #fff;
+    font-family: "Overpass", Arial, Helvetica, Verdana;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 0;
+    text-align: left;
+    padding: 5px 14px;
+}
+
+.shared-magna-header .extra-links a {
+    color: #fff;
+    font-family: "Overpass", Arial, Helvetica, Verdana;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 0;
+    line-height: 25px;
+    text-align: right;
+    text-decoration: none;
+}

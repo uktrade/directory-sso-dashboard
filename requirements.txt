@@ -4,138 +4,51 @@
 #
 #    pip-compile requirements.in
 #
-attrs==19.2.0
-    # via jsonschema
-beautifulsoup4==4.8.0
-    # via directory-components
-boto3==1.7.30
-    # via -r requirements.in
-botocore==1.10.84
-    # via
-    #   boto3
-    #   s3transfer
-certifi==2019.9.11
-    # via
-    #   requests
-    #   sentry-sdk
-chardet==3.0.4
-    # via requests
-directory-api-client==21.0.0
-    # via -r requirements.in
-directory-ch-client==2.1.0
-    # via -r requirements.in
-directory-client-core==6.1.0
-    # via
-    #   directory-api-client
-    #   directory-ch-client
-    #   directory-forms-api-client
-    #   directory-sso-api-client
-directory-components==35.27.0
-    # via -r requirements.in
-directory-constants==20.11.0
-    # via directory-components
-directory-forms-api-client==5.0.0
-    # via -r requirements.in
-directory-sso-api-client==6.2.0
-    # via -r requirements.in
-directory-validators==6.0.5
-    # via -r requirements.in
-django-environ==0.4.5
-    # via -r requirements.in
-django-formtools==2.1
-    # via -r requirements.in
-django-recaptcha==2.0.5
-    # via -r requirements.in
-django-redis==4.10.0
-    # via -r requirements.in
-django-storages==1.7.1
-    # via -r requirements.in
-django==2.2.19
-    # via
-    #   -r requirements.in
-    #   directory-api-client
-    #   directory-ch-client
-    #   directory-client-core
-    #   directory-components
-    #   directory-constants
-    #   directory-validators
-    #   django-formtools
-    #   django-recaptcha
-    #   django-redis
-    #   django-storages
-    #   djangorestframework
-    #   sigauth
-djangorestframework==3.11.2
-    # via
-    #   -r requirements.in
-    #   sigauth
-docutils==0.15.2
-    # via botocore
-gunicorn==19.5.0
-    # via -r requirements.in
-idna==2.8
-    # via requests
-jmespath==0.9.4
-    # via
-    #   boto3
-    #   botocore
-jsonschema==3.0.2
-    # via directory-components
-mohawk==0.3.4
-    # via sigauth
-monotonic==1.5
-    # via
-    #   directory-ch-client
-    #   directory-client-core
-olefile==0.44
-    # via directory-validators
-pillow==8.1.2
-    # via directory-validators
-pyrsistent==0.15.4
-    # via jsonschema
-python-dateutil==2.8.0
-    # via botocore
-pytz==2017.2
-    # via
-    #   directory-validators
-    #   django
-redis==3.3.8
-    # via django-redis
-requests==2.21.0
-    # via
-    #   -r requirements.in
-    #   directory-api-client
-    #   directory-ch-client
-    #   directory-client-core
-s3transfer==0.1.13
-    # via boto3
-sentry-sdk==0.13.4
-    # via -r requirements.in
-sigauth==4.1.0
-    # via
-    #   -r requirements.in
-    #   directory-client-core
-six==1.12.0
-    # via
-    #   jsonschema
-    #   mohawk
-    #   pyrsistent
-    #   python-dateutil
-    #   w3lib
-soupsieve==1.9.4
-    # via beautifulsoup4
-sqlparse==0.3.0
-    # via django
-urllib3==1.24.3
-    # via
-    #   -r requirements.in
-    #   directory-validators
-    #   requests
-    #   sentry-sdk
-w3lib==1.21.0
-    # via directory-client-core
-whitenoise==4.1.2
-    # via -r requirements.in
+attrs==19.2.0             # via jsonschema
+beautifulsoup4==4.8.0     # via directory-components, great-components
+boto3==1.7.30             # via -r requirements.in
+botocore==1.10.84         # via boto3, s3transfer
+certifi==2019.9.11        # via requests, sentry-sdk
+chardet==3.0.4            # via requests
+directory-api-client==21.0.0  # via -r requirements.in
+directory-ch-client==2.1.0  # via -r requirements.in
+directory-client-core==6.1.0  # via directory-api-client, directory-ch-client, directory-forms-api-client, directory-sso-api-client
+directory-components==35.27.0  # via -r requirements.in
+directory-constants==20.11.0  # via directory-components, great-components
+directory-forms-api-client==5.0.0  # via -r requirements.in
+directory-sso-api-client==6.2.0  # via -r requirements.in
+directory-validators==6.0.5  # via -r requirements.in
+django-environ==0.4.5     # via -r requirements.in
+django-formtools==2.1     # via -r requirements.in
+django-recaptcha==2.0.5   # via -r requirements.in
+django-redis==4.10.0      # via -r requirements.in
+django-storages==1.7.1    # via -r requirements.in
+django==2.2.19            # via -r requirements.in, directory-api-client, directory-ch-client, directory-client-core, directory-components, directory-constants, directory-validators, django-formtools, django-recaptcha, django-redis, django-storages, djangorestframework, great-components, sigauth
+djangorestframework==3.11.2  # via -r requirements.in, sigauth
+docutils==0.15.2          # via botocore
+great-components==1.1.1   # via -r requirements.in
+gunicorn==19.5.0          # via -r requirements.in
+idna==2.8                 # via requests
+jmespath==0.9.4           # via boto3, botocore
+jsonschema==3.0.2         # via directory-components, great-components
+mohawk==0.3.4             # via sigauth
+monotonic==1.5            # via directory-ch-client, directory-client-core
+olefile==0.44             # via directory-validators
+pillow==8.1.2             # via directory-validators
+pyrsistent==0.15.4        # via jsonschema
+python-dateutil==2.8.0    # via botocore
+pytz==2017.2              # via directory-validators, django
+redis==3.3.8              # via django-redis
+requests==2.21.0          # via -r requirements.in, directory-api-client, directory-ch-client, directory-client-core
+s3transfer==0.1.13        # via boto3
+sentry-sdk==0.13.4        # via -r requirements.in
+sigauth==4.1.0            # via -r requirements.in, directory-client-core
+six==1.12.0               # via jsonschema, mohawk, pyrsistent, python-dateutil, w3lib
+soupsieve==1.9.4          # via beautifulsoup4
+sqlparse==0.3.0           # via django
+urllib3==1.24.3           # via -r requirements.in, directory-validators, requests, sentry-sdk
+w3lib==1.21.0             # via directory-client-core
+whitenoise==4.1.2         # via -r requirements.in
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
