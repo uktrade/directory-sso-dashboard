@@ -1,4 +1,4 @@
-{% extends 'great_components/base.html' %}
+{% extends request.session.magna|yesno:'great_components/base.html,directory_components/base.html' %}
 
 {% load static from staticfiles %}
 

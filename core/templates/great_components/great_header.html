@@ -1,10 +1,6 @@
 {% load static %}
-
-{% with query=request.GET.magna %} 
-  {{ query }}
-{% endwith %}
 <header class="magna-header shared-magna-header text-white grid" id="header" dir="ltr" data-ga-section="header">
-  
+  <!-- {% include 'great_components/header_footer/global_header.html' with header_class="domestic" %} -->
   <div class="container container-fluid">
     <nav>
       <a id="header-logo-link" href="/">
@@ -12,15 +8,16 @@
       </a>
       <div class="header-links">
         <ul id="services-area" class="services-area">
-          
-          
           <li class="lg-only"><a id="header-link-learning" class="" href="/learn/categories/">Learn to export</a></li>
           <li class="lg-only"><a id="header-link-markets" class="" href="/where-to-export/">Where to export</a></li>
           <li class="lg-only"><a id="header-link-exporting-plan" class="" href="/export-plan/dashboard/">Make an export plan</a></li>
-          <li id="header-link-user-profile"><div style="line-height: 0;"><button type="button" class="">Menu<span class="burger-icon"></span><span class="visually-hidden">User menu</span></button></div></li>
-
-  
-
+          <li id="header-link-user-profile" class="dropdown"><div style="line-height: 0;"><button type="button" onclick="myFunction()" class="dropbtn">Menu<span class="burger-icon"></span><span class="visually-hidden"></span></button>
+            <div id="myDropdown" class="dropdown-content">
+              <a href="#">Link 1</a>
+              <a href="#">Link 2</a>
+              <a href="#">Link 3</a>
+            </div>
+          </div></li>
         </ul>
       </div>
       <ul class="extra-links">

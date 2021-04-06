@@ -5,6 +5,11 @@
 {% block css_layout_class %}enrolment-content{% endblock css_layout_class %}
 
 
+{% block body_js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static 'js/magna-menu.js' %}"></script>
+    
+{% endblock body_js %}
 {% block head_css %}
     <link href="{% static 'css/profile.css' %}" media="all" rel="stylesheet" />
      <link href="{% static 'css/magna_header.css' %}" media="all" rel="stylesheet" />

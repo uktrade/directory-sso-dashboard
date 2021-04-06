@@ -1,3 +1,4 @@
+import pdb
 import requests
 from directory_ch_client.client import ch_search_api_client
 from django.conf import settings
@@ -56,4 +57,7 @@ class AboutView(TemplateView):
     template_name = 'about.html'
 
     def get_context_data(self):
+        if (bool(self.request.GET.get('magna', False)) == True):
+            if not self.request.session.get('magna', None):     
+                self.request.session['magna'] = True
         return {'about_tab_classes': 'active'}
