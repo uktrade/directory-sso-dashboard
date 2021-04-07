@@ -20,7 +20,7 @@ The back-end framework is Django 1.9. The front-end uses minimal Javascript. The
 We aim to follow [GDS service standards](https://www.gov.uk/service-manual/service-standard) and [GDS design principles](https://www.gov.uk/design-principles).
 
 ## Requirements
-[Python 3.6](https://www.python.org/downloads/release/python-366/)
+[Python 3.9](https://www.python.org/downloads/release/python-391/)
 
 [Redis]( https://redis.io/)
 

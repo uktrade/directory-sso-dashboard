@@ -1,4 +1,4 @@
-django==2.2.13
+django==2.2.20
 django-environ==0.4.5
 djangorestframework==3.11.2
 gunicorn==19.5.0
@@ -18,3 +18,4 @@ django-redis==4.10.0
 django-storages==1.7.1
 boto3==1.7.30
 sentry-sdk==0.13.4
+directory-healthcheck
