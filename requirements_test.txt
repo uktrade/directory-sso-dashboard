@@ -56,6 +56,8 @@ directory-constants==20.26.0
     # via directory-components
 directory-forms-api-client==5.0.0
     # via -r requirements.in
+directory-healthcheck==2.0.0
+    # via -r requirements.in
 directory-sso-api-client==6.2.0
     # via -r requirements.in
 directory-validators==6.0.5
@@ -64,6 +66,8 @@ django-environ==0.4.5
     # via -r requirements.in
 django-formtools==2.1
     # via -r requirements.in
+django-health-check==3.8.0
+    # via directory-healthcheck
 django-recaptcha==2.0.5
     # via -r requirements.in
 django-redis==4.10.0
@@ -78,6 +82,7 @@ django==2.2.20
     #   directory-client-core
     #   directory-components
     #   directory-constants
+    #   directory-healthcheck
     #   directory-validators
     #   django-formtools
     #   django-recaptcha
