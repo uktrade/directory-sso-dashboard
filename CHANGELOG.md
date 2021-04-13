@@ -4,12 +4,14 @@
 
 ### Implemented enhancements
  - No ticket - Dependencies upgrade
+ * GP2-2224 - Python upgrade to 3.9.1
  
 ### Fixed bugs
-
+- 
 - GBAU-889 - directory-components version bump
 - GAA-27 - directory-components version bump
 - GP2-1068 - adopt Black auto-formatting + provide optional pre-commit config
+- NOTICKET - fix-vulnerabilities
 
 ## [1.0.0](https://github.com/uktrade/directory-sso-profile/releases/tag/1.0.0)
 
