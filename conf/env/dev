@@ -37,3 +37,5 @@ SSO_SIGNATURE_SECRET=api_signature_debug
 STORAGE_CLASS_NAME=local-storage
 UTM_COOKIE_DOMAIN=.trade.great
 STATICFILES_STORAGE=django.contrib.staticfiles.storage.StaticFilesStorage
+MAGNA_HEADER=true
+DIRECTORY_CONSTANTS_URL_GREAT_MAGNA=http://greatcms.trade.great:8020/

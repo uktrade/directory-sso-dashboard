@@ -50,7 +50,7 @@ directory-client-core==6.3.0
     #   directory-ch-client
     #   directory-forms-api-client
     #   directory-sso-api-client
-directory-components==35.27.0
+directory-components==36.0.0
     # via -r requirements.in
 directory-constants==20.26.0
     # via directory-components
