@@ -6,6 +6,7 @@
 ## Pre-Release
 
 ### Implemented enhancements
+ - GP2-2332 - Upgraded directory-components package
  - No ticket - Dependencies upgrade
  * GP2-2224 - Python upgrade to 3.9.1
  
