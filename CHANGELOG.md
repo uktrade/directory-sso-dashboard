@@ -6,12 +6,13 @@
 ## Pre-Release
 
 ### Implemented enhancements
+ - GP2-2381 - corrected footer link for contact
  - GP2-2332 - Upgraded directory-components package
  - No ticket - Dependencies upgrade
- * GP2-2224 - Python upgrade to 3.9.1
- 
+ - GP2-2224 - Python upgrade to 3.9.1
+
 ### Fixed bugs
-- 
+-
 - GBAU-889 - directory-components version bump
 - GAA-27 - directory-components version bump
 - GP2-1068 - adopt Black auto-formatting + provide optional pre-commit config
