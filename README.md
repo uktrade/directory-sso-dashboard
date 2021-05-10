@@ -36,7 +36,7 @@ We use SASS CSS pre-compiler. If you're doing front-end work your local machine 
 ### Installing
     $ git clone https://github.com/uktrade/directory-sso-profile
     $ cd directory-sso-profile
-    $ virtualenv .venv -p python3.6
+    $ virtualenv .venv -p python3.9.2
     $ source .venv/bin/activate
     $ make install_requirements
 
