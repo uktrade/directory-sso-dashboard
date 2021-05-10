@@ -9,7 +9,7 @@
  - GP2-2381 - corrected footer link for contact
  - GP2-2332 - Upgraded directory-components package
  - No ticket - Dependencies upgrade
- - GP2-2224 - Python upgrade to 3.9.1
+ - GP2-2224 - Python upgrade to 3.9.2
 
 ### Fixed bugs
 -
