@@ -38,6 +38,10 @@ DEBUG = env.bool('DEBUG', False)
 # PaaS, we can open ALLOWED_HOSTS
 ALLOWED_HOSTS = ['*']
 
+
+# Flag for loading magna header
+MAGNA_HEADER = env.bool('MAGNA_HEADER', False)
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -217,7 +221,7 @@ DIRECTORY_CONSTANTS_URL_INTERNATIONAL = env.str('DIRECTORY_CONSTANTS_URL_INTERNA
 DIRECTORY_CONSTANTS_URL_INVESTMENT_SUPPORT_DIRECTORY = env.str(
     'DIRECTORY_CONSTANTS_URL_INVESTMENT_SUPPORT_DIRECTORY', ''
 )
-
+DIRECTORY_CONSTANTS_URL_GREAT_MAGNA = env.str('DIRECTORY_CONSTANTS_URL_GREAT_MAGNA', 'https://great.gov.uk/')
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 SESSION_COOKIE_SECURE = env.bool('SESSION_COOKIE_SECURE', True)
 SESSION_COOKIE_NAME = env.str('SESSION_COOKIE_NAME', 'profile_sessionid')
