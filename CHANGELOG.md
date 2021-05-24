@@ -10,6 +10,7 @@
  - GP2-2332 - Upgraded directory-components package
  - No ticket - Dependencies upgrade
  - GP2-2224 - Python upgrade to 3.9.2
+ - GP2-2784 - Bump directory-components
 
 ### Fixed bugs
 -
