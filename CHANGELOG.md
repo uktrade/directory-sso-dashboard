@@ -1,9 +1,18 @@
 # Changelog
 
-### Hot Fixes
-- NOTICKET - fix-vulnerabilies
-
 ## Pre-Release
+
+### Implemented enhancements
+
+### Fixed bugs
+
+## [1.6.0](https://github.com/uktrade/directory-sso-profile/releases/tag/1.6.0)
+
+[Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/1.0.0...1.6.0)
+
+### Hot Fixes
+
+- NOTICKET - fix-vulnerabilies
 
 ### Implemented enhancements
  - GP2-2381 - corrected footer link for contact
@@ -13,7 +22,6 @@
  - GP2-2784 - Bump directory-components
 
 ### Fixed bugs
--
 - GBAU-889 - directory-components version bump
 - GAA-27 - directory-components version bump
 - GP2-1068 - adopt Black auto-formatting + provide optional pre-commit config
