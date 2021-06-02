@@ -9,6 +9,7 @@ from django.urls import reverse, reverse_lazy
 from django.utils.functional import cached_property
 from django.views.generic import FormView, TemplateView
 from formtools.wizard.views import NamedUrlSessionWizardView
+from directory_components.helpers import CompanyParser
 
 import core.forms
 import core.mixins
@@ -496,6 +497,8 @@ class PreVerifiedEnrolmentView(BaseEnrolmentWizardView):
         if key:
             data = helpers.retrieve_preverified_company(key)
             if data:
+                # This is to tell the template that the company is registered companies house
+                data['is_in_companies_house'] = CompanyParser(data).is_in_companies_house
                 self.storage.extra_data[constants.SESSION_KEY_COMPANY_DATA] = data
                 self.storage.extra_data[constants.SESSION_KEY_ENROL_KEY] = key
                 self.request.session.save()
