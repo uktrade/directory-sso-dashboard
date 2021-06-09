@@ -40,7 +40,7 @@ directory-healthcheck==2.0.0
     # via -r requirements.in
 directory-sso-api-client==6.2.0
     # via -r requirements.in
-directory-validators==6.0.5
+directory-validators==6.0.6
     # via -r requirements.in
 django-environ==0.4.5
     # via -r requirements.in
@@ -54,7 +54,7 @@ django-redis==4.10.0
     # via -r requirements.in
 django-storages==1.7.1
     # via -r requirements.in
-django==2.2.21
+django==2.2.24
     # via
     #   -r requirements.in
     #   directory-api-client
@@ -106,7 +106,7 @@ pytz==2020.1
     #   django
 redis==3.5.3
     # via django-redis
-requests==2.21.0
+requests==2.25.1
     # via
     #   -r requirements.in
     #   directory-api-client
@@ -130,7 +130,7 @@ soupsieve==2.2.1
     # via beautifulsoup4
 sqlparse==0.4.1
     # via django
-urllib3==1.24.3
+urllib3==1.26.5
     # via
     #   -r requirements.in
     #   directory-validators
