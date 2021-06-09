@@ -3,6 +3,8 @@
 ## Pre-Release
 
 ### Implemented enhancements
+- no-ticket - dependencies upgrade
+
 ### Fixed bugs
 
 ## [1.6.1](https://github.com/uktrade/directory-sso-profile/releases/tag/1.6.1)
