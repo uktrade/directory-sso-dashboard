@@ -60,7 +60,7 @@ directory-healthcheck==2.0.0
     # via -r requirements.in
 directory-sso-api-client==6.2.0
     # via -r requirements.in
-directory-validators==6.0.5
+directory-validators==6.0.6
     # via -r requirements.in
 django-environ==0.4.5
     # via -r requirements.in
@@ -74,7 +74,7 @@ django-redis==4.10.0
     # via -r requirements.in
 django-storages==1.7.1
     # via -r requirements.in
-django==2.2.21
+django==2.2.24
     # via
     #   -r requirements.in
     #   directory-api-client
@@ -186,7 +186,7 @@ redis==3.5.3
     # via django-redis
 regex==2021.4.4
     # via black
-requests==2.21.0
+requests==2.25.1
     # via
     #   -r requirements.in
     #   codecov
@@ -226,7 +226,7 @@ typed-ast==1.4.3
     # via black
 typing-extensions==3.7.4.3
     # via black
-urllib3==1.24.3
+urllib3==1.26.5
     # via
     #   -r requirements.in
     #   directory-validators
