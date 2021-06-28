@@ -3,6 +3,7 @@
 ## Pre-Release
 
 ### Implemented enhancements
+- GP2-2841 - Pinned CF buildpack and upgraded python to 3.9.5
 - no-ticket - dependencies upgrade
 
 ### Fixed bugs
