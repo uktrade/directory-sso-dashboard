@@ -1,12 +1,17 @@
 # Changelog
 
 ## Pre-Release
+### Fixed bugs
+### Implemented enhancements
+
+
+## [1.7.1](https://github.com/uktrade/directory-sso-profile/releases/tag/1.7.1)
+[Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/1.6.1...1.7.1)
 
 ### Implemented enhancements
 - GP2-2841 - Pinned CF buildpack and upgraded python to 3.9.5
 - no-ticket - dependencies upgrade
 
-### Fixed bugs
 
 ## [1.6.1](https://github.com/uktrade/directory-sso-profile/releases/tag/1.6.1)
 [Full Changelog](https://github.com/uktrade/directory-sso-profile/compare/1.6.0...1.6.1)
